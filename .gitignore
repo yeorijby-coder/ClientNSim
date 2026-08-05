@@ -5,5 +5,7 @@ Bin/
 Builder/
 backend/
 frontend/
-Ecs/
-ScSim/
+CvSim/CvSim.sdf
+Ecs/Ecs.sdf
+ScSim/ScSim.sdf
+HostSim/HostSim.sdf
