@@ -1,0 +1,6 @@
+17:12:52 [Alarm] Cannot open SML file: (WUXI_SDI_HIGH.sml)
+17:12:52 [I/F:Alarm] Initialization Error: -10010
+17:13:53 [I/F:Alarm] XCom driver was stopped directly by DestroyWindow
+17:14:00 [I/F:Alarm] Initialization Error: sml file has invalid SECS item format at line 1 : (XCom)
+17:14:00 [I/F:Alarm] Initialization Error: -10020
+17:18:06 [I/F:Alarm] XCom driver was stopped directly by DestroyWindow

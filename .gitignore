@@ -1,0 +1,9 @@
+
+.vs/
+backup/
+Bin/
+Builder/
+backend/
+frontend/
+Ecs/
+ScSim/
