@@ -18,7 +18,7 @@ public:
 	virtual ~CDciButtonCtrl(void);
 
 public:
-	enum { enButtonCtrlPropSize = CDciControl::enControlPropSize + 2 };
+	enum { enButtonCtrlPropSize = CDciControl::enControlPropSize + 1 };
 	//==> 삼각형 4방향 추가 - 최원빈 수정
 	enum EN_BTNCTRL_SHAPE {	
 		enBcsRectangle, enBcsEllipse, enBcsRoundRect,																													//  0,  1,  2
@@ -31,7 +31,7 @@ public:
 	//==<
 
 public:
-	int m_nFontSize;
+//	int m_nFontSize;
 	int m_nShape;
 
 public:

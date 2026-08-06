@@ -40,14 +40,14 @@ public:
 	};
 
 public:
-	enum { enTrackCtrlPropSize = CDciControl::enControlPropSize + 4 + 1};
+	enum { enTrackCtrlPropSize = CDciControl::enControlPropSize + 4};
 
 public:
 	BOOL m_bExist;
 	BOOL m_bDoubleExist;
 
-public:
-	int m_nFontSize;
+protected:
+//	int m_nFontSize;
 	int m_nRow;
 	int m_nCol;
 

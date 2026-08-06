@@ -209,7 +209,7 @@ CRect CDciMaster::ConvertRectL(int l, int t, int r, int b)
 	return rcRectL;
 }
 
-void CDciMaster::DrawText(CDC* pDC, const CRect& rcRectL, const CString& strText, COLORREF clrText)
+void CDciMaster::DrawText(CDC* pDC, const CRect& rcRectL, const CString& strText, COLORREF clrText, int nFontSize)
 {
 	if (pDC == NULL || rcRectL.IsRectNull() || strText.IsEmpty())
 		return;
@@ -217,10 +217,55 @@ void CDciMaster::DrawText(CDC* pDC, const CRect& rcRectL, const CString& strText
 	int nOldBkMode = pDC->SetBkMode(TRANSPARENT);
 	int nOldTextColor = pDC->SetTextColor(clrText);
 
-	pDC->DrawText(strText, ConvertRectS(rcRectL), DT_SINGLELINE|DT_CENTER|DT_VCENTER);
+
+
+	CRect rcControlS = ConvertRectS(rcRectL);
+
+	LOGFONT m_logfont;
+	CFont m_font;
+	CFont* pOldFont;
+
+	int nSize = 0;
+	int nHeight = rcControlS.Height();
+	int nWidth = rcControlS.Width();
+	nSize = nHeight;
+	if (nHeight > nWidth)
+		nSize = nWidth;
+
+	int nStrCnt = 0;
+	//if (m_strText.GetLength() < 5)
+	if (strText.GetLength() < 5)
+		nStrCnt = 1;
+	else
+		nStrCnt = (strText.GetLength() / 5) + 1;
+	//	nStrCnt = (m_strText.GetLength() / 5) + 1;
+
+	//if (m_strText.GetLength() > 20)
+	if (strText.GetLength() > 20)
+		nSize = nSize / 2;
+	else
+		nSize = nSize / nStrCnt;
+
+	memset(&m_logfont, 0, sizeof(LOGFONT));
+	m_logfont.lfQuality = PROOF_QUALITY;
+	//			m_logfont.lfHeight = r;
+	m_logfont.lfHeight = nFontSize;
+	m_logfont.lfWeight = FW_BOLD;
+	lstrcpy(m_logfont.lfFaceName, _T("Arial"));
+
+	m_font.CreateFontIndirect(&m_logfont);
+
+	pOldFont = pDC->SelectObject(&m_font);
+	
+//	pDC->DrawText(strText, ConvertRectS(rcRectL), DT_SINGLELINE|DT_CENTER|DT_VCENTER);
+	pDC->DrawText(strText, rcControlS, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+	if (pOldFont != NULL)
+		pDC->SelectObject(pOldFont);   // ÆùÆ®'
 
 	pDC->SetTextColor(nOldTextColor);
 	pDC->SetBkMode(nOldBkMode);
+
 }
 
 void CDciMaster::Draw3dSolidRect(CDC* pDC, const CRect& rcRectL, COLORREF clrBrush, COLORREF clrLeftTop, COLORREF clrRightBottom)

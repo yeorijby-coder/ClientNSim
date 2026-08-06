@@ -36,7 +36,7 @@ void CDciRvCtrl::InitControl(CDciMaster* pDCI)
 //	m_nCol		= 1;
 //	m_nRow		= 1;
 	m_nProd		= 0;
-	m_nFontSize = 10;
+//	m_nFontSize = 10;
 	m_rcForkS.SetRect(0, 0, 0, 0);
 	m_rcForkT.SetRect(0, 0, 0, 0);
 	m_rcForkD.SetRect(0, 0, 0, 0);
@@ -56,9 +56,10 @@ int CDciRvCtrl::UpdatePropNames(CDciPropertyArray& properties)
 	properties[i++].SetProperty(CDciProperty::PT_COLOR, _T("forkcolor"));
 	properties[i++].SetProperty(CDciProperty::PT_COLOR, _T("wingcolor"));
 	properties[i++].SetProperty(CDciProperty::PT_COLOR, _T("railcolor"));
-	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("fontsize"));
+//	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("fontsize"));
+	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("Increase"));
 	ASSERT(properties.GetSize() == i);
-
+	
 	return i;
 }
 
@@ -77,9 +78,10 @@ int CDciRvCtrl::UpdatePropValues(CDciPropertyArray& properties, BOOL bSaveObject
 		m_clrFork	= CConvert::ToColor(properties[i++].m_strValue);
 		m_clrWing	= CConvert::ToColor(properties[i++].m_strValue);
 		m_clrRail	= CConvert::ToColor(properties[i++].m_strValue);
-		m_nFontSize	= CConvert::ToInt(properties[i++].m_strValue);
+//		m_nFontSize	= CConvert::ToInt(properties[i++].m_strValue);
+		m_nIncrease = CConvert::ToInt(properties[i++].m_strValue);
 		m_clrFork2	= m_clrFork;
-
+		
 	}
 	else
 	{
@@ -92,9 +94,10 @@ int CDciRvCtrl::UpdatePropValues(CDciPropertyArray& properties, BOOL bSaveObject
 		properties[i++].m_strValue.Format(_T("%s"), CConvert::ToString(m_clrFork));
 		properties[i++].m_strValue.Format(_T("%s"), CConvert::ToString(m_clrWing));
 		properties[i++].m_strValue.Format(_T("%s"), CConvert::ToString(m_clrRail));
-		properties[i++].m_strValue.Format(_T("%d"), m_nFontSize);
+//		properties[i++].m_strValue.Format(_T("%d"), m_nFontSize);
+		properties[i++].m_strValue.Format(_T("%d"), m_nIncrease);
 	}
-
+	
 	return i;
 }
 //===============================================================================================================================================
@@ -123,9 +126,12 @@ void CDciRvCtrl::UpdateControlHorizental(int nType ,
 //	if (nForkType == enGap2)
 //		nForkSize = abs(m_rcControlL.Height()) ? abs(m_rcControlL.Height())*m_nLen : m_nLen;
 
-	if (m_nForkPos <= 0) nForkPos = 0;
-	else if (m_nForkPos >= abs(m_rcControlL.Width()/nForkSize)) nForkPos = abs(m_rcControlL.Width())/nForkSize - 1;
-	else nForkPos = m_nForkPos;
+	int nPosVal = m_nForkPos;
+	if (nForkType == enSingleGap2 || nForkType == enTwinGap2)
+		nPosVal = m_nForkPos / 2;	// Gap2 : Position값 2마다 1칸씩 이동
+	if (nPosVal <= 0) nForkPos = 0;
+	else if (nPosVal >= abs(m_rcControlL.Width()/nForkSize)) nForkPos = abs(m_rcControlL.Width())/nForkSize - 1;
+	else nForkPos = nPosVal;
 
 	if (nType == enL2R)
 	{
@@ -140,14 +146,14 @@ void CDciRvCtrl::UpdateControlHorizental(int nType ,
 		rcWingS1.right = rcForkS.left - rcForkS.Width()*nWingGapRatio/100;
 		rcWingS1.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;
 
-		if (nForkType == enSingle)
+		if (nForkType == enSingle || nForkType == enSingleGap2)
 		{
 			rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
 			rcWingS2.top = rcForkS.top + rcForkS.Height()/2 - rcForkS.Height()*nWingScaleRatio/100;
 			rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
 			rcWingS2.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;
 		}
-		else if (nForkType == enTwin)
+		else if (nForkType == enTwin || nForkType == enTwinGap2)
 		{
 			rcForkL2.left = m_rcControlL.left + (nForkPos+1)*nForkSize;
 			rcForkL2.top = m_rcControlL.top;
@@ -159,6 +165,14 @@ void CDciRvCtrl::UpdateControlHorizental(int nType ,
 			rcWingS2.top = rcForkT.top + rcForkT.Height()/2 - rcForkT.Height()*nWingScaleRatio/100;
 			rcWingS2.right = rcForkT.right + rcForkT.Width()*nWingGapRatio/100 + rcForkT.Width()*nWingScaleRatio/100;
 			rcWingS2.bottom = rcForkT.top + rcForkT.Height()/2 + rcForkT.Height()*nWingScaleRatio/100;
+
+			if (m_nIncrease != 0)
+			{
+				rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
+				rcWingS2.top = rcForkS.top + rcForkS.Height()/m_nIncrease - rcForkS.Height()*nWingScaleRatio/100;
+				rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
+				rcWingS2.bottom = rcForkS.top + rcForkS.Height()/m_nIncrease + rcForkS.Height()*nWingScaleRatio/100;
+			}
 		}
 		else if (nForkType == enDouble)
 		{
@@ -196,19 +210,20 @@ void CDciRvCtrl::UpdateControlHorizental(int nType ,
 			rcForkL2.bottom = m_rcControlL.bottom;	
 			m_rcForkD = rcForkD = m_pDCI->ConvertRectS(rcForkL2);		
 		}
-		else if(nForkType == enGap2)
-		{
-		//	nForkSize *=2;
-	
-			rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
-			rcWingS2.top = rcForkS.top + rcForkS.Height()/2 - rcForkS.Height()*nWingScaleRatio/100;
-			rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
-			rcWingS2.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;
-		
-	//		if (m_nForkPos/2 <= 0) nForkPos = 0;
-	//		else if (m_nForkPos/2 >= abs(m_rcControlL.Width()/nForkSize)) nForkPos = (abs(m_rcControlL.Width())/nForkSize - 1)/2;
-	//		else nForkPos = m_nForkPos/2;
-		}
+		// m_nIncrease 사용함으로 enGap2은 사용하지 않음!
+//		else if(nForkType == enGap2)
+//		{
+//		//	nForkSize *=2;
+//	
+//			rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
+//			rcWingS2.top = rcForkS.top + rcForkS.Height()/2 - rcForkS.Height()*nWingScaleRatio/100;
+//			rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
+//			rcWingS2.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;
+//		
+//	//		if (m_nForkPos/2 <= 0) nForkPos = 0;
+//	//		else if (m_nForkPos/2 >= abs(m_rcControlL.Width()/nForkSize)) nForkPos = (abs(m_rcControlL.Width())/nForkSize - 1)/2;
+//	//		else nForkPos = m_nForkPos/2;
+//		}
 	}
 	else //if (nType == enR2L)
 	{
@@ -223,14 +238,14 @@ void CDciRvCtrl::UpdateControlHorizental(int nType ,
 		rcWingS1.right = rcForkS.left - rcForkS.Width()*nWingGapRatio/100;
 		rcWingS1.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;
 
-		if (nForkType == enSingle)
+		if (nForkType == enSingle || nForkType == enSingleGap2)
 		{
 			rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
 			rcWingS2.top = rcForkS.top + rcForkS.Height()/2 - rcForkS.Height()*nWingScaleRatio/100;
 			rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
 			rcWingS2.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;
 		}
-		else if (nForkType == enTwin)
+		else if (nForkType == enTwin || nForkType == enTwinGap2)
 		{
 			rcForkL2.left = m_rcControlL.right - (nForkPos+2)*nForkSize;	
 			rcForkL2.top = m_rcControlL.top;								
@@ -305,20 +320,21 @@ void CDciRvCtrl::UpdateControlHorizental(int nType ,
 			rcWingS2.bottom = rcForkD.bottom	- rcForkD.Height()/2				- rcForkD.Height()*nWingScaleRatio/100;
 
 		}
-		else if(nForkType == enGap2)
-		{
-
-		//	nForkSize *=2;
-
-			rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
-			rcWingS2.top = rcForkS.top + rcForkS.Height()/2 - rcForkS.Height()*nWingScaleRatio/100;
-			rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
-			rcWingS2.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;
-					
-	//		if (m_nForkPos/2 <= 0) nForkPos = 0;
-	//		else if (m_nForkPos/2 >= abs(m_rcControlL.Width()/nForkSize)) nForkPos = (abs(m_rcControlL.Width())/nForkSize - 1)/2;
-	//		else nForkPos = m_nForkPos/2;
-		}
+		// m_nIncrease 사용함으로 enGap2은 사용하지 않음!
+//		else if(nForkType == enGap2)
+//		{
+//
+//		//	nForkSize *=2;
+//
+//			rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
+//			rcWingS2.top = rcForkS.top + rcForkS.Height()/2 - rcForkS.Height()*nWingScaleRatio/100;
+//			rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
+//			rcWingS2.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;
+//					
+//	//		if (m_nForkPos/2 <= 0) nForkPos = 0;
+//	//		else if (m_nForkPos/2 >= abs(m_rcControlL.Width()/nForkSize)) nForkPos = (abs(m_rcControlL.Width())/nForkSize - 1)/2;
+//	//		else nForkPos = m_nForkPos/2;
+//		}
 	}
 }
 
@@ -346,9 +362,12 @@ void CDciRvCtrl::UpdateControlVertical(	int nType ,
 
 //	nForkSize = abs(m_rcControlL.Width()) ? abs(m_rcControlL.Width())*m_nLen : m_nLen;
 
-	if (m_nForkPos <= 0) nForkPos = 0;
-	else if (m_nForkPos >= abs(m_rcControlL.Height()/nForkSize)) nForkPos = abs(m_rcControlL.Height())/nForkSize - 1;
-	else nForkPos = m_nForkPos;
+	int nPosVal = m_nForkPos;
+	if (nForkType == enSingleGap2 || nForkType == enTwinGap2)
+		nPosVal = m_nForkPos / 2;	// Gap2 : Position값 2마다 1칸씩 이동
+	if (nPosVal <= 0) nForkPos = 0;
+	else if (nPosVal >= abs(m_rcControlL.Height()/nForkSize)) nForkPos = abs(m_rcControlL.Height())/nForkSize - 1;
+	else nForkPos = nPosVal;
 
 	if (nType == enT2B)
 	{
@@ -368,7 +387,7 @@ void CDciRvCtrl::UpdateControlVertical(	int nType ,
 		rcWingS2.right = rcForkS.left + rcForkS.Width()/2 + rcForkS.Width()*nWingScaleRatio/100;
 		rcWingS2.bottom = rcForkS.bottom + rcForkS.Height()*nWingGapRatio/100 + rcForkS.Height()*nWingScaleRatio/100;
 
-		if (nForkType == enTwin)
+		if (nForkType == enTwin || nForkType == enTwinGap2)
 		{
 			rcForkL2.left = m_rcControlL.left;
 			rcForkL2.top = m_rcControlL.top - (nForkPos+1)*nForkSize;
@@ -418,19 +437,20 @@ void CDciRvCtrl::UpdateControlVertical(	int nType ,
 			rcForkL2.bottom = m_rcControlL.top		-  nForkPos			* nForkSize;	
 			m_rcForkD = rcForkD = m_pDCI->ConvertRectS(rcForkL2);		
 		}
-		else if (nForkType == enGap2)
-		{
-
-	//		rcWingS2.left = rcForkS.left + 2;
-	//		rcWingS2.top = rcForkS.bottom + 2;
-	///		rcWingS2.right = rcForkS.left + 2;
-	//		rcWingS2.bottom = rcForkS.bottom + 2;
-		
-//			rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
-//			rcWingS2.top = rcForkS.top + rcForkS.Height()/2 - rcForkS.Height()*nWingScaleRatio/100;
-//			rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
-//			rcWingS2.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;		
-		}
+		// m_nIncrease 사용함으로 enGap2은 사용하지 않음!
+//		else if (nForkType == enGap2)
+//		{
+//
+//	//		rcWingS2.left = rcForkS.left + 2;
+//	//		rcWingS2.top = rcForkS.bottom + 2;
+//	///		rcWingS2.right = rcForkS.left + 2;
+//	//		rcWingS2.bottom = rcForkS.bottom + 2;
+//		
+//	//			rcWingS2.left = rcForkS.right + rcForkS.Width()*nWingGapRatio/100;
+//	//			rcWingS2.top = rcForkS.top + rcForkS.Height()/2 - rcForkS.Height()*nWingScaleRatio/100;
+//	//			rcWingS2.right = rcForkS.right + rcForkS.Width()*nWingGapRatio/100 + rcForkS.Width()*nWingScaleRatio/100;
+//	//			rcWingS2.bottom = rcForkS.top + rcForkS.Height()/2 + rcForkS.Height()*nWingScaleRatio/100;		
+//		}
 	}
 	else //if (nType == enB2T)
 	{
@@ -450,7 +470,7 @@ void CDciRvCtrl::UpdateControlVertical(	int nType ,
 		rcWingS2.right = rcForkS.left + rcForkS.Width()/2 + rcForkS.Width()*nWingScaleRatio/100;
 		rcWingS2.bottom = rcForkS.bottom + rcForkS.Height()*nWingGapRatio/100 + rcForkS.Height()*nWingScaleRatio/100;
 
-		if (nForkType == enTwin)
+		if (nForkType == enTwin || nForkType == enTwinGap2)
 		{
 			rcForkL2.left = m_rcControlL.left;
 			rcForkL2.top = m_rcControlL.bottom + (nForkPos+2)*nForkSize;
@@ -462,6 +482,106 @@ void CDciRvCtrl::UpdateControlVertical(	int nType ,
 			rcWingS1.top = rcForkT.top - rcForkT.Height()*nWingGapRatio/100 - rcForkT.Height()*nWingScaleRatio/100;
 			rcWingS1.right = rcForkT.left + rcForkT.Width()/2 + rcForkT.Width()*nWingScaleRatio/100;
 			rcWingS1.bottom = rcForkT.top - rcForkT.Height()*nWingGapRatio/100;
+
+			if (m_nIncrease != 0)
+			{
+				if (nForkPos <= (m_nIncrease-1))
+				{
+					// 홈스탠드 일때 
+					nForkPos = 1;
+					rcForkL1.left = m_rcControlL.left;
+					rcForkL1.top = m_rcControlL.bottom + (nForkPos + 1) * nForkSize;
+					rcForkL1.right = m_rcControlL.right;
+					rcForkL1.bottom = m_rcControlL.bottom + nForkPos * nForkSize;
+					m_rcForkS = rcForkS = m_pDCI->ConvertRectS(rcForkL1);
+
+					rcWingS1.left = rcForkS.left + rcForkS.Width() / 2 - rcForkS.Width() * nWingScaleRatio / 100;
+					rcWingS1.top = rcForkS.top - rcForkS.Height() * nWingGapRatio / 100 - rcForkS.Height() * nWingScaleRatio / 100;
+					rcWingS1.right = rcForkS.left + rcForkS.Width() / 2 + rcForkS.Width() * nWingScaleRatio / 100;
+					rcWingS1.bottom = rcForkS.top - rcForkS.Height() * nWingGapRatio / 100;
+
+					rcWingS2.left = rcForkS.left + rcForkS.Width() / 2 - rcForkS.Width() * nWingScaleRatio / 100;
+					rcWingS2.top = rcForkS.bottom + rcForkS.Height() * nWingGapRatio / 100;
+					rcWingS2.right = rcForkS.left + rcForkS.Width() / 2 + rcForkS.Width() * nWingScaleRatio / 100;
+					rcWingS2.bottom = rcForkS.bottom + rcForkS.Height() * nWingGapRatio / 100 + rcForkS.Height() * nWingScaleRatio / 100;
+
+					rcForkL2.left = m_rcControlL.left;
+					rcForkL2.top = m_rcControlL.bottom + (nForkPos + 2) * nForkSize;
+					rcForkL2.right = m_rcControlL.right;
+					rcForkL2.bottom = m_rcControlL.bottom + (nForkPos + 1) * nForkSize;
+					m_rcForkT = rcForkT = m_pDCI->ConvertRectS(rcForkL2);
+
+					rcWingS1.left = rcForkT.left + rcForkT.Width() / 2 - rcForkT.Width() * nWingScaleRatio / 100;
+					rcWingS1.top = rcForkT.top - rcForkT.Height() * nWingGapRatio / 100 - rcForkT.Height() * nWingScaleRatio / 100;
+					rcWingS1.right = rcForkT.left + rcForkT.Width() / 2 + rcForkT.Width() * nWingScaleRatio / 100;
+					rcWingS1.bottom = rcForkT.top - rcForkT.Height() * nWingGapRatio / 100;
+				}	
+				else
+				{
+					// 랙 일때 
+					BOOL bForkReduce = FALSE;		// FALSE : Increase 칸씩 건너뛸 때,			TRUE : 포크를 줄일때 
+
+					if (bForkReduce == FALSE)
+					{
+						//==================================================================================================================================
+						// Increase 칸씩 건너뛸 때
+						//==================================================================================================================================
+						//nForkPos += (m_nIncrease * 2) + (m_nIncrease / 2);
+						nForkPos += (m_nIncrease * 2) + (m_nIncrease / 2);
+						rcForkL1.left = m_rcControlL.left;
+						rcForkL1.top = m_rcControlL.bottom + ((nForkPos / m_nIncrease) + 1) * nForkSize;
+						rcForkL1.right = m_rcControlL.right;
+						rcForkL1.bottom = m_rcControlL.bottom + (nForkPos / m_nIncrease) * nForkSize;
+						m_rcForkS = rcForkS = m_pDCI->ConvertRectS(rcForkL1);
+
+						rcWingS2.left = rcForkS.left + rcForkS.Width() / 2 - rcForkS.Width() * nWingScaleRatio / 100;
+						rcWingS2.top = rcForkS.bottom + rcForkS.Height() * nWingGapRatio / 100;
+						rcWingS2.right = rcForkS.left + rcForkS.Width() / 2 + rcForkS.Width() * nWingScaleRatio / 100;
+						rcWingS2.bottom = rcForkS.bottom + rcForkS.Height() * nWingGapRatio / 100 + rcForkS.Height() * nWingScaleRatio / 100;
+
+						rcForkL2.left = m_rcControlL.left;
+						rcForkL2.top = m_rcControlL.bottom + ((nForkPos / m_nIncrease) + 2) * nForkSize;
+						rcForkL2.right = m_rcControlL.right;
+						rcForkL2.bottom = m_rcControlL.bottom + ((nForkPos / m_nIncrease) + 1) * nForkSize;
+						m_rcForkT = rcForkT = m_pDCI->ConvertRectS(rcForkL2);
+
+						rcWingS1.left = rcForkT.left + rcForkT.Width() / 2 - rcForkT.Width() * nWingScaleRatio / 100;
+						rcWingS1.top = rcForkT.top - rcForkT.Height() * nWingGapRatio / 100 - rcForkT.Height() * nWingScaleRatio / 100;
+						rcWingS1.right = rcForkT.left + rcForkT.Width() / 2 + rcForkT.Width() * nWingScaleRatio / 100;
+						rcWingS1.bottom = rcForkT.top - rcForkT.Height() * nWingGapRatio / 100;
+						//----------------------------------------------------------------------------------------------------------------------------------
+					}
+					else
+					{
+						//==================================================================================================================================
+						// 포크를 줄여서 보여줄 때 - 현재는 구현되지 않음! 
+						//==================================================================================================================================
+						nForkPos += (m_nIncrease * 2) + (m_nIncrease / 2);
+						rcForkL1.left = m_rcControlL.left;
+						rcForkL1.top = m_rcControlL.bottom + ((nForkPos / m_nIncrease) + 1) * nForkSize;
+						rcForkL1.right = m_rcControlL.right;
+						rcForkL1.bottom = m_rcControlL.bottom + (nForkPos / m_nIncrease) * nForkSize;
+						m_rcForkS = rcForkS = m_pDCI->ConvertRectS(rcForkL1);
+
+						rcWingS2.left = rcForkS.left + rcForkS.Width() / 2 - rcForkS.Width() * nWingScaleRatio / 100;
+						rcWingS2.top = rcForkS.bottom + rcForkS.Height() * nWingGapRatio / 100;
+						rcWingS2.right = rcForkS.left + rcForkS.Width() / 2 + rcForkS.Width() * nWingScaleRatio / 100;
+						rcWingS2.bottom = rcForkS.bottom + rcForkS.Height() * nWingGapRatio / 100 + rcForkS.Height() * nWingScaleRatio / 100;
+
+						rcForkL2.left = m_rcControlL.left;
+						rcForkL2.top = m_rcControlL.bottom + ((nForkPos / m_nIncrease) + 2) * nForkSize;
+						rcForkL2.right = m_rcControlL.right;
+						rcForkL2.bottom = m_rcControlL.bottom + ((nForkPos / m_nIncrease) + 1) * nForkSize;
+						m_rcForkT = rcForkT = m_pDCI->ConvertRectS(rcForkL2);
+
+						rcWingS1.left = rcForkT.left + rcForkT.Width() / 2 - rcForkT.Width() * nWingScaleRatio / 100;
+						rcWingS1.top = rcForkT.top - rcForkT.Height() * nWingGapRatio / 100 - rcForkT.Height() * nWingScaleRatio / 100;
+						rcWingS1.right = rcForkT.left + rcForkT.Width() / 2 + rcForkT.Width() * nWingScaleRatio / 100;
+						rcWingS1.bottom = rcForkT.top - rcForkT.Height() * nWingGapRatio / 100;
+						//----------------------------------------------------------------------------------------------------------------------------------
+					}
+				}
+			}
 		}
 		else if (nForkType == enDouble)
 		{
@@ -711,14 +831,76 @@ void CDciRvCtrl::UpdateControl(CDC* pDC)
 			break;
 	
 		// Sc 크기 직사각형으로 늘림
-		case enGap2:
+		//case enGap2:
+		//	{
+		//		switch (m_nType)
+		//		{
+		//		case enL2R:
+		//		case enR2L:
+		//			{
+		//				// 레일끝에 점 표시하기
+		//				ptRailS1.x = rcControlS.left;
+		//				ptRailS1.y = rcControlS.top + abs(rcControlS.Height()/2);
+		//				ptRailS2.x = rcControlS.right;
+		//				ptRailS2.y = rcControlS.top + abs(rcControlS.Height()/2);
+
+		//				UpdateControlHorizental(m_nType, 
+		//										ptRailS1, ptRailS2, 
+		//										rcRailS1, rcRailS2, 
+		//										rcWingS1, rcWingS2, 
+		//										rcForkL1, rcForkL2,
+		//										rcForkS, rcForkT, rcForkD, 
+		//										enGap2);
+		//			}
+		//			break;
+		//		case enT2B:
+		//		case enB2T:
+		//			{
+		//				// 레일끝에 점 표시하기
+		//				ptRailS1.x = rcControlS.left + abs(rcControlS.Width()/2);
+		//				ptRailS1.y = rcControlS.top;
+		//				ptRailS2.x = rcControlS.left + abs(rcControlS.Width()/2);
+		//				ptRailS2.y = rcControlS.bottom;
+
+		//				UpdateControlVertical(	m_nType, 
+		//										ptRailS1, ptRailS2, 
+		//										rcRailS1, rcRailS2, 
+		//										rcWingS1, rcWingS2, 
+		//										rcForkL1, rcForkL2,
+		//										rcForkS, rcForkT, rcForkD, 
+		//										enGap2);
+		//			}
+		//		case enTypeSize:
+		//			{
+		//				// 레일끝에 점 표시하기
+		//				ptRailS1.x = rcControlS.left + abs(rcControlS.Width()/2);
+		//				ptRailS1.y = rcControlS.top;
+		//				ptRailS2.x = rcControlS.left + abs(rcControlS.Width()/2);
+		//				ptRailS2.y = rcControlS.bottom;
+
+		//				UpdateControlVertical(	m_nType, 
+		//										ptRailS1, ptRailS2, 
+		//										rcRailS1, rcRailS2, 
+		//										rcWingS1, rcWingS2, 
+		//										rcForkL1, rcForkL2,
+		//										rcForkS, rcForkT, rcForkD, 
+		//										enGap2);						
+
+
+
+
+		//			}
+		//			break;
+		//		}
+		//	}
+		//	break;
+		case enSingleGap2:		// Position값 2마다 1칸씩 이동하는 Single 포크
 			{
 				switch (m_nType)
 				{
 				case enL2R:
 				case enR2L:
 					{
-						// 레일끝에 점 표시하기
 						ptRailS1.x = rcControlS.left;
 						ptRailS1.y = rcControlS.top + abs(rcControlS.Height()/2);
 						ptRailS2.x = rcControlS.right;
@@ -730,13 +912,12 @@ void CDciRvCtrl::UpdateControl(CDC* pDC)
 												rcWingS1, rcWingS2, 
 												rcForkL1, rcForkL2,
 												rcForkS, rcForkT, rcForkD, 
-												enGap2);
+												enSingleGap2);
 					}
 					break;
 				case enT2B:
 				case enB2T:
 					{
-						// 레일끝에 점 표시하기
 						ptRailS1.x = rcControlS.left + abs(rcControlS.Width()/2);
 						ptRailS1.y = rcControlS.top;
 						ptRailS2.x = rcControlS.left + abs(rcControlS.Width()/2);
@@ -748,11 +929,36 @@ void CDciRvCtrl::UpdateControl(CDC* pDC)
 												rcWingS1, rcWingS2, 
 												rcForkL1, rcForkL2,
 												rcForkS, rcForkT, rcForkD, 
-												enGap2);
+												enSingleGap2);
 					}
-				case enTypeSize:
+					break;
+				}
+			}
+			break;
+		case enTwinGap2:		// Position값 2마다 1칸씩 이동하는 Twin 포크
+			{
+				switch (m_nType)
+				{
+				case enL2R:
+				case enR2L:
 					{
-						// 레일끝에 점 표시하기
+						ptRailS1.x = rcControlS.left;
+						ptRailS1.y = rcControlS.top + abs(rcControlS.Height()/2);
+						ptRailS2.x = rcControlS.right;
+						ptRailS2.y = rcControlS.top + abs(rcControlS.Height()/2);
+
+						UpdateControlHorizental(m_nType, 
+												ptRailS1, ptRailS2, 
+												rcRailS1, rcRailS2, 
+												rcWingS1, rcWingS2, 
+												rcForkL1, rcForkL2,
+												rcForkS, rcForkT, rcForkD, 
+												enTwinGap2);
+					}
+					break;
+				case enT2B:
+				case enB2T:
+					{
 						ptRailS1.x = rcControlS.left + abs(rcControlS.Width()/2);
 						ptRailS1.y = rcControlS.top;
 						ptRailS2.x = rcControlS.left + abs(rcControlS.Width()/2);
@@ -764,11 +970,7 @@ void CDciRvCtrl::UpdateControl(CDC* pDC)
 												rcWingS1, rcWingS2, 
 												rcForkL1, rcForkL2,
 												rcForkS, rcForkT, rcForkD, 
-												enGap2);						
-
-
-
-
+												enTwinGap2);
 					}
 					break;
 				}
@@ -841,7 +1043,7 @@ void CDciRvCtrl::UpdateControl(CDC* pDC)
 
 		m_pDCI->DrawText(pDC, rcForkL1, m_strText, m_clrFgColor);
 
-		if (m_nForkType == enTwin)
+		if (m_nForkType == enTwin || m_nForkType == enTwinGap2)
 //		if (m_nForkType != enSingle)
 		{
 			m_pDCI->DrawButton(pDC, rcForkL2, m_clrFork2, m_bClick);
@@ -857,10 +1059,11 @@ void CDciRvCtrl::UpdateControl(CDC* pDC)
 		rcIntersect.IntersectRect(rcWingS1, rcControlS);
 		if (rcWingS1.EqualRect(rcIntersect))
 		{
-			pDC->FillSolidRect(rcWingS1, m_clrWing);
+			//pDC->FillSolidRect(rcWingS1, m_clrWing);
+			pDC->FillSolidRect(rcWingS1, RGB(255, 255, 255));
 			pDC->Draw3dRect(rcWingS1, RGB(255,255,255), RGB(0,0,0));
 		}
-
+		
 		rcIntersect.IntersectRect(rcWingS2, rcControlS);
 		if (rcWingS2.EqualRect(rcIntersect))
 		{
@@ -869,13 +1072,13 @@ void CDciRvCtrl::UpdateControl(CDC* pDC)
 		}
 
 		// 필요시 이부분을 주석 처리해야할수도 있음!
-		if (m_nForkType == enGap2 || m_nForkType == enSingle)
+		if (/*m_nForkType == enGap2 || */m_nForkType == enSingle || m_nForkType == enSingleGap2)
 		{
 			m_pDCI->DrawButton(pDC, rcForkL1, m_clrFork, m_bClick);
 			m_pDCI->DrawText(pDC, rcForkL1, m_strText, m_clrFgColor);
 		}
 
-		if (m_nForkType != enSingle && m_nForkType != enGap2)
+		if (m_nForkType != enSingle && m_nForkType != enSingleGap2/* && m_nForkType != enGap2*/)
 		{
 			m_pDCI->DrawButton(pDC, rcForkL2, m_clrFork2, m_bClick);
 			m_pDCI->DrawText(pDC, rcForkL2, m_strText, m_clrFgColor);
@@ -977,13 +1180,18 @@ BOOL CDciRvCtrl::SetClick(CWnd* pWnd, const CPoint& ptClickS)
 //		strTemp.Format(_T("Bottom = %d \nTop = %d \nLeft = %d \nRight = %d \n클릭여부 = %d"), m_rcForkD.bottom, m_rcForkD.top, m_rcForkD.left, m_rcForkD.right, m_bClick);
 //		AfxMessageBox(strTemp);
 		break;
-	case enGap2:
-		if (m_bClick = (m_rcForkS.PtInRect(ptClickS) || m_rcForkD.PtInRect(ptClickS)) )
+	case enSingleGap2:
+		if (m_bClick = (m_rcForkS.PtInRect(ptClickS)))
 			InvalidateControl(pWnd, FALSE);
-		
-//		strTemp.Format(_T("Bottom = %d \nTop = %d \nLeft = %d \nRight = %d \n클릭여부 = %d"), m_rcForkD.bottom, m_rcForkD.top, m_rcForkD.left, m_rcForkD.right, m_bClick);
-//		AfxMessageBox(strTemp);
 		break;
+	case enTwinGap2:
+		if (m_bClick = (m_rcForkS.PtInRect(ptClickS) || m_rcForkT.PtInRect(ptClickS)) )
+			InvalidateControl(pWnd, FALSE);
+		break;
+//	case enGap2:
+//		if (m_bClick = (m_rcForkS.PtInRect(ptClickS) || m_rcForkD.PtInRect(ptClickS)) )
+//			InvalidateControl(pWnd, FALSE);
+//		break;
 	}
 
 //	if (m_bClick = (m_rcForkS.PtInRect(ptClickS) || m_rcForkT.PtInRect(ptClickS) || m_rcForkD.PtInRect(ptClickS)) )

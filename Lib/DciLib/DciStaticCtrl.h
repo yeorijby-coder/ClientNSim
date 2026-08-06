@@ -18,11 +18,11 @@ public:
 	virtual ~CDciStaticCtrl(void);
 
 public:
-	enum { enStaticCtrlPropSize = CDciControl::enControlPropSize + 9 };
+	enum { enStaticCtrlPropSize = CDciControl::enControlPropSize + 8 };
 	enum EN_BORDER { enBorderNone, enBorderRectangle, enBorderRoundRect, enBorderEllipse, enBorderLargeFont, enBorderSize };
 
 public:
-	int m_nFontSize;
+//	int m_nFontSize;
 	int m_nBorder;
 	int m_nPenStyle;
 	int m_nPenWidth;

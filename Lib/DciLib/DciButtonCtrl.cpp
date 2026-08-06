@@ -22,7 +22,7 @@ void CDciButtonCtrl::InitControl(CDciMaster* pDCI)
 	CDciControl::InitControl(pDCI);
 	
 	m_clrBgColor = ::GetSysColor(COLOR_BTNFACE);
-	m_nFontSize = 1;
+//	m_nFontSize = 1;
 	m_nShape = enBcsRectangle;
 }
 
@@ -31,7 +31,7 @@ int CDciButtonCtrl::UpdatePropNames(CDciPropertyArray& properties)
 	int i = CDciControl::UpdatePropNames(properties);
 
 	properties.SetSize(enButtonCtrlPropSize);
-	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("fontsize"));
+//	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("fontsize"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("shape"));
 	ASSERT(properties.GetSize() == i);
 
@@ -44,12 +44,12 @@ int CDciButtonCtrl::UpdatePropValues(CDciPropertyArray& properties, BOOL bSaveOb
 
 	if (bSaveObject)
 	{
-		m_nFontSize	= CConvert::ToInt(properties[i++].m_strValue);
+//		m_nFontSize	= CConvert::ToInt(properties[i++].m_strValue);
 		m_nShape = CConvert::ToInt(properties[i++].m_strValue);
 	}
 	else
 	{
-		properties[i++].m_strValue.Format(_T("%d"), m_nFontSize);
+//		properties[i++].m_strValue.Format(_T("%d"), m_nFontSize);
 		properties[i++].m_strValue.Format(_T("%d"), m_nShape);
 	}
 

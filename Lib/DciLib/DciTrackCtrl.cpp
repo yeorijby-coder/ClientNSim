@@ -22,7 +22,7 @@ void CDciTrackCtrl::InitControl(CDciMaster* pDCI)
 	CDciControl::InitControl(pDCI);
 	m_clrBgColor = ::GetSysColor(COLOR_BTNFACE);
 	
-	m_nFontSize = 1;
+//	m_nFontSize = 1;
 	m_nRow = 0;
 	m_nCol = 0;
 	m_bDoubleExist = 0;
@@ -33,7 +33,7 @@ int CDciTrackCtrl::UpdatePropNames(CDciPropertyArray& properties)
 	int i = CDciControl::UpdatePropNames(properties);
 
 	properties.SetSize(enTrackCtrlPropSize);
-	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("fontsize"));
+//	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("fontsize"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("prod"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("prod2"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("row"));
@@ -49,8 +49,7 @@ int CDciTrackCtrl::UpdatePropValues(CDciPropertyArray& properties, BOOL bSaveObj
 
 	if (bSaveObject)
 	{
-		//m_nFontSize	= CConvert::ToInt(properties[i++].m_strValue);
-		m_nFontSize	= CConvert::ToInt(properties[i++].m_strValue);
+//		m_nFontSize	= CConvert::ToInt(properties[i++].m_strValue);
 		m_bExist = CConvert::ToInt(properties[i++].m_strValue);
 		m_bDoubleExist = CConvert::ToInt(properties[i++].m_strValue);
 		m_nRow = CConvert::ToInt(properties[i++].m_strValue);
@@ -59,7 +58,7 @@ int CDciTrackCtrl::UpdatePropValues(CDciPropertyArray& properties, BOOL bSaveObj
 	}
 	else
 	{
-		properties[i++].m_strValue.Format(_T("%d"), m_nFontSize);
+//		properties[i++].m_strValue.Format(_T("%d"), m_nFontSize);
 		properties[i++].m_strValue.Format(_T("%d"), m_bExist);
 		properties[i++].m_strValue.Format(_T("%d"), m_bDoubleExist);
 		properties[i++].m_strValue.Format(_T("%d"), m_nRow);
@@ -338,11 +337,14 @@ void CDciTrackCtrl::UpdateControl(CDC* pDC)
   			pDC->FillSolidRect(nX, nY, nMinusRatioValue * 2, nMinusRatioValue * 2, 0x000000);
 		}
 
-		pDC->DrawText(m_strText, rcControlS, DT_SINGLELINE|DT_CENTER|DT_VCENTER);
+//		pDC->DrawText(m_strText, rcControlS, DT_SINGLELINE|DT_CENTER|DT_VCENTER);
+//
+//		pDC->SetTextColor(nOldFgColor);
+//		pDC->SetBkMode(nOldBkMode);
+//		pDC->SelectObject(pOldFont);
 
-		pDC->SetTextColor(nOldFgColor);
-		pDC->SetBkMode(nOldBkMode);
-		pDC->SelectObject(pOldFont);
+		DrawFontText(pDC, _T(""), NULL, nOldBkMode, nOldFgColor);
+
 	}
 	catch (CException* e)
 	{

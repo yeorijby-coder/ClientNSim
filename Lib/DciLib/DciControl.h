@@ -21,7 +21,7 @@ public:
 	virtual ~CDciControl();
 
 public:
-	enum { enControlPropSize = 12 };
+	enum { enControlPropSize = 13 };	// 12
 
 protected:
 	CDciMaster*	m_pDCI;
@@ -37,12 +37,14 @@ public:
 	BOOL		m_bEnable;
 	BOOL		m_bVisible;
 	BOOL		m_bClick;
+	int			m_nFontSize;
 
 public:
 	virtual void InitControl(CDciMaster* pDCI);
 	virtual void UpdateControl(CDC* pDC);
 	virtual void InvalidateControl(CWnd* pWnd, BOOL bErase);
 	virtual void InvalidateControl(HWND hWnd, BOOL bErase);
+	virtual void DrawFontText(CDC* pDC, CString strText, CRect* pRect = NULL, int nOldBkMode=0, int nOldFgColor=0, CBrush* pOldBrush = NULL, CPen* pOldPen = NULL);
 
 public:
 	virtual int UpdatePropNames(CDciPropertyArray& properties);

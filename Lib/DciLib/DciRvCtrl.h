@@ -20,7 +20,7 @@ public:
 public:
 	enum { enRvCtrlPropSize = CDciControl::enControlPropSize + 8 };
 	enum EN_TYPE { enL2R, enR2L, enT2B, enB2T,  enTypeSize };
-	enum EN_FORK_TYPE { enSingle, enTwin, enDouble, enGap2, enenForkTypeSize };
+	enum EN_FORK_TYPE { enSingle, enTwin, enDouble, enSingleGap2, enTwinGap2, enenForkTypeSize };	// m_nIncrease 사용함으로 enGap2은 사용하지 않음!
 
 protected:
 	int m_nType;
@@ -37,7 +37,7 @@ public:
 	COLORREF m_clrRail;		// 레일 색깔
 //	int m_nCol;
 //	int m_nRow;
-	int m_nFontSize;
+//	int m_nFontSize;
 
 private:
 	CRect m_rcForkS;	// Single용 포크 그림

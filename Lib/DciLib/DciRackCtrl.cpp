@@ -26,6 +26,7 @@ void CDciRackCtrl::InitControl(CDciMaster* pDCI)
 	m_nType = enL2R;
 	m_nUnitLenL = 1;
 	m_nStartPos = 0;
+//	m_nIncreaseCount = 1;
 }
 
 int CDciRackCtrl::UpdatePropNames(CDciPropertyArray& properties)
@@ -36,6 +37,7 @@ int CDciRackCtrl::UpdatePropNames(CDciPropertyArray& properties)
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("start"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("type"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("len"));
+//	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("increase"));
 	ASSERT(properties.GetSize() == i);
 
 	return i;
@@ -47,17 +49,19 @@ int CDciRackCtrl::UpdatePropValues(CDciPropertyArray& properties, BOOL bSaveObje
 
 	if (bSaveObject)
 	{
-		m_nStartPos	= CConvert::ToInt(properties[i++].m_strValue);
-		m_nType		= CConvert::ToInt(properties[i++].m_strValue);
-		m_nUnitLenL = CConvert::ToInt(properties[i++].m_strValue);
+		m_nStartPos		= CConvert::ToInt(properties[i++].m_strValue);
+		m_nType			= CConvert::ToInt(properties[i++].m_strValue);
+		m_nUnitLenL		= CConvert::ToInt(properties[i++].m_strValue);
+//		m_nIncreaseCount= CConvert::ToInt(properties[i++].m_strValue);
 	}
 	else	
 	{
 		properties[i++].m_strValue.Format(_T("%d"), m_nStartPos);
 		properties[i++].m_strValue.Format(_T("%d"), m_nType);
 		properties[i++].m_strValue.Format(_T("%d"), m_nUnitLenL);
+//		properties[i++].m_strValue.Format(_T("%d"), m_nIncreaseCount);
 	}
-
+	
 	return i;
 }
 
@@ -104,7 +108,7 @@ void CDciRackCtrl::UpdateControl(CDC* pDC)
 */
 
 		// 수정본
-		if (m_nType == enL2R || m_nType == enR2L)
+		if (m_nType == enL2R || m_nType == enR2L || m_nType == enDoubleL2R || m_nType == enDoubleR2L)
 		{
 			nRow = 1;
 			for (int i=0; i<nRow; ++i)
@@ -129,6 +133,22 @@ void CDciRackCtrl::UpdateControl(CDC* pDC)
 
 							str.Format(_T("%d"), nBay);
 						}
+						else if (m_nType == enDoubleL2R)	//==> 큰 랙일 때 2칸씩 표현 - Double 타입
+						{
+							nBay = (i*nCol+j)*2+1;
+							if(m_nStartPos != 0)
+								nBay += m_nStartPos;
+
+							str.Format(_T("%d"), nBay);
+						}
+						else if (m_nType == enDoubleR2L)
+						{
+							nBay = (i*nCol+nCol-j-1)*2+1;
+							if(m_nStartPos != 0)
+								nBay += m_nStartPos;
+
+							str.Format(_T("%d"), nBay);
+						}
 						else //if (m_nType == enR2L)
 						{
 							nBay = i*nCol+nCol-j;
@@ -137,13 +157,14 @@ void CDciRackCtrl::UpdateControl(CDC* pDC)
 							str.Format(_T("%d"), nBay);
 						}
 
-						m_pDCI->DrawText(pDC, rcUnitL, str, m_clrFgColor);
+						m_pDCI->DrawText(pDC, rcUnitL, str, m_clrFgColor, m_nFontSize);
+						//DrawFontText(pDC, str, &rcUnitL, nOldMode, nOldFgColor);
 					}
 				}
 			}
 		}
 	
-		else if(m_nType == enT2B || m_nType == enB2T)
+		else if(m_nType == enT2B || m_nType == enB2T || m_nType == enDoubleT2B || m_nType == enDoubleB2T)
 		{
 			// 세로 타입 일때는 Col를 1개만 표시함
 			nCol = 1;
@@ -172,6 +193,22 @@ void CDciRackCtrl::UpdateControl(CDC* pDC)
 
 //							str.Format(_T("%d", i*nRow+j+1);
 						}
+						else if (m_nType == enDoubleT2B)	//==> 큰 랙일 때 2칸씩 표현 - Double 타입
+						{
+							nBay = (j*nRow+nRow-i-1)*2+1;
+							if(m_nStartPos != 0)
+								nBay += m_nStartPos;
+
+							str.Format(_T("%d"), nBay);
+						}
+						else if (m_nType == enDoubleB2T)
+						{
+							nBay = (j*nRow+i)*2+1;
+							if(m_nStartPos != 0)
+								nBay += m_nStartPos;
+
+							str.Format(_T("%d"), nBay);
+						}
 						else //if (m_nType == enR2L)
 						{
 							nBay = j*nRow+i+1;
@@ -181,90 +218,12 @@ void CDciRackCtrl::UpdateControl(CDC* pDC)
 //							str.Format(_T("%d", i*nRow+nRow-j);
 						}
 
-						m_pDCI->DrawText(pDC, rcUnitL, str, m_clrFgColor);
+						m_pDCI->DrawText(pDC, rcUnitL, str, m_clrFgColor, m_nFontSize);
+						//DrawFontText(pDC, str, &rcUnitL, nOldMode, nOldFgColor);
 					}
 				}
 			}
 		}
-		else if (m_nType == enDoubleL2R || m_nType == enDoubleR2L)
-		{
-			nRow = 1;
-			for (int i = 0; i < nRow; ++i)
-			{
-				for (int j = 0; j < nCol; ++j)
-				{
-					// 각 컨트롤의 위치를 계산하는 부분
-					rcUnitL.left = m_rcControlL.left + j * m_nUnitLenL;
-					rcUnitL.top = m_rcControlL.bottom + (i + 1) * m_nUnitLenL;
-					rcUnitL.right = m_rcControlL.left + (j + 1) * m_nUnitLenL;
-					rcUnitL.bottom = m_rcControlL.bottom + i * m_nUnitLenL;
-					m_pDCI->DrawButton(pDC, rcUnitL, m_clrBgColor, m_bClick);
-
-					if (m_bClick)
-					{
-						int nBay;
-						if (m_nType == enDoubleL2R)
-						{
-							nBay = i * nCol + (j * 2) + 1;
-							if (m_nStartPos != 0)
-								nBay += m_nStartPos;
-
-							str.Format(_T("%d"), nBay);
-						}
-						else //if (m_nType == enDoubleR2L)
-						{
-							nBay = i * nCol + (nCol * 2) - (j * 2) - 1;
-							if (m_nStartPos != 0)
-								nBay += m_nStartPos;
-							str.Format(_T("%d"), nBay);
-						}
-
-						m_pDCI->DrawText(pDC, rcUnitL, str, m_clrFgColor);
-					}
-				}
-			}
-		}
-		else if(m_nType == enDoubleT2B || m_nType == enDoubleB2T)
-		{
-			// 세로 타입 일때는 Col를 1개만 표시함
-			nCol = 1;
-			for (int i=0; i<nRow; ++i)
-			{
-				for (int j=0; j<nCol; ++j)
-				{
-					// 각 컨트롤의 위치를 계산하는 부분
-					rcUnitL.left	= m_rcControlL.left+j*m_nUnitLenL;
-					rcUnitL.top		= m_rcControlL.bottom+(i+1)*m_nUnitLenL;
-					rcUnitL.right	= m_rcControlL.left+(j+1)*m_nUnitLenL;
-					rcUnitL.bottom	= m_rcControlL.bottom+i*m_nUnitLenL;
-					m_pDCI->DrawButton(pDC, rcUnitL, m_clrBgColor, m_bClick);
-
-					
-					if (m_bClick)
-					{
-						int nBay;
-						if(m_nType == enDoubleT2B)
-						{
-							nBay = j * nRow + (nRow * 2) - (i * 2) - 1;
-							if(m_nStartPos != 0)
-								nBay += m_nStartPos;
-
-							str.Format(_T("%d"), nBay);
-						}
-						else //if (m_nType == enDoubleR2L)
-						{
-							nBay = j * nRow + (i * 2) + 1;
-							if(m_nStartPos != 0)
-								nBay += m_nStartPos;
-							str.Format(_T("%d"), nBay);
-						}
-
-						m_pDCI->DrawText(pDC, rcUnitL, str, m_clrFgColor);
-					}
-				}
-			}
-		}
-		
 		//==> 큰 랙일 때 2씩 증가 - 최원빈 추가
 		else //if (m_nType == enTypeSize)
 		{
@@ -282,8 +241,8 @@ void CDciRackCtrl::UpdateControl(CDC* pDC)
 					{
 						str.Format(_T("%d"), nBay2);
 						m_pDCI->DrawText(pDC, rcUnitL, str, m_clrFgColor);
-						nBay2 += 2 ;
-
+						nBay2 += 4 ;
+						
 					}
 				}
 			}

@@ -68,7 +68,7 @@ public:
 	CRect	ConvertRectS(const CRect& rc) { return ConvertRectS(rc.left, rc.top, rc.right, rc.bottom); }
 
 public:
-	void	DrawText(CDC* pDC, const CRect& rcRectL, const CString& strText, COLORREF clrText);
+	void	DrawText(CDC* pDC, const CRect& rcRectL, const CString& strText, COLORREF clrText, int nFontSize = 10);
 	void	Draw3dSolidRect(CDC* pDC, const CRect& rcRectL, COLORREF clrBrush, COLORREF clrLeftTop, COLORREF clrRightBottom);
 	void	DrawButton(CDC* pDC, const CRect& rcRectL, COLORREF clrBrush, BOOL bClick);
 };

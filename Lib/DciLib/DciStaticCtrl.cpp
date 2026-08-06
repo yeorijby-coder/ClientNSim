@@ -26,7 +26,7 @@ void CDciStaticCtrl::InitControl(CDciMaster* pDCI)
 	m_nPenWidth = 1;
 	m_clrPen = RGB(0,0,0);
 	m_rcGap.SetRectEmpty();
-	m_nFontSize = 1;
+//	m_nFontSize = 1;
 	m_nFontSizeTemp = 0;
 }
 
@@ -35,7 +35,7 @@ int CDciStaticCtrl::UpdatePropNames(CDciPropertyArray& properties)
 	int i = CDciControl::UpdatePropNames(properties);
 
 	properties.SetSize(enStaticCtrlPropSize);
-	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("fontsize"));
+//	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("fontsize"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("border"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("pstyle"));
 	properties[i++].SetProperty(CDciProperty::PT_DEC, _T("pwidth"));
@@ -55,7 +55,7 @@ int CDciStaticCtrl::UpdatePropValues(CDciPropertyArray& properties, BOOL bSaveOb
 
 	if (bSaveObject)
 	{
-		m_nFontSize		= CConvert::ToInt(properties[i++].m_strValue);
+//		m_nFontSize		= CConvert::ToInt(properties[i++].m_strValue);
 		m_nBorder		= CConvert::ToInt(properties[i++].m_strValue);
 		m_nPenStyle		= CConvert::ToInt(properties[i++].m_strValue);
 		m_nPenWidth		= CConvert::ToInt(properties[i++].m_strValue);
@@ -67,7 +67,7 @@ int CDciStaticCtrl::UpdatePropValues(CDciPropertyArray& properties, BOOL bSaveOb
 	}
 	else	
 	{
-		properties[i++].m_strValue.Format(_T("%d"), m_nFontSize);
+//		properties[i++].m_strValue.Format(_T("%d"), m_nFontSize);
 		properties[i++].m_strValue.Format(_T("%d"), m_nBorder);
 		properties[i++].m_strValue.Format(_T("%d"), m_nPenStyle);
 		properties[i++].m_strValue.Format(_T("%d"), m_nPenWidth);
@@ -115,9 +115,6 @@ void CDciStaticCtrl::UpdateControl(CDC* pDC)
 
 		int r = abs(rcControlS.Width()) < abs(rcControlS.Height()) ? abs(rcControlS.Width())/2 : abs(rcControlS.Height())/2;
 
-		//CRect rcControlS = m_pDCI->ConvertRectS(m_rcControlL);
-		//m_pDCI->DrawButton(pDC, m_rcControlL, m_clrBgColor, m_bClick);
-
 		switch (m_nBorder)
 		{
 		case enBorderNone:
@@ -135,6 +132,7 @@ void CDciStaticCtrl::UpdateControl(CDC* pDC)
 			break;
 		}
 
+		/*
 		LOGFONT m_logfont;
 		CFont m_font ;
 		CFont * pOldFont;
@@ -152,19 +150,11 @@ void CDciStaticCtrl::UpdateControl(CDC* pDC)
 		else
 			nStrCnt = (m_strText.GetLength() / 5) + 1;
 
-
-/*		if (m_strText == "Degassing" || m_strText == "ISP" || m_strText == "RANK" || (m_strText.GetLength() == 4 && m_strText.Left(1) == _T("9")))
-		{
-			nSize = nSize / 3 ;
-		}
-		else*/ 
 		if (m_strText.GetLength() > 20)
 			nSize = nSize / 2 ;
 		else
 			nSize = nSize / nStrCnt ;
 
-//		if (m_nBorder == enBorderLargeFont)
-//		{
 			memset(&m_logfont,0,sizeof(LOGFONT));
 			m_logfont.lfQuality = PROOF_QUALITY;
 //			m_logfont.lfHeight = r;
@@ -175,18 +165,16 @@ void CDciStaticCtrl::UpdateControl(CDC* pDC)
 			m_font.CreateFontIndirect(&m_logfont);
 
 			pOldFont = pDC->SelectObject(&m_font);
-//		}
 
 		pDC->DrawText(m_strText, rcControlS, DT_SINGLELINE|DT_CENTER|DT_VCENTER);
-
 		pDC->SelectObject(pOldPen);
 		pDC->SelectObject(pOldBrush);
 		pDC->SetTextColor(nOldFgColor);
 		pDC->SetBkMode(nOldBkMode);
+		//*/
 
-//		if (m_nBorder == enBorderLargeFont)
-			pDC->SelectObject(pOldFont);
-//		m_font.DeleteObject();
+//		pDC->SelectObject(pOldFont);
+		DrawFontText(pDC, _T(""), NULL, nOldBkMode, nOldFgColor, pOldBrush, pOldPen);
 	}
 	catch (CException* e)
 	{

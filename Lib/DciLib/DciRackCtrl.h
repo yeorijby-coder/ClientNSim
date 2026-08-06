@@ -18,9 +18,7 @@ public:
 
 public:
 	enum { enRackCtrlPropSize = CDciControl::enControlPropSize + 3 };
-	enum EN_TYPE { enL2R, enR2L, enT2B, enB2T, 
-		enDoubleL2R, enDoubleR2L, enDoubleT2B, enDoubleB2T,
-		enTypeSize };
+	enum EN_TYPE { enL2R, enR2L, enT2B, enB2T, enDoubleL2R, enDoubleR2L, enDoubleT2B, enDoubleB2T, enTypeSize };
 
 protected:
 	int m_nType;
@@ -28,6 +26,8 @@ protected:
 public:
 	int	m_nUnitLenL;
 	int	m_nStartPos;
+//	int	m_nIncreaseCount;	// 수열 개수
+
 
 public:
 	virtual void InitControl(CDciMaster* pDCI);
