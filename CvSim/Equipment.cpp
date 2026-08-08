@@ -461,7 +461,11 @@ UINT CEquipment::ThreadProc(LPVOID pParam)
 	{
 		for(int i = 0 ; i < PLC_CONN_PORT_CNT ; i++)
 		{			
-			switch (::WaitForMultipleObjects(enEventSize, pThis->m_hEventArray[i], FALSE, 400))
+			// 슬롯마다 400ms 씩 순차 대기하면 활성 연결의 Q3E 응답이
+			// (앞선 슬롯 수 x 400ms) 만큼 밀려, 여러 연결이 붙는 통합 구동에서
+			// TASK 수신 타임아웃(5초)을 넘겨 재접속을 반복했다.
+			// 신호 없는 슬롯은 바로 넘어가고(0ms), 루프 주기는 바깥 Sleep(100)이 맡는다.
+			switch (::WaitForMultipleObjects(enEventSize, pThis->m_hEventArray[i], FALSE, 0))
 			{
 			case enEventKill:
 				strLog.Format(_T("\r\n %s THREAD 종료 (EVENT) \r\n"), pThis->m_port.m_strDevice);
