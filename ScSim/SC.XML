@@ -207,4 +207,77 @@
 		</HS_GROUP>
 		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
 	</SC>
+
+
+
+	<SC TYPE="0" class="CSc" number="2" device="SC_E02" cid="1112029002" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="3" device="SC_E03" cid="1112029003" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="4" device="SC_E04" cid="1112029004" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="5" device="SC_E05" cid="1112029005" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="6" device="SC_E06" cid="1112029006" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="7" device="SC_E07" cid="1112029007" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="8" device="SC_E08" cid="1112029008" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="9" device="SC_E09" cid="1112029009" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="10" device="SC_E10" cid="1112029010" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+	<SC TYPE="0" class="CSc" number="11" device="SC_E11" cid="1112029011" com="E">
+		<HS_GROUP>
+			<STO_HS/>
+			<RET_HS/>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
 </ECS>
