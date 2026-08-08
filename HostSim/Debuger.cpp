@@ -48,7 +48,7 @@ void CDebuger::WriteLog(LPCTSTR lpszLog, LPCTSTR lpszFileName)
 	{
 		CString strLog;
 		TCHAR szMessage[512] = {0};
-		e->GetErrorMessage(szMessage, sizeof(szMessage));
+		e->GetErrorMessage(szMessage, _countof(szMessage));
 		strLog.Format(_T("%s [%s] [%s]"), e->GetRuntimeClass()->m_lpszClassName, szMessage, lpszLog);
 		TRACE(_T("\n [CDebuger::WriteLog] %s \n"), strLog);
 	}
@@ -60,7 +60,10 @@ void CDebuger::WriteLog(LPCTSTR lpszLog, LPCTSTR lpszFileName)
 void CDebuger::Assert(BOOL bValid, LPCTSTR lpszLog, int nLine, LPCSTR lpszFile)
 {
 #ifdef _DEBUG
-	if (!bValid) 
+	// Ecs.ini 의 [COMMON] DebugerAssert 가 0 이면 대화상자를 띄우지 않는다.
+	// (예전에는 이 스위치를 무시하고 무조건 띄워, 데이터가 조금만 달라도
+	//  기동이 Assertion 대화상자에 막혔다. 로그 기록은 아래에서 그대로 한다)
+	if (!bValid && m_bAssert) 
 		::AfxAssertFailedLine(lpszFile, nLine);
 #endif
 
@@ -79,7 +82,8 @@ void CDebuger::Assert(BOOL bValid, LPCTSTR lpszLog, int nLine, LPCSTR lpszFile)
 void CDebuger::Assert(int nIndex, int nSize, LPCTSTR lpszLog, int nLine, LPCSTR lpszFile)
 {
 #ifdef _DEBUG
-	if ((nIndex < 0) || (nIndex >= nSize)) 
+	// 위와 같은 이유로 DebugerAssert 스위치를 존중한다.
+	if (((nIndex < 0) || (nIndex >= nSize)) && m_bAssert) 
 		::AfxAssertFailedLine(lpszFile, nLine);
 #endif
 

@@ -844,6 +844,13 @@ void CScInfo::InvokeControl()
 
 	CString strTemp;
 	DEBUGER_ASSERT_VALID(m_pControl != NULL);
+
+	// 레이아웃(EcsLayout*.xml)에 이 호기의 컨트롤이 없으면 m_pControl 이 NULL 이다.
+	// (EcsDefine.xml 은 4대를 정의하는데 레이아웃엔 일부만 있는 구성이 실제로 있다)
+	// 그대로 진행하면 아래 역참조에서 죽으므로 화면 갱신만 건너뛴다.
+	if (m_pControl == NULL)
+		return;
+
 	m_wHorizontalPos;
 	BOOL bErase = (m_pControl->m_nForkPos != m_wHorizontalPos);
 	m_pControl->m_nForkPos = (m_wHorizontalPos >= 254 || m_wHorizontalPos < 1) ? 0 : m_wHorizontalPos;

@@ -124,7 +124,7 @@ void CLog::Write(int nType, int nLogPos, int nLuggNum, LPCTSTR lpszContent, LPCT
 	CATCH (CException, e)
 	{
 		TCHAR szMessage[_MAX_PATH] = {0};
-		e->GetErrorMessage(szMessage, sizeof(szMessage));
+		e->GetErrorMessage(szMessage, _countof(szMessage));
 		TRACE(_T("\n %s! %s \n"), e->GetRuntimeClass()->m_lpszClassName, szMessage);
 		m_syncLogThread.Unlock();
 		return;
@@ -278,7 +278,7 @@ void CLog::PumpupAlarm(CLogEvent* pLogEvent)
 		delete pLogEvent;
 
 		char szErrMsg[1024];
-		e->GetErrorMessage((LPTSTR)szErrMsg, sizeof(szErrMsg));
+		e->GetErrorMessage((LPTSTR)szErrMsg, _countof(szErrMsg));
 		return;
 	}
 	END_CATCH

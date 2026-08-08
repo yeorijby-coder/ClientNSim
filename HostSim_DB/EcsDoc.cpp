@@ -1976,9 +1976,11 @@ void CEcsDoc::InitializeErrorMst()
 			CString strACTION_KOR, strACTION_ENG, strACTION_CHIN, strACTION_HUN;
 			CString strMSG_KOR, strMSG_ENG, strMSG_CHIN, strMSG_HUN;
 			strEQP_TYP = pRswError->GetItem(_T("EQP_TYP"));
-			strEQP_TYP.Format(_T("%s"), strEQP_TYP);
+			// (자기 자신을 인자로 넘기는 Format 은 미정의 동작 - Ecs 와 동일하게 정리)
 			strERROR_CODE = pRswError->GetItem(_T("EQP_ERR_CD"));
-			strERROR_CODE.Format(_T("%04s"), strERROR_CODE);
+			strERROR_CODE.TrimLeft(); strERROR_CODE.TrimRight();
+			while (strERROR_CODE.GetLength() < 4)
+				strERROR_CODE = _T("0") + strERROR_CODE;
 			CEQP_ECD_MST* pMapItem = new CEQP_ECD_MST(strEQP_TYP, strERROR_CODE);
 			strACTION_KOR = pRswError->GetItem(_T("ACTION_KOR"));
 			strACTION_ENG = pRswError->GetItem(_T("ACTION_ENG"));

@@ -173,7 +173,7 @@ CString CLib::GetExceptionString(CException* e)
 {
 	CString strLog;
 	TCHAR szMessage[512] = {0};
-	e->GetErrorMessage(szMessage, sizeof(szMessage));
+	e->GetErrorMessage(szMessage, _countof(szMessage));
 	strLog.Format(_T("%s! [%s]"), e->GetRuntimeClass()->m_lpszClassName, szMessage);
 	return strLog;
 }

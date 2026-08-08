@@ -378,14 +378,17 @@ void CHostSv::Parsing(char *pFrame)
 		break;
 	case	CMD_ERROR:
 		{
-			int nDeviceClass= _ttoi(strFrame.Mid( 2, 1));
-			int nEquipNum	= _ttoi(strFrame.Mid( 3, 3));
-			int nErrorKind	= _ttoi(strFrame.Mid( 6, 1));
-			int nErrorCode	= _ttoi(strFrame.Mid( 7, 4));
-			int nLuggNum	= _ttoi(strFrame.Mid(11, 4));
-			int nErrorBank	= _ttoi(strFrame.Mid(15, 2));
-			int nErrorBay	= _ttoi(strFrame.Mid(17, 3));
-			int nErrorLevel	= _ttoi(strFrame.Mid(20, 2));
+			// ECS 에러전문 : STX(0) Type(1) 창고구분(2) 장비분류(3) 장비번호(4-6) 에러종류(7)
+			//                에러코드(8-11) 작업번호(12-15) Bank(16-17) Bay(18-20) Level(21-22) ETX
+			// [09]Interface목록서 IV.4 기준. 예전에는 창고구분을 빼고 읽어 한 칸씩 밀려 있었다.
+			int nDeviceClass= _ttoi(strFrame.Mid( 3, 1));
+			int nEquipNum	= _ttoi(strFrame.Mid( 4, 3));
+			int nErrorKind	= _ttoi(strFrame.Mid( 7, 1));
+			int nErrorCode	= _ttoi(strFrame.Mid( 8, 4));
+			int nLuggNum	= _ttoi(strFrame.Mid(12, 4));
+			int nErrorBank	= _ttoi(strFrame.Mid(16, 2));
+			int nErrorBay	= _ttoi(strFrame.Mid(18, 3));
+			int nErrorLevel	= _ttoi(strFrame.Mid(21, 2));
 
 			// 이중 입고 에러일때는 이중입고 처리 버튼을 활성화 할것! 
 			if (nDeviceClass == 1 && nErrorKind == 1)
@@ -433,6 +436,42 @@ void CHostSv::Parsing(char *pFrame)
 //	case	CMD_LOAD_ARRV:
 //		Answer(CMD_LOAD_ARRV, nLuggNum, RECEIVE_OK);
 //		break;
+
+	// [09]Interface목록서 IV.8 공파렛트 입고 요구
+	//   STX Type(1) 작업구분(2) P/M스테이션(3-5) UserData(6) ETX
+	case	CMD_PALLET:
+		{
+			CString strLog;
+			strLog.Format(_T("공파렛트 입고 요구.. 스테이션=[%d]"), _ttoi(strFrame.Mid(3, 3)));
+			m_pDoc->WriteLog(LOG_TYPE_EVENT, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
+		}
+		Answer(CMD_PALLET, 0, RECEIVE_OK);
+		break;
+
+	// [09]Interface목록서 IV.9 P-BoxRack 입고 요구
+	//   STX Type(1) 작업번호#1(2-5) 작업번호#2(6-9) ETX
+	case	CMD_IN_OUT_REQUEST:
+		{
+			CString strLog;
+			strLog.Format(_T("P-BOX 입고 요구.. #1=[%d] #2=[%d]"),
+				_ttoi(strFrame.Mid(2, 4)), _ttoi(strFrame.Mid(6, 4)));
+			m_pDoc->WriteLog(LOG_TYPE_EVENT, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
+		}
+		Answer(CMD_IN_OUT_REQUEST, 0, RECEIVE_OK);
+		break;
+
+	// [09]Interface목록서 IV.6 BCR 보고
+	//   STX Type(1) 읽은스테이션(2-4) 읽은데이터(5-24) UserData(25) ETX
+	case	CMD_BARCODE:
+		{
+			CString strLog;
+			strLog.Format(_T("바코드 보고.. 스테이션=[%d] 데이터=[%s]"),
+				_ttoi(strFrame.Mid(2, 3)), strFrame.Mid(5, 20));
+			m_pDoc->WriteLog(LOG_TYPE_EVENT, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
+		}
+		Answer(CMD_BARCODE, 0, RECEIVE_OK);
+		break;
+
 	default:
 		{
 			CString strLog;
@@ -440,6 +479,9 @@ void CHostSv::Parsing(char *pFrame)
 			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
 			//			LOG_ERROR(LOG_POS_HOST, nLuggNum, strLog);
 		}
+		// 문서 III.A : 수신한 모든 메세지는 응답해야 한다.
+		// 응답하지 않으면 보낸 쪽이 타임아웃으로 접속을 끊고 재접속을 반복한다.
+		Answer(ucMsgType, 0, MSG_UNKNOWN_MSG_TYPE);
 		break;	
 	}
 }
@@ -732,8 +774,9 @@ void CHostSv::Answer(BYTE ucMsgType, int nLuggNum, int nReasonCode)
 	
 	memset(TxBuff, 0x20, sizeof(TxBuff));
 	sprintf(TxBuff, "ECS_MBX   %04d ", MSG_LENGTH_RESPONSE_DATA);  //MSG_LENGTH_RESPONSE_DATA - 10
-	sprintf(TxBuff + MSG_LENGTH_HEADER, "%c%c%c%02d%04d%c",
-		STX, ucMsgType, AckNak, nReasonCode, nLuggNum, ETX);
+	// 문서 III.A : 작업번호 뒤에 장비번호 3자리가 온다. (해당 없으면 000)
+	sprintf(TxBuff + MSG_LENGTH_HEADER, "%c%c%c%02d%04d%03d%c",
+		STX, ucMsgType, AckNak, nReasonCode, nLuggNum, 0, ETX);
 	
 	UpdateCommSv(NOTIFY_SEND);
 	Send(TxBuff, MSG_LENGTH_RESPONSE_MSG);
@@ -1270,14 +1313,19 @@ int CHostCl::AlterLocation(BOOL bManual)
 	strLocation = m_pDoc->m_strAlterLocation;
 	int nScNo = m_pDoc->m_nDualStoScNo;
 
-		//			    1   2 3 4 5  6    
-	strTempMsg.Format(_T("1%04d%s%s%s%s1%02d"),
-		nLuggNum,		// 1	// 작업번호 
-		_T("000"),			// 2	// Source Station
-		_T("0000000"),		// 3	// Source Bank, Bay, Level
-		_T("000"),			// 4	// Dest. Station
-		strLocation,	// 5	// Dest. Bank, Bay, Level
-		nScNo);			// 6	// Sc No.
+	// [09]Interface목록서 IV.2 재작업 지시
+	//   타입1 작업구분1 창고구분1 작업번호4 출발대3 출발B/B/L 7
+	//   도착대3 도착B/B/L 7 재지정종류1 크레인호기2   (본문 30자)
+	// 예전에는 창고구분이 빠져 29자였고, 받는 쪽이 작업번호부터 어긋나게 읽었다.
+		//			    1 2   3 4 5  6  7    
+	strTempMsg.Format(_T("1%c%04d%s%s%s%s1%02d"),
+		'A',			// 1	// 창고구분
+		nLuggNum,		// 2	// 작업번호 
+		_T("000"),			// 3	// Source Station
+		_T("0000000"),		// 4	// Source Bank, Bay, Level
+		_T("000"),			// 5	// Dest. Station
+		strLocation,	// 6	// Dest. Bank, Bay, Level
+		nScNo);			// 7	// Sc No.
 
 	//m_pDoc->m_nPrevLuggNum = nLuggNum;
 
@@ -1488,7 +1536,7 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			'A',						// 2	// 창고구분 
 			nLuggNum,					// 3	// 작업번호 
 			1234,						// 4	// Seq
-			_T("PalletID(20자리)"),		// 5	// Pallet Size
+			_T("PALLET_ID_00000000  "),		// 5	// Pallet Size
 			n1stStn,					// 6	// Source Station
 			_T("0000000"),				// 7	// Source Bank, Bay, Level
 			0,							// 8	// Route Station
@@ -1497,8 +1545,8 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			0,							// 11	// Pair 작업번호 
 			100,						// 12	// Priority
 			_T(" "),					// 13	// JobRoute
-			_T("Product_ID(20자리)"),	// 14	// Product ID
-			_T("User_Data(20자리)"));	// 15	// UserData
+			_T("PRODUCT_ID_00000000 "),	// 14	// Product ID
+			_T("USER_DATA_000000000 "));	// 15	// UserData
 
 		strJobType = _T("입고");
 			
@@ -1539,7 +1587,7 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			'A',						// 2	// 창고구분 
 			nLuggNum,					// 3	// 작업번호 
 			1234,						// 4	// Seq
-			_T("PalletID(20자리)"),		// 5	// Pallet Size
+			_T("PALLET_ID_00000000  "),		// 5	// Pallet Size
 			0,							// 6	// Source Station
 			strRetLoc,					// 7	// Source Bank, Bay, Level
 			0,							// 8	// Route Station
@@ -1548,8 +1596,8 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			0,							// 11	// Pair 작업번호 
 			100,						// 12	// Priority
 			_T(" "),					// 13	// JobRoute
-			_T("Product_ID(20자리)"),	// 14	// Product ID
-			_T("User_Data(20자리)"));	// 15	// UserData
+			_T("PRODUCT_ID_00000000 "),	// 14	// Product ID
+			_T("USER_DATA_000000000 "));	// 15	// UserData
 
 		strJobType = _T("출고");
 		break;
@@ -1576,7 +1624,7 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			'A',						// 2	// 창고구분 
 			nLuggNum,					// 3	// 작업번호 
 			1234,						// 4	// Seq
-			_T("PalletID(20자리)"),		// 5	// Pallet Size
+			_T("PALLET_ID_00000000  "),		// 5	// Pallet Size
 			0,							// 6	// Source Station
 			m_pDoc->m_strFromPos,		// 7	// Source Bank, Bay, Level
 			0,							// 8	// Route Station
@@ -1585,8 +1633,8 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			0,							// 11	// Pair 작업번호 
 			100,						// 12	// Priority
 			_T(" "),					// 13	// JobRoute
-			_T("Product_ID(20자리)"),	// 14	// Product ID
-			_T("User_Data(20자리)"));	// 15	// UserData
+			_T("PRODUCT_ID_00000000 "),	// 14	// Product ID
+			_T("USER_DATA_000000000 "));	// 15	// UserData
 
 		switch(nJobType)
 		{
@@ -1621,7 +1669,7 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			'A',						// 2	// 창고구분 
 			nLuggNum,					// 3	// 작업번호 
 			1234,						// 4	// Seq
-			_T("PalletID(20자리)"),		// 5	// Pallet Size
+			_T("PALLET_ID_00000000  "),		// 5	// Pallet Size
 			n1stStn,					// 6	// Source Station
 			_T("0000000"),				// 7	// Source Bank, Bay, Level
 			0,							// 8	// Route Station
@@ -1630,8 +1678,8 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			0,							// 11	// Pair 작업번호 
 			100,						// 12	// Priority
 			_T(" "),					// 13	// JobRoute
-			_T("Product_ID(20자리)"),	// 14	// Product ID
-			_T("User_Data(20자리)"));	// 15	// UserData
+			_T("PRODUCT_ID_00000000 "),	// 14	// Product ID
+			_T("USER_DATA_000000000 "));	// 15	// UserData
 
 		strJobType = _T("이동");
 		break;

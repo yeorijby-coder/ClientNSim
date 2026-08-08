@@ -214,7 +214,7 @@ CString CLib::GetExceptionString(CException* e)
 	TCHAR szMessage[512] = {0};
 	TCHAR szTemp[512] = {0};
 	::memset(&szTemp, 0x00, sizeof(szTemp));
-	e->GetErrorMessage((LPTSTR)szTemp, sizeof(szTemp));
+	e->GetErrorMessage((LPTSTR)szTemp, _countof(szTemp));
 
 	
 //	CRuntimeClass * pRTClass = e->GetRuntimeClass();

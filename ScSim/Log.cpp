@@ -125,7 +125,7 @@ void CLog::Write(int nType, int nLogPos, int nLuggNum, LPCTSTR lpszContent, LPCT
 	CATCH (CException, e)
 	{
 //		TCHAR szMessage[_MAX_PATH] = {0};
-//		e->GetErrorMessage(szMessage, sizeof(szMessage));
+//		e->GetErrorMessage(szMessage, _countof(szMessage));
 //		TRACE(_T("\n %s! %s \n"), e->GetRuntimeClass()->m_lpszClassName, szMessage);
 		m_syncLogThread.Unlock();
 		return;
@@ -198,7 +198,7 @@ BOOL CLog::Load(CReportCtrl* pReportCtrl, CSortContext* pContext)
 // 	CATCH (CException, e)
 // 	{
 // 		TCHAR szMessage[_MAX_PATH];
-// 		e->GetErrorMessage(szMessage, sizeof(szMessage));
+// 		e->GetErrorMessage(szMessage, _countof(szMessage));
 // 		if (pFileIn) delete pFileIn;
 // 		AfxMessageBox(szMessage);
 // 		return FALSE;
@@ -223,7 +223,7 @@ BOOL CLog::Load(CReportCtrl* pReportCtrl, CSortContext* pContext)
 // 		{
 // 			CString strTemp;
 // 			TCHAR szTemp[_MAX_PATH] = {0};
-// 			e->GetErrorMessage(szTemp, sizeof(szTemp));
+// 			e->GetErrorMessage(szTemp, _countof(szTemp));
 // 			strTemp.Format(_T("로그파일 시리얼 라이징중 이상 발생! [%s] [MSG=%s]", e->GetRuntimeClass()->m_lpszClassName, szTemp);
 // 			if (pArchiveIn) delete pArchiveIn;
 // 			if (pFileIn) delete pFileIn;
@@ -292,7 +292,7 @@ void CLog::PumpupAlarm(CLogEvent* pLogEvent)
 		delete pLogEvent;
 
 		char szErrMsg[1024];
-		e->GetErrorMessage((LPTSTR)szErrMsg, sizeof(szErrMsg));
+		e->GetErrorMessage((LPTSTR)szErrMsg, _countof(szErrMsg));
 		return;
 	}
 	END_CATCH

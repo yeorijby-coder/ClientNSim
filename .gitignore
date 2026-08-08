@@ -9,3 +9,10 @@ CvSim/CvSim.sdf
 Ecs/Ecs.sdf
 ScSim/ScSim.sdf
 HostSim/HostSim.sdf
+# 실행 로그 / 작업 산출물
+*/Log/*.elg
+*/Temp/
+*/Job/
+*/Stc/
+ASSERT.LOG
+*.dmp

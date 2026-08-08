@@ -1945,6 +1945,13 @@ void CEcsView::OnBtnAlterLoc()
 	if (pDoc != NULL && pDoc->m_pHostCl != NULL && pDoc->m_pHostCl->IsConnect()) 
 	{
 		GET(IDC_DUAL_STO_LOC, pDoc->m_strAlterLocation);
+
+		// 화면에 작업번호가 들어 있으면 그것을 쓴다.
+		// (m_nPrevLuggNum 은 이중입고 발생시에만 채워지므로 시험 때는 비어 있다)
+		int nInputLuggNum = GET_INT(IDC_DUAL_STO_LUGG);
+		if (nInputLuggNum > 0)
+			pDoc->m_nPrevLuggNum = nInputLuggNum;
+
 		// 재작업 지시 
 		if ((pDoc->m_nWorkingLuggNum1 = pDoc->m_pHostCl->AlterLocation()) != 0)
 		{

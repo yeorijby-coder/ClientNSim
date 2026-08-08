@@ -47,9 +47,11 @@ BOOL CCollectDB::IsDB_POSSIBLE()
 
 	if(m_pDB_ACCESS->m_pAdoDB->m_bConnected == FALSE)
 	{
+		// (예전에는 delete m_pDB_ACCESS 뒤에 m_pDB_ACCESS->m_pAdoDB = NULL 을 써서
+		//  해제된 메모리에 쓰는 순서였다. DB 재접속 경로를 탈 때마다 무작위로 죽었다)
 		delete m_pDB_ACCESS->m_pAdoDB;
-		delete m_pDB_ACCESS;
 		m_pDB_ACCESS->m_pAdoDB = NULL;
+		delete m_pDB_ACCESS;
 		m_pDB_ACCESS = NULL;
 		return FALSE;
 	}

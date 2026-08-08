@@ -208,7 +208,7 @@ CString CLib::GetExceptionString(CException* e)
 {
 	CString strLog="", strClassName = "";
 	TCHAR szMessage[512] = {0};
-	e->GetErrorMessage(szMessage, sizeof(szMessage));
+	e->GetErrorMessage(szMessage, _countof(szMessage));
 
 //	CRuntimeClass * pRTClass = e->GetRuntimeClass();
 //	strClassName = pRTClass->m_lpszClassName;

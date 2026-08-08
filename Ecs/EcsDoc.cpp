@@ -1492,9 +1492,14 @@ void CEcsDoc::InitializeErrorMst()
 			CString strACTION_KOR, strACTION_ENG, strACTION_CHIN, strACTION_HUN;
 			CString strMSG_KOR, strMSG_ENG, strMSG_CHIN, strMSG_HUN;
 			strEQP_TYP = pRswError->GetItem(_T("EQP_TYP"));
-			strEQP_TYP.Format(_T("%s"), strEQP_TYP);
+			// (예전의 strEQP_TYP.Format(_T("%s"), strEQP_TYP) 는 자기 자신을
+			//  인자로 넘기는 미정의 동작이라 기동 중 액세스 위반으로 죽었다.
+			//  값 그대로 쓰면 되므로 Format 자체가 필요 없다)
 			strERROR_CODE = pRswError->GetItem(_T("EQP_ERR_CD"));
-			strERROR_CODE.Format(_T("%04s"), strERROR_CODE);
+			// 에러코드는 4자리 0 채움 (%04s 는 표준상 0 패딩이 안 된다)
+			strERROR_CODE.TrimLeft(); strERROR_CODE.TrimRight();
+			while (strERROR_CODE.GetLength() < 4)
+				strERROR_CODE = _T("0") + strERROR_CODE;
 			CEQP_ECD_MST* pMapItem = new CEQP_ECD_MST(strEQP_TYP, strERROR_CODE);
 			strACTION_KOR = pRswError->GetItem(_T("ACTION_KOR"));
 			strACTION_ENG = pRswError->GetItem(_T("ACTION_ENG"));
