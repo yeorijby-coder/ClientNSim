@@ -55,11 +55,23 @@ public:
 class CTrackPropertyArray : public CArray<CTrackProperty*, CTrackProperty*>
 {
 public:
-	CTrackPropertyArray() {}
-	virtual ~CTrackPropertyArray() {}
+	CTrackPropertyArray() : m_nIndexedSize(-1) {}
+	virtual ~CTrackPropertyArray() { ClearIndex(); }
 
-	CTrackProperty* GetTrackProperty(CString strKeyword, int nTrackNo = 0, BOOL bParent = FALSE);
+	CTrackProperty* GetTrackProperty(const CString& strKeyword, int nTrackNo = 0, BOOL bParent = FALSE);
 
+private:
+	// 이름별 버킷. 조회 때 넘어온 CString 을 그대로 키로 쓰므로
+	// 부를 때마다 문자열을 새로 만들 일이 없다.
+	CMapStringToPtr	m_mapByName;		// 이름   -> CPtrArray*
+	CMapStringToPtr	m_mapByParent;		// 부모이름 -> CPtrArray*
+	int				m_nIndexedSize;		// 색인을 만들 당시의 원소 수
+
+	void BuildIndex();
+	void ClearIndex();
+
+	// 예전 방식(배열 전체 훑기). 색인 결과를 대조해 볼 때 쓰려고 남겨 둔다.
+	CTrackProperty* GetTrackPropertyBySearch(const CString& strKeyword, int nTrackNo = 0, BOOL bParent = FALSE);
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class CFlantProperty

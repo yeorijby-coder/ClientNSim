@@ -40,7 +40,103 @@ void CTrackProperty::SetProperty(CString strType, CString strName, CString strAd
 	m_nTrackNo = nTrackNo;
 }
 
-CTrackProperty* CTrackPropertyArray::GetTrackProperty(CString strKeyword, int nTrackNo, BOOL bParent)
+void CTrackPropertyArray::ClearIndex()
+{
+	void* pValue = NULL;
+	CString strKey;
+
+	for (POSITION pos = m_mapByName.GetStartPosition(); pos != NULL; )
+	{
+		m_mapByName.GetNextAssoc(pos, strKey, pValue);
+		delete (CPtrArray*)pValue;
+	}
+	m_mapByName.RemoveAll();
+
+	for (POSITION pos = m_mapByParent.GetStartPosition(); pos != NULL; )
+	{
+		m_mapByParent.GetNextAssoc(pos, strKey, pValue);
+		delete (CPtrArray*)pValue;
+	}
+	m_mapByParent.RemoveAll();
+
+	m_nIndexedSize = -1;
+}
+
+void CTrackPropertyArray::BuildIndex()
+{
+	ClearIndex();
+
+	// 원래 배열 순서대로 담는다. 그래야 "먼저 나오는 것을 돌려준다" 가 그대로 유지된다.
+	for (int i = 0; i < this->m_nSize; ++i)
+	{
+		CTrackProperty* pTrackProperty = this->m_pData[i];
+		if (pTrackProperty == NULL)
+			continue;
+
+		void* pValue = NULL;
+
+		if (m_mapByName.Lookup(pTrackProperty->m_strName, pValue) == FALSE)
+		{
+			pValue = new CPtrArray;
+			m_mapByName.SetAt(pTrackProperty->m_strName, pValue);
+		}
+		((CPtrArray*)pValue)->Add(pTrackProperty);
+
+		if (m_mapByParent.Lookup(pTrackProperty->m_strParent, pValue) == FALSE)
+		{
+			pValue = new CPtrArray;
+			m_mapByParent.SetAt(pTrackProperty->m_strParent, pValue);
+		}
+		((CPtrArray*)pValue)->Add(pTrackProperty);
+	}
+
+	m_nIndexedSize = this->m_nSize;
+}
+
+/*
+ * GetTrackProperty :: 키워드로 트랙 속성 하나 찾기
+ *
+ *   예전에는 속성 배열 전체를 앞에서부터 훑으며 CString 을 비교했다.
+ *   GET_REG_INFO 가 트랙 하나를 그릴 때마다 이 함수를 네 번 부르는데,
+ *   트랙 400여개 x PLC 8대 x 초당 10회 라서 비교 횟수가 초당 수백만 번이 됐다.
+ *   CvSim 이 아무 일도 안 할 때에도 CPU 한 코어를 물고 있던 이유다.
+ *
+ *   이름별로 버킷을 나눠 두고 그 안에서만 훑는다. 판정 규칙은 예전 그대로다.
+ *     SeparatelyETC 인 것은 트랙번호까지 같아야 하고, 아닌 것은 이름만 맞으면 된다.
+ *   조회 때 넘어온 CString 을 그대로 해시 키로 쓰므로 부를 때마다 새로 만드는
+ *   문자열이 없다. (키를 조합해 캐시하는 방식은 키 만드는 비용 때문에 효과가 없었다)
+ */
+CTrackProperty* CTrackPropertyArray::GetTrackProperty(const CString& strKeyword, int nTrackNo, BOOL bParent)
+{
+	if (m_nIndexedSize != this->m_nSize)		// 속성이 더 실렸으면 다시 만든다
+		BuildIndex();
+
+	void* pValue = NULL;
+	CMapStringToPtr& rMap = (bParent == TRUE) ? m_mapByParent : m_mapByName;
+
+	if (rMap.Lookup(strKeyword, pValue) == FALSE)
+		return NULL;
+
+	CPtrArray* pBucket = (CPtrArray*)pValue;
+	for (int i = 0; i < pBucket->GetSize(); ++i)
+	{
+		CTrackProperty* pTrackProperty = (CTrackProperty*)pBucket->GetAt(i);
+
+		if (pTrackProperty->m_bSeparatelyETC == TRUE)
+		{
+			if (pTrackProperty->m_nTrackNo == nTrackNo)
+				return pTrackProperty;
+		}
+		else
+		{
+			return pTrackProperty;
+		}
+	}
+
+	return NULL;
+}
+
+CTrackProperty* CTrackPropertyArray::GetTrackPropertyBySearch(const CString& strKeyword, int nTrackNo, BOOL bParent)
 {
 	// 한국단자에서는 트랙번호를 101이런식으로 가져갔기 때문에 트랙번호가 101이런식으로 와야한다. 
 	CTrackProperty* pTrackProperty = NULL;

@@ -478,10 +478,12 @@ BOOL CEcsDoc::IsStationKind(CTrackInfo* pTrack, CString strKeyWord)
 // Number이미 -1되어서 넘겨줌
 #define		INVERSE_BIT(xArg, yArg, zArg)			m_arrRegData[xArg].InverseBit(yArg, zArg)
 
-int CEcsDoc::GetAddrByName(int nNumber, int nDevNum, CString strArgName, BOOL bParent)
+int CEcsDoc::GetAddrByName(int nNumber, int nDevNum, const CString& strArgName, BOOL bParent)
 {
-	CString strType, strInOrder;
-	CString strAddr, strName, strTrackNo;
+	// 키워드를 값으로 받으면 부를 때마다 CString 복사본이 생긴다. 이 함수는 트랙마다
+	// 초당 수십 번 불려서 그 복사와 해제가 그대로 CPU 로 나타났다(디버그 CRT 힙은
+	// 해제 때 잠금을 잡는다). 참조로 받고, 지역 CString 도 만들지 않는다.
+	// (strInOrder / strName / strTrackNo 는 원래 쓰이지도 않았다)
 	
 	#pragma region 원하는 키워드 찾기
 	int nTrackNo = int(nDevNum / m_nWordCnt) + ((nNumber + 1) * 100);
@@ -492,9 +494,8 @@ int CEcsDoc::GetAddrByName(int nNumber, int nDevNum, CString strArgName, BOOL bP
 	if ((pTrackProperty = GetTrackPropertyByKeyword(nNumber, nTrackNo, strArgName, bParent)) == NULL)
 		return 0;
 
-	strType = pTrackProperty->m_strType;
-	strAddr = pTrackProperty->m_strAddr;
-	strName = pTrackProperty->m_strName;
+	const CString& strType = pTrackProperty->m_strType;
+	const CString& strAddr = pTrackProperty->m_strAddr;
 	#pragma endregion
 
 	int nRealDevNum;
@@ -506,7 +507,13 @@ int CEcsDoc::GetAddrByName(int nNumber, int nDevNum, CString strArgName, BOOL bP
 		return -2;		// Addr 값 이상
 
 	int nAddr = _ttoi(strAddr);
-	int nWordOrder = _ttoi(strAddr.Right(1));
+
+	// 예전에는 _ttoi(strAddr.Right(1)) 이었다. Right(1) 이 부를 때마다 임시 CString 을
+	// 만들어 바로 버렸다. 마지막 글자 하나만 보면 되므로 그대로 읽는다.
+	int nWordOrder = 0;
+	TCHAR chLast = strAddr[strAddr.GetLength() - 1];
+	if (chLast >= _T('0') && chLast <= _T('9'))
+		nWordOrder = chLast - _T('0');
 	if (pTrackProperty->m_bSeparatelyETC == TRUE)
 		nRealDevNum = nAddr;
 	else
@@ -594,7 +601,12 @@ int CEcsDoc::GetBitInOrderByWord(int nNumber, int nDevNum, CString strArgName)
 		return -2;		// Addr 값 이상
 
 	int nAddr = _ttoi(strAddr);
-	int nWordOrder = _ttoi(strAddr.Right(1));
+
+	// Right(1) 이 부를 때마다 임시 CString 을 만들어 바로 버렸다. 글자 하나만 읽는다.
+	int nWordOrder = 0;
+	TCHAR chLast = strAddr[strAddr.GetLength() - 1];
+	if (chLast >= _T('0') && chLast <= _T('9'))
+		nWordOrder = chLast - _T('0');
 	if (pTrackProperty->m_bSeparatelyETC == TRUE)
 		nRealDevNum = nAddr;
 	else
@@ -636,10 +648,9 @@ int CEcsDoc::GetBitInOrderByWord(int nNumber, int nDevNum, CString strArgName)
 //									  2 이면 해당 비트만 빼고 OFF,	wData가 기존 값이어야함!
 //									  3 이면 반전					wData가 기존 값이어야함!
 //									  4 이면 특정 비트만 강제 OFF,	wData가 기존 값이어야함!
-int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, CString strArgName, WORD wData, int nOption)
+int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, const CString& strArgName, WORD wData, int nOption)
 {
-	CString strType, strInOrder;
-	CString strAddr, strName, strTrackNo;
+	// GetAddrByName 과 같은 이유로 지역 CString 을 만들지 않는다.
 
 	#pragma region 원하는 키워드 찾기
 	//if (LookupKeywordInfo(nNumber, nDevNum, strArgName, strType, strAddr, strInOrder, strTrackNo) == FALSE)
@@ -652,9 +663,8 @@ int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, CString strArgName, WORD wD
 	if ((pTrackProperty = GetTrackPropertyByKeyword(nNumber, nTrackNo, strArgName)) == NULL)
 		return 0;
 
-	strType	= pTrackProperty->m_strType;
-	strAddr = pTrackProperty->m_strAddr;
-	strName = pTrackProperty->m_strName;
+	const CString& strType = pTrackProperty->m_strType;
+	const CString& strAddr = pTrackProperty->m_strAddr;
 	#pragma endregion
 
 	int nRealDevNum;
@@ -746,7 +756,7 @@ int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, CString strArgName, WORD wD
 	return -6;	// Type 이상
 }
 // -1이 가져오지 못했다는 뜻임!
-int CEcsDoc::GetSignalIndex(CString strKeyWord)
+int CEcsDoc::GetSignalIndex(const CString& strKeyWord)
 {
 	int nSelIndex = -1;
 	int nCount = m_strEtcKeyWords.GetSize();

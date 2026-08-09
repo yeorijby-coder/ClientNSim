@@ -133,7 +133,7 @@ public:
 	BOOL InvokeLogic(CCv* pCv, CTrackInfo* pTrack, CLogicArray* pLogicArray);
 	BOOL IsBitOnOffByKeyWord(int m_nNumber, int nDevNum, CString strKeyWord, BOOL bOn, BOOL bNext);
 
-	BOOL UpdateSignalReg(CTrackInfo* pTrack, int nPlcNo, int nDeviceNo, CString strKeyWord, BOOL bOn);
+	BOOL UpdateSignalReg(CTrackInfo* pTrack, int nPlcNo, int nDeviceNo, const CString& strKeyWord, BOOL bOn);
 
 // Attributes
 public:

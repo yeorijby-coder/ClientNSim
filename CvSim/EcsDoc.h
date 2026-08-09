@@ -224,8 +224,10 @@ public:
 	void MulticastClientInfo(CMonitorServer* pMonitorSv, int nCommStatus);
 
 public:
-	int GetAddrByName(int nNumber, int nDevNum, CString strArgName, BOOL bParent = FALSE);
-	int SetAddrByName(int nNumber, int nDevNum, CString strArgName, WORD wData, int nOption = 0);
+	// 키워드는 const 참조로 받는다. 값으로 받으면 부를 때마다 CString 복사본이 생기는데,
+	// 이 두 함수는 트랙마다 초당 수십 번씩 불려서 그 비용이 그대로 CPU 로 나타났다.
+	int GetAddrByName(int nNumber, int nDevNum, const CString& strArgName, BOOL bParent = FALSE);
+	int SetAddrByName(int nNumber, int nDevNum, const CString& strArgName, WORD wData, int nOption = 0);
 	int GetBitInOrderByWord(int nNumber, int nDevNum, CString strArgName);
 //	int	UpdateRegDataByName(CString strName, BOOL bSaveObject = TRUE) { return UpdateRegDataByName(m_pTrackProperties, strName, bSaveObject); }
 //	int	GetRegDataByName(CString strName) { return UpdateRegDataByName(m_pTrackProperties, strName, TRUE); }
@@ -235,10 +237,12 @@ public:
 	BOOL IsStationKind(CTrackInfo* pTrack, CString strKeyWord);
 	BOOL IsDestination(CString strArgName, int nValue, int nTrNo, int nMethod);
 	BOOL LookupKeywordInfo(CString strKeyWord, CString& strType, CString& strAddr, CString& strInOrder);
-	int GetSignalIndex(CString strKeyWord);
+	// 키워드를 값으로 받으면 부를 때마다 CString 복사본이 생긴다.
+	// 화면 타이머가 트랙마다 이 함수를 불러서 그 복사와 해제가 CPU 를 먹고 있었다.
+	int GetSignalIndex(const CString& strKeyWord);
 
 public:
-	CTrackProperty* GetTrackPropertyByKeyword(int nPlcNum, int nTrackNo, CString strKeyWord, BOOL bPrent = FALSE)
+	CTrackProperty* GetTrackPropertyByKeyword(int nPlcNum, int nTrackNo, const CString& strKeyWord, BOOL bPrent = FALSE)
 	{ return m_pTrackProperties[nPlcNum].GetTrackProperty(strKeyWord, nTrackNo, bPrent); }
 
 public:

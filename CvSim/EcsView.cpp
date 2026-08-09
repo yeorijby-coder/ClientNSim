@@ -1349,7 +1349,7 @@ void CEcsView::OnTimer(UINT nIDEvent)
 	CFormView::OnTimer(nIDEvent);
 }
 
-BOOL CEcsView::UpdateSignalReg(CTrackInfo* pTrack, int nPlcNo, int nDeviceNo, CString strKeyWord, BOOL bOn)
+BOOL CEcsView::UpdateSignalReg(CTrackInfo* pTrack, int nPlcNo, int nDeviceNo, const CString& strKeyWord, BOOL bOn)
 {
 	CEcsDoc* pDoc = GetDocument();
 	ASSERT(pDoc != NULL);
