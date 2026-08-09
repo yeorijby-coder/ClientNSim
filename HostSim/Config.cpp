@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Ecs.h"
 #include "Config.h"
+#include "XmlDom.h"
 
 #include "EcsDoc.h"
 
@@ -392,8 +393,130 @@ void CConfig::SaveConfig5()
 //} SJobInvokeInfo;
 
 
+//==============================================================================
+//	Desc	: 없는 노드를 읽으면 XmlDom 이 ASSERT 로 멈추므로 개수부터 확인한다.
+//==============================================================================
+static BOOL GfGetXmlValue(CXmlDom& dom, LPCTSTR lpszQuery, CString& strValue, BOOL bFromDocument)
+{
+	strValue.Empty();
+
+	if (dom.GetNodeCount(lpszQuery, bFromDocument) <= 0)
+		return FALSE;
+
+	dom.GetNodeValue(lpszQuery, strValue, NULL, bFromDocument);
+	return TRUE;
+}
+
+//==============================================================================
+//	Desc	: 로직 정의를 Logic.xml 에서 읽는다.
+//
+//	  예전에는 Ecs.ini 의 [LOGIC_CONTROL] / [LOGIC_GROUPnn] 이었다. ini 로는
+//	  스테이션 목록을 콤마 문자열로밖에 못 담고, 몇 개를 읽을지가 LogicGroup 이라는
+//	  별도 개수 항목에 달려 있어 정의를 해 놓고도 안 읽히는 그룹이 생겼다.
+//	  XML 은 목록을 목록대로 담고, 읽을지 말지는 그룹마다 <Use> 로 적는다.
+//
+//	  주의 : XmlLib 는 MSXML3 를 SelectionLanguage 지정 없이 쓴다. 그래서 질의가
+//	  XPath 가 아니라 XSLPattern 으로 해석되고 element[n] 의 n 이 0부터다.
+//	  헷갈리지 않도록 위치 지정은 쓰지 않고 SelectElements + MoveSelect 로 옮겨 다닌다.
+//
+//	  파일이 없거나 쓸 그룹이 하나도 없으면 FALSE 를 돌려주고,
+//	  LoadConfig6() 이 예전 ini 경로로 돌아간다.
+//==============================================================================
+BOOL CConfig::LoadLogicXml()
+{
+	CString strFile = ECS_LOGIC_FILE;
+	if (::GetFileAttributes(strFile) == INVALID_FILE_ATTRIBUTES)
+		return FALSE;
+
+	CXmlDom dom;
+	if (!dom.InitializeXmlDom())
+		return FALSE;
+
+	if (!dom.LoadXmlFile(strFile))
+	{
+		AfxMessageBox(dom.GetErrorMessage());
+		return FALSE;
+	}
+
+	CString strValue;
+	if (GfGetXmlValue(dom, _T("/Logic/Control/JobCount"), strValue, TRUE))		m_nJobCnt = _ttoi(strValue);
+	if (GfGetXmlValue(dom, _T("/Logic/Control/ScCount"), strValue, TRUE))		m_nScCnt = _ttoi(strValue);
+	if (GfGetXmlValue(dom, _T("/Logic/Control/StoSeperate"), strValue, TRUE))	m_nStoSeperate = _ttoi(strValue);
+	if (GfGetXmlValue(dom, _T("/Logic/Control/RetSeperate"), strValue, TRUE))	m_nRetSeperate = _ttoi(strValue);
+
+	if (!dom.SelectElements(_T("/Logic/Group")))
+		return FALSE;
+
+	int nTotal = dom.GetSelectCount();
+	m_strLogicGroupNames.RemoveAll();
+
+	for (int i = 0; i < nTotal; ++i)
+	{
+		dom.MoveSelect(i);		// @.여기서부터 상대 질의는 이 <Group> 기준이다
+
+		// @.Use 가 N(또는 0) 이면 건너뛴다. ini 시절 LogicGroup=n 으로 앞에서 n개만
+		//   읽던 것을 그룹마다 명시하는 방식으로 바꾼 것이다.
+		GfGetXmlValue(dom, _T("Use"), strValue, FALSE);
+		strValue.Trim();
+		if (strValue.CompareNoCase(_T("N")) == 0 || strValue == _T("0"))
+			continue;
+
+		SLogicGorupInfo* pLogicGorupInfo = new SLogicGorupInfo();
+		pLogicGorupInfo->m_bStart = FALSE;
+
+		GfGetXmlValue(dom, _T("Name"), strValue, FALSE);
+		m_strLogicGroupNames.Add(strValue);
+
+		// @.입고 스테이션 수만큼 작업정보를 만든다. 경유/출고는 같은 순번에 짝지어진다.
+		int nCount = dom.GetNodeCount(_T("StoStns/Stn"), FALSE);
+		for (int j = 0; j < nCount; ++j)
+		{
+			dom.GetNodeValue(_T("StoStns/Stn"), j, strValue, NULL, FALSE);
+			pLogicGorupInfo->m_strStoStations.Add(strValue);
+
+			SJobInvokeInfo* pJobInvokeInfo = new SJobInvokeInfo();
+			pJobInvokeInfo->m_nWorkingLuggNum = 0;
+			pJobInvokeInfo->m_bCompleteStore = FALSE;
+			pJobInvokeInfo->m_bCompleteMove = FALSE;
+			pJobInvokeInfo->m_strTime = COleDateTime::GetCurrentTime().Format(_T("%Y-%m-%d %H:%M:%S"));
+			pLogicGorupInfo->m_pJobInvokeInfos.Add(pJobInvokeInfo);
+			pLogicGorupInfo->m_nStoStnCnt = j + 1;
+		}
+
+		nCount = dom.GetNodeCount(_T("ViaStns/Stn"), FALSE);
+		for (int j = 0; j < nCount; ++j)
+		{
+			dom.GetNodeValue(_T("ViaStns/Stn"), j, strValue, NULL, FALSE);
+			pLogicGorupInfo->m_strViaStations.Add(strValue);
+		}
+
+		nCount = dom.GetNodeCount(_T("RetStns/Stn"), FALSE);
+		for (int j = 0; j < nCount; ++j)
+		{
+			dom.GetNodeValue(_T("RetStns/Stn"), j, strValue, NULL, FALSE);
+			pLogicGorupInfo->m_strRetStations.Add(strValue);
+		}
+
+		nCount = dom.GetNodeCount(_T("Scs/Sc"), FALSE);
+		for (int j = 0; j < nCount; ++j)
+		{
+			dom.GetNodeValue(_T("Scs/Sc"), j, strValue, NULL, FALSE);
+			pLogicGorupInfo->m_strScs.Add(strValue);
+		}
+
+		m_pDoc->m_pLogicGorupInfos.Add(pLogicGorupInfo);
+	}
+
+	m_nLogicGroupCnt = (int)m_pDoc->m_pLogicGorupInfos.GetSize();
+	return (m_nLogicGroupCnt > 0);
+}
+
 void CConfig::LoadConfig6()
 {
+	// @.Logic.xml 이 있으면 그것을 쓴다. 없을 때만 예전 ini 정의로 돌아간다.
+	if (LoadLogicXml())
+		return;
+
 	TCHAR szTemp[_MAX_PATH] = { 0 };
 	m_nJobCnt = ::GetPrivateProfileInt(_T("LOGIC_CONTROL"), _T("JobCount"), 1, ECS_INI_FILE);
 	m_nScCnt = ::GetPrivateProfileInt(_T("LOGIC_CONTROL"), _T("ScCount"), 1, ECS_INI_FILE);

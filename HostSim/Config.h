@@ -105,6 +105,7 @@ public:
 	int				m_nJobCnt;
 	int				m_nScCnt;
 	int				m_nLogicGroupCnt;
+	CStringArray	m_strLogicGroupNames;	// @.Logic.xml 의 <Name>. 화면 콤보에 쓴다
 	int				m_nStoSeperate;
 	int				m_nRetSeperate;
 
@@ -131,6 +132,7 @@ public:
 	void 			LoadConfig5();
 	void	 		SaveConfig5();
 	void			LoadConfig6();
+	BOOL			LoadLogicXml();		// @.로직 정의를 Logic.xml 에서 읽는다
 //	void			SaveConfig6();
 //	BOOL			LoadXML();
 //	BOOL			SaveXML();

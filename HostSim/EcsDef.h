@@ -18,6 +18,7 @@
 #define ECS_LAYOUT_FILE2		_T(".\\EcsLayout2.xml")
 #define ECS_CODE_FILE			g_strEcsPath + _T("\\EcsCode.dat")
 #define ECS_INI_FILE			g_strEcsPath + _T("\\Ecs.ini")
+#define ECS_LOGIC_FILE			g_strEcsPath + _T("\\Logic.xml")
 #define ECS_USER_FILE			g_strEcsPath + _T("\\Data\\EcsUser.dat")
 #define ECS_USER_BACK_FILE		g_strEcsPath + _T("\\Data\\EcsUser.bak")
 // </File Definition>

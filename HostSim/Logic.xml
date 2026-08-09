@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<!--
+	HostSim 작업지시 로직 정의.  (예전에는 Ecs.ini 의 [LOGIC_CONTROL] / [LOGIC_GROUPnn])
+
+	Control
+	  JobCount       한 번에 만들 작업 수
+	  ScCount        대상 크레인 수
+	  StoSeperate    0=없음, 1=이동/입고, 2=이동/이동/입고
+	  StoViaMatching StoSeperate 가 0 이 아닐 때 경유지 매칭 여부
+	  RetSeperate    0=없음, 1=이동/출고
+
+	Group
+	  Use   Y 인 것만 읽는다. ini 시절의 LogicGroup=2 (앞에서 N개만 읽기) 를 대신한다.
+	  Name  화면 콤보에 보이는 이름
+	  StoStns / ViaStns / RetStns / Scs
+	        여기 스테이션 번호는 CV_DATA 에 STN_KIND 가 설정된 작업대여야 한다.
+	        그렇지 않으면 ECS 가 "출발지가 올바르지 않습니다" 로 NAK(09) 한다.
+	        StoStns / ViaStns / RetStns 는 같은 순번끼리 한 작업으로 짝지어진다.
+-->
+<Logic>
+
+	<Control>
+		<JobCount>500</JobCount>
+		<ScCount>10</ScCount>
+		<StoSeperate>1</StoSeperate>
+		<StoViaMatching>1</StoViaMatching>
+		<RetSeperate>0</RetSeperate>
+	</Control>
+
+	<Group>
+		<Use>Y</Use>
+		<Name>1층 : 입고대 102 -> 중간도착대 105 -> 랙(SC 1~5호기) -> 출고대 105</Name>
+		<StoStns><Stn>102</Stn></StoStns>
+		<ViaStns><Stn>105</Stn></ViaStns>
+		<RetStns><Stn>105</Stn></RetStns>
+		<Scs><Sc>1</Sc><Sc>2</Sc><Sc>3</Sc><Sc>4</Sc><Sc>5</Sc></Scs>
+	</Group>
+
+	<Group>
+		<Use>Y</Use>
+		<Name>1층 : 입고대 102 -> 중간도착대 108 -> 랙(SC 6~10호기) -> 출고대 105</Name>
+		<StoStns><Stn>102</Stn></StoStns>
+		<ViaStns><Stn>108</Stn></ViaStns>
+		<RetStns><Stn>105</Stn></RetStns>
+		<Scs><Sc>6</Sc><Sc>7</Sc><Sc>8</Sc><Sc>9</Sc><Sc>10</Sc></Scs>
+	</Group>
+
+	<Group>
+		<Use>N</Use>
+		<Name>옛 정의 (ini LogicGroup=2 라 쓰이지 않던 것)</Name>
+		<StoStns><Stn>203</Stn></StoStns>
+		<ViaStns><Stn>206</Stn></ViaStns>
+		<RetStns><Stn>203</Stn></RetStns>
+		<Scs><Sc>3</Sc><Sc>4</Sc></Scs>
+	</Group>
+
+	<Group>
+		<Use>N</Use>
+		<Name>옛 정의 (ini LogicGroup=2 라 쓰이지 않던 것)</Name>
+		<StoStns><Stn>208</Stn></StoStns>
+		<ViaStns><Stn>209</Stn></ViaStns>
+		<RetStns><Stn>208</Stn></RetStns>
+		<Scs><Sc>5</Sc><Sc>6</Sc></Scs>
+	</Group>
+
+	<Group>
+		<Use>N</Use>
+		<Name>옛 정의 (ini LogicGroup=2 라 쓰이지 않던 것)</Name>
+		<StoStns><Stn>212</Stn></StoStns>
+		<ViaStns><Stn>214</Stn></ViaStns>
+		<RetStns><Stn>212</Stn></RetStns>
+		<Scs><Sc>7</Sc><Sc>8</Sc></Scs>
+	</Group>
+
+	<Group>
+		<Use>N</Use>
+		<Name>옛 정의 (ini LogicGroup=2 라 쓰이지 않던 것)</Name>
+		<StoStns><Stn>213</Stn></StoStns>
+		<ViaStns><Stn>215</Stn></ViaStns>
+		<RetStns><Stn>213</Stn></RetStns>
+		<Scs><Sc>9</Sc><Sc>10</Sc></Scs>
+	</Group>
+
+</Logic>

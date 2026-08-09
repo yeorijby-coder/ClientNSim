@@ -235,7 +235,13 @@ void CEcsView::OnInitialUpdate()
 		CString strTemp;
 		for (int i = 1; i <= pDoc->m_pConfig->m_nLogicGroupCnt; ++i)
 		{
-			strTemp.Format(_T("LOGIC_GROUP%02d"), i);
+			// @.Logic.xml 에 이름이 있으면 그것을 보여준다. 없으면 예전처럼 번호로.
+			if (i - 1 < pDoc->m_pConfig->m_strLogicGroupNames.GetSize()
+				&& !pDoc->m_pConfig->m_strLogicGroupNames[i - 1].IsEmpty())
+				strTemp.Format(_T("%02d. %s"), i, pDoc->m_pConfig->m_strLogicGroupNames[i - 1]);
+			else
+				strTemp.Format(_T("LOGIC_GROUP%02d"), i);
+
 			m_cbxLogicGroup.AddString(strTemp);
 			m_cbxLogicGroup.SetItemData(m_cbxLogicGroup.GetCount() - 1, i);
 		}
