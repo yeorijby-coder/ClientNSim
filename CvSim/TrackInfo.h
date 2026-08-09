@@ -97,6 +97,10 @@ public:
 	CDciTrackCtrl*	m_pTrackCtrl4;
 	CDciTrackCtrl*	m_pTrackCtrl5;
 	int				m_nCvPlcNum;
+
+	// 화면 주기마다 이 트랙의 워드가 바뀌었는지 보려고 지난 값을 들고 있는다.
+	// (CEcsView::OnTimer 가 바뀐 트랙만 돌기 위해 쓴다)
+	CArray<WORD, WORD>	m_arrPrevWords;
 	int				m_strPlcno;
 	int				m_nTabNum;
 

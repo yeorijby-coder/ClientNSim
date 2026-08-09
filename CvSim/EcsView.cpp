@@ -1191,6 +1191,64 @@ void CEcsView::OnTimer(UINT nIDEvent)
 
 			int m_nNumber = pCv->m_nNumber;
 
+			/*
+			 * 바뀐 트랙만 돈다.
+			 *
+			 *   8개 PLC 400여 트랙을 매 틱마다 전부 도는 것이 CPU 한 코어를 물고
+			 *   있던 원인이다. 한 바퀴 도는 시간이 틱 간격보다 길어서 TimerTick 을
+			 *   늘려도 줄지 않았다.
+			 *
+			 *   비어 있고(워드가 전부 0) 지난 주기와 값이 같은 트랙은 할 일이 없다.
+			 *   화물 이동은 화물을 가진 트랙이 다음 트랙으로 미는 방식이라
+			 *   (MoveNextTrackForKindNormal_1) 빈 트랙을 건너뛰어도 흐름이 끊기지 않는다.
+			 *
+			 *   그래도 이웃이나 시간에 기대는 처리가 있을 수 있으니
+			 *   IDLE_FULL_SCAN_TICK 주기마다 한 번은 전부 돈다.
+			 */
+			{
+				// 전체 순회 주기. Ecs.ini [COMMON] IdleFullScanTick 으로 정한다.
+				//   짧게 잡으면 안전하고 길게 잡으면 가볍다.
+				//   10(1초) 이면 0.52 코어, 100(10초) 이면 0.24 코어였다. (고치기 전 1.19)
+				static int nIdleFullScanTick = 0;
+				if (nIdleFullScanTick == 0)
+				{
+					nIdleFullScanTick = ::GetPrivateProfileInt(_T("COMMON"), _T("IdleFullScanTick"), 10, ECS_INI_FILE);
+					if (nIdleFullScanTick < 1)    nIdleFullScanTick = 1;
+					if (nIdleFullScanTick > 1000) nIdleFullScanTick = 1000;
+				}
+				const int IDLE_FULL_SCAN_TICK = nIdleFullScanTick;
+
+				int nChkPlc  = pTrack->m_nCvPlcNum;
+				int nChkBase = (pTrack->m_nNumber - pCv->m_nStTrNum + 1) * pDoc->m_nWordCnt;
+				int nChkCnt  = pDoc->m_nWordCnt;
+
+				if (pTrack->m_arrPrevWords.GetSize() != nChkCnt)
+					pTrack->m_arrPrevWords.SetSize(nChkCnt);
+
+				BOOL bTrackChanged = FALSE;
+				BOOL bTrackEmpty   = TRUE;
+
+				for (int nChk = 0; nChk < nChkCnt; ++nChk)
+				{
+					WORD wNow = pDoc->m_arrRegData[nChkPlc - 1].GetWord(nChkBase + nChk);
+
+					if (wNow != 0)
+						bTrackEmpty = FALSE;
+
+					if (wNow != pTrack->m_arrPrevWords[nChk])
+						bTrackChanged = TRUE;
+
+					pTrack->m_arrPrevWords[nChk] = wNow;
+				}
+
+				if ((bTrackEmpty == TRUE) &&
+					(bTrackChanged == FALSE) &&
+					((nCount % IDLE_FULL_SCAN_TICK) != 0))
+				{
+					continue;
+				}
+			}
+
 			int nSimMode = (int)pDoc->m_arrRegData[m_nNumber - 1].GetWord(1);			// 시뮬레이터 모드일때
 
 			int nDevNum = (pTrack->m_nNumber - pCv->m_nStTrNum + 1) * 10;
@@ -1360,6 +1418,14 @@ BOOL CEcsView::UpdateSignalReg(CTrackInfo* pTrack, int nPlcNo, int nDeviceNo, co
 		return FALSE;
 
 	int nTemp = pTrack->m_sSeparatelyETC[nSelIndex];
+
+	// 값이 그대로면 쓸 것이 없다.
+	//   아래 GetAddrByName / SetAddrByName 은 속성을 찾아 레지스터를 읽고 쓰는데,
+	//   트랙 400여개 x 상태 키워드 10여개 x 초당 10회라 그 횟수가 그대로 CPU 가 된다.
+	//   대부분의 주기에는 아무 신호도 바뀌지 않는다.
+	//   (직전 값을 꺼내는 이 줄은 원래 있었는데 쓰이지 않고 있었다. 비교용이었던 듯하다)
+	if (nTemp == (int)bOn)
+		return FALSE;
 
 	pTrack->m_sSeparatelyETC[nSelIndex] = bOn;
 

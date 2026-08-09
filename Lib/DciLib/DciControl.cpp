@@ -157,16 +157,30 @@ void CDciControl::UpdateControl(CDC* pDC)
 		else
 			nSize = nSize / nStrCnt;
 
-		memset(&m_logfont, 0, sizeof(LOGFONT));
-		m_logfont.lfQuality = PROOF_QUALITY;
-		m_logfont.lfHeight = m_nFontSize;
-		m_logfont.lfWeight = FW_BOLD;
-		lstrcpy(m_logfont.lfFaceName, _T("Arial"));
+		/*
+		 * 폰트는 글자 크기에만 좌우된다. 예전에는 글자를 그릴 때마다
+		 * CreateFontIndirect 로 새로 만들었는데, 컨트롤 수백 개를 초당 몇 번씩
+		 * 그리는 화면에서는 그 값이 만만치 않다. (CPU 를 떠 보면 여기가 가장 위였다)
+		 * 크기별로 한 번만 만들어 두고 다시 쓴다. 그리기는 화면 스레드에서만 일어난다.
+		 */
+		static CMap<int, int, CFont*, CFont*> mapFontCache;
 
-		m_font.CreateFontIndirect(&m_logfont);
+		CFont* pCacheFont = NULL;
+		if (mapFontCache.Lookup(m_nFontSize, pCacheFont) == FALSE)
+		{
+			LOGFONT lf;
+			memset(&lf, 0, sizeof(LOGFONT));
+			lf.lfQuality = PROOF_QUALITY;
+			lf.lfHeight  = m_nFontSize;
+			lf.lfWeight  = FW_BOLD;
+			lstrcpy(lf.lfFaceName, _T("Arial"));
 
-		// select font and remember previous one
-		pOldFont = (CFont*)pDC->SelectObject(&m_font);
+			pCacheFont = new CFont;
+			pCacheFont->CreateFontIndirect(&lf);
+			mapFontCache.SetAt(m_nFontSize, pCacheFont);
+		}
+
+		pOldFont = (CFont*)pDC->SelectObject(pCacheFont);
 
 		m_pDCI->DrawText(pDC, m_rcControlL, m_strText, m_clrFgColor);
 
@@ -250,16 +264,30 @@ void CDciControl::DrawFontText(CDC* pDC, CString strText, CRect* pRect, int nOld
 	else
 		nSize = nSize / nStrCnt;
 
-	memset(&m_logfont, 0, sizeof(LOGFONT));
-	m_logfont.lfQuality = PROOF_QUALITY;
-	//			m_logfont.lfHeight = r;
-	m_logfont.lfHeight = m_nFontSize;
-	m_logfont.lfWeight = FW_BOLD;
-	lstrcpy(m_logfont.lfFaceName, _T("Arial"));
+	/*
+	 * 폰트는 글자 크기에만 좌우된다. 예전에는 글자를 그릴 때마다
+	 * CreateFontIndirect 로 새로 만들었는데, 컨트롤 수백 개를 초당 몇 번씩
+	 * 그리는 화면에서는 그 값이 만만치 않다. (CPU 를 떠 보면 여기가 가장 위였다)
+	 * 크기별로 한 번만 만들어 두고 다시 쓴다. 그리기는 화면 스레드에서만 일어난다.
+	 */
+	static CMap<int, int, CFont*, CFont*> mapFontCache;
 
-	m_font.CreateFontIndirect(&m_logfont);
+	CFont* pCacheFont = NULL;
+	if (mapFontCache.Lookup(m_nFontSize, pCacheFont) == FALSE)
+	{
+		LOGFONT lf;
+		memset(&lf, 0, sizeof(LOGFONT));
+		lf.lfQuality = PROOF_QUALITY;
+		lf.lfHeight  = m_nFontSize;
+		lf.lfWeight  = FW_BOLD;
+		lstrcpy(lf.lfFaceName, _T("Arial"));
 
-	pOldFont = pDC->SelectObject(&m_font);
+		pCacheFont = new CFont;
+		pCacheFont->CreateFontIndirect(&lf);
+		mapFontCache.SetAt(m_nFontSize, pCacheFont);
+	}
+
+	pOldFont = pDC->SelectObject(pCacheFont);
 	
 	//pDC->DrawText(m_strText, rcControlS, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 	pDC->DrawText(strRealText, rcControlS, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
