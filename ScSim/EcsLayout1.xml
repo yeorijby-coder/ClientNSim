@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="euc-kr"?>
-<Builder id="1" l="0" b="0" r="36" t="20" text="유유제약 RTV#1" bgmode="2" fgmode="1" bgcolor="ffffff" fgcolor="000000" enable="1" visible="0" fontsize="10" selcolor="808080">
+<Builder id="1" l="0" b="0" r="36" t="20" text="KET SC #1" bgmode="2" fgmode="1" bgcolor="ffffff" fgcolor="000000" enable="1" visible="0" fontsize="10" selcolor="808080">
 	<Group gname="LAYOUT" gid="" show="1"/>
 	<Group gname="LABEL" gid="" show="1">
 		<CDciStaticCtrl>
