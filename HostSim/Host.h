@@ -177,6 +177,10 @@ public:
 	int m_nCurBay;
 	int m_nCurLevel;
 
+	// CalcurateLocation 이 고른 랙 위치가 어느 호기 것인지.
+	// 입고 작업 전문의 도착지에 이 번호를 싣는다.
+	int m_nCurScNum;
+
 	TCHAR m_JobOrderMsg[1024];
 	TCHAR m_AlterLocMsg[1024];
 	int m_nJobOrderSize;

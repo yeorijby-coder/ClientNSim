@@ -55,7 +55,15 @@ HICON CGlobal::HICONFromPATH(CString pstrPath)
 {
 	CBitmap bitmap;
 	CImage image;
-	image.Load(pstrPath);
+
+	/*
+	 * 그림 파일이 없으면 CImage::Load 가 실패하고 m_hBitmap 이 0 으로 남는다.
+	 * 그 상태로 Detach() 를 부르면 atlimage.h 에서 어서션이 난다.
+	 * (작업정보창을 열 때 실제로 그랬다. dlg_jobinfo\20x20\search3.png 가 없다)
+	 * 그림 하나 없다고 창이 죽을 이유는 없다. 없으면 아이콘 없이 연다.
+	 */
+	if (FAILED(image.Load(pstrPath)) || image.IsNull())
+		return NULL;
 	bitmap.Attach(image.Detach());
 	BITMAP bmp;
 	bitmap.GetBitmap(&bmp);

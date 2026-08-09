@@ -1500,6 +1500,12 @@ BOOL CHostCl::CalcurateLocation(BOOL bSto, CStringArray* pScList)
 
 	// 이번에 지시할 Location 저장 
 	m_pDoc->m_strLocation.Format(_T("%02d%03d%02d"), nCurBank, m_nCurBay, m_nCurLevel);
+
+	// 이 뱅크가 어느 호기 것인지 기억해 둔다.
+	//   위에서 호기마다 뱅크를 nMinBank = 호기*2-1, nMaxBank = 호기*2 로 잡았다.
+	//   입고 작업 전문의 도착지에 이 번호를 싣는다.
+	m_nCurScNum = (nCurBank + 1) / 2;
+
 	return TRUE;
 }
 // n2ndStn은 이동일때만 사용됨!
@@ -1549,7 +1555,7 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			n1stStn,					// 6	// Source Station
 			_T("0000000"),				// 7	// Source Bank, Bay, Level
 			0,							// 8	// Route Station
-			0,							// 9	// Dest. Station
+			m_nCurScNum,				// 9	// Dest. Station (입고는 화물을 받을 S/C 번호)
 			m_pDoc->m_strLocation,		// 10	// Dest. Bank, Bay, Level
 			0,							// 11	// Pair 작업번호 
 			100,						// 12	// Priority

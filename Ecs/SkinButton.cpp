@@ -187,6 +187,22 @@ void CSkinButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	{
 		captionRect = lpDIS->rcItem;
 		DrawTheIcon(MemDC, !sTitle.IsEmpty(), &lpDIS->rcItem, &captionRect, m_bIsPressed, m_bIsDisabled);
+	}
+	else
+	{
+		/*
+		 * 아이콘이 없으면 캡션 자리를 원래대로 되돌린다.
+		 *
+		 *   위의 DrawTheBitmap 안에서 PrepareBitmapRect 가 "그림 옆에 글씨를 놓는다" 는
+		 *   가정으로 rpTitle->left 를 그림 너비만큼 민다. 그런데 이 프로그램이 넘기는
+		 *   그림은 버튼 배경 스킨이라 너비가 버튼 폭과 같다. 그래서 캡션 자리가 버튼
+		 *   밖으로 통째로 밀려나 글씨가 사라진다.
+		 *
+		 *   아이콘이 있는 버튼은 바로 위에서 captionRect 를 다시 잡아 주기 때문에
+		 *   그 피해가 드러나지 않았다. 아이콘 그림 파일이 없는 버튼만 글씨가 없었다.
+		 *   (작업정보창의 조회 버튼이 그랬다. search3.png 가 없다)
+		 */
+		captionRect = lpDIS->rcItem;
 	}	
 
 	// Write the button title

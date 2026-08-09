@@ -232,7 +232,14 @@ void CMainFrame :: OnRbnBtnToolbarInterface ()
 HICON CMainFrame::HICONFromPATH(CString pstrPath)
 {
 	CImage image;
-	image.Load(pstrPath);
+
+	/*
+	 * 그림 파일이 없으면 CImage::Load 가 실패하고 m_hBitmap 이 0 으로 남는다.
+	 * 그 상태로 Detach() 를 부르면 atlimage.h 에서 어서션이 난다.
+	 * 그림 하나 없다고 창이 죽을 이유는 없다. 없으면 아이콘 없이 연다.
+	 */
+	if (FAILED(image.Load(pstrPath)) || image.IsNull())
+		return NULL;
 	if(image == NULL)
 	{
 		return Global.GetIcon(Global.ICO_CV_ON);
