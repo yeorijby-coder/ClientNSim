@@ -263,7 +263,12 @@ void CEquipment::OnConnectSocket(int nErrorCode, int nIndex)
 		m_pSocket[nIndex]->m_enCommStatus = CInterfaceSk::enStatusConnectOK;
 
 		::ResetEvent(m_hEventArray[nIndex][enEventKill]);
-		m_pThread[nIndex] = ::AfxBeginThread(m_pfThreadProc[nIndex], this);
+
+		// @.RunThread 가 띄운 스레드가 모든 슬롯을 훑으므로,
+		//   접속할 때마다 또 띄우면 중복이다. 없을 때만 띄운다.
+		if (m_pThread[0] == NULL)
+			m_pThread[0] = ::AfxBeginThread(m_pfThreadProc[0], this);
+
 		DEBUGER_ASSERT_VALID(m_pThread != NULL);
 	}
 
@@ -313,11 +318,21 @@ BOOL CEquipment::RunServer(int nIndex)
 
 void CEquipment::RunThread()
 {
+	// @.스레드는 하나만 띄운다.
+	//   ThreadProc 은 인자로 장비 포인터만 받아 자기 슬롯 번호를 모르고,
+	//   그래서 함수 안에서 PLC_CONN_PORT_CNT 개 슬롯을 전부 순회한다.
+	//   여기서 포트 수만큼 띄우면 같은 일을 18번 중복해서 하는 셈이고,
+	//   장비 8대면 144개 스레드가 같은 이벤트 배열을 두고 경쟁한다.
+	//   실제로 Q3E 응답이 1~2.7초까지 밀려서 CV 태스크의 수신 타임아웃(2초)에
+	//   걸렸다. 슬롯 순회는 그대로 두고 스레드만 하나로 줄인다.
+	//   (킬 이벤트는 슬롯 0 것을 쓰므로 전부 리셋해 둔다.)
 	for (int i = 0 ; i < PLC_CONN_PORT_CNT ; i++)
 	{
 		::ResetEvent(m_hEventArray[i][enEventKill]);
-		m_pThread[i] = ::AfxBeginThread(m_pfThreadProc[i], this);
+		m_pThread[i] = NULL;
 	}
+
+	m_pThread[0] = ::AfxBeginThread(m_pfThreadProc[0], this);
 
 	DEBUGER_ASSERT_VALID(m_pThread != NULL);
 }
@@ -473,6 +488,12 @@ UINT CEquipment::ThreadProc(LPVOID pParam)
 				return 0;
 
 			case WAIT_TIMEOUT:
+				// @.수신 이벤트가 없어도 소켓을 직접 확인한다.
+				//   OnReceive 는 윈도우 메시지로 UI 스레드에 오는데, OnTimer 의
+				//   UpdateSignalReg 가 100ms 를 넘게 잡아먹으면 통지가 초 단위로
+				//   밀린다. RecvData 는 IOCtl(FIONREAD) 로 직접 물어보므로
+				//   메시지 펌프와 무관하고, 받을 것이 없으면 그냥 빠진다.
+				pThis->AutoRunProc(i);
 				break;
 
 			default:
@@ -481,7 +502,7 @@ UINT CEquipment::ThreadProc(LPVOID pParam)
 			}
 		}
 
-		::Sleep(100);
+		::Sleep(10);
 	}
 
 	strLog.Format(_T("\r\n %s THREAD 종료 (END) \r\n"), pThis->m_port.m_strDevice);
