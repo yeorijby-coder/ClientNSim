@@ -29,16 +29,16 @@
 
 	<Group>
 		<Use>Y</Use>
-		<Name>1층 : 입고대 102 -> 중간도착대 105 -> 랙(SC 1~5호기) -> 출고대 105</Name>
-		<StoStns><Stn>102</Stn></StoStns>
-		<ViaStns><Stn>105</Stn></ViaStns>
+		<Name> 101  -> 105 </Name>
+		<StoStns><Stn>101</Stn></StoStns>
+		<ViaStns><Stn>107</Stn></ViaStns>
 		<RetStns><Stn>105</Stn></RetStns>
 		<Scs><Sc>1</Sc><Sc>2</Sc><Sc>3</Sc><Sc>4</Sc><Sc>5</Sc></Scs>
 	</Group>
 
 	<Group>
-		<Use>Y</Use>
-		<Name>1층 : 입고대 102 -> 중간도착대 108 -> 랙(SC 6~10호기) -> 출고대 105</Name>
+		<Use>N</Use>
+		<Name> 102  -> 105 </Name>
 		<StoStns><Stn>102</Stn></StoStns>
 		<ViaStns><Stn>108</Stn></ViaStns>
 		<RetStns><Stn>105</Stn></RetStns>

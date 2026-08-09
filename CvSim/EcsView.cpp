@@ -225,7 +225,14 @@ void CEcsView::OnInitialUpdate()
 
 	UINT uTimerID = 0;
 
-	m_nMainTimerID = SetTimer(ID_MAIN_TIMER, 100, NULL);
+	// @.화면 갱신 주기. OnTimer 한 번이 전 PLC 의 전 트랙 신호를 다시 계산하므로
+	//   PLC 대수가 늘면 그만큼 무거워진다. Ecs.ini [COMMON] TimerTick 으로 조정한다.
+	//   (없으면 300ms. 예전 값은 100ms 였는데 PLC 8대에서는 CPU 를 코어 하나만큼 먹었다)
+	int nTimerTick = ::GetPrivateProfileInt(_T("COMMON"), _T("TimerTick"), 100, ECS_INI_FILE);
+	if (nTimerTick < 50)   nTimerTick = 50;
+	if (nTimerTick > 5000) nTimerTick = 5000;
+
+	m_nMainTimerID = SetTimer(ID_MAIN_TIMER, nTimerTick, NULL);
 
 	m_cbxPlcNo.AddString(_T("01"));
 	m_cbxPlcNo.AddString(_T("02"));
