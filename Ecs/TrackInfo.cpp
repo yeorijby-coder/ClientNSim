@@ -68,7 +68,25 @@ COLORREF CTrackInfo::GetCvColor()
 	CConfig* pConfig = m_pEquipment->m_pDoc->m_pConfig;
 	DEBUGER_ASSERT_VALID(pConfig != NULL);
 
-	if (m_pCV_DATA->V_ERROR_CODE != _T("0"))
+	/*
+	 * 에러코드는 현장마다 자리수가 다르다. CV 태스크는 DeviceMap 의 포맷("0000")대로
+	 * 채워 넣으므로 정상일 때 "0000" 이 들어온다. 예전에는 "0" 하고만 비교해서
+	 * 정상 트랙까지 전부 에러색으로 칠했다.
+	 * (스케줄러는 같은 값을 ERROR_CODE IN ('0','0000') 으로 본다)
+	 * 비었거나 전부 0 이면 에러가 아니다.
+	 */
+	BOOL bError = FALSE;
+	for (int nIdxErr = 0; nIdxErr < m_pCV_DATA->V_ERROR_CODE.GetLength(); ++nIdxErr)
+	{
+		TCHAR chErr = m_pCV_DATA->V_ERROR_CODE[nIdxErr];
+		if (chErr != _T('0') && chErr != _T(' '))
+		{
+			bError = TRUE;
+			break;
+		}
+	}
+
+	if (bError == TRUE)
 		return pConfig->m_clrUSER_COLOR_ERROR;
 
 
