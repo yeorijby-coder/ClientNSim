@@ -1018,7 +1018,13 @@ void CHostCl::Parsing(char *pFrame)
 		{
 			// 작업지시에 대한 전문 재보고 
 
-			strLog.Format(_T("작업 지시 응답 이상으로 작업지시 재전송 [%d=%s]"), nResultCode, CLib::GetHostResultSting(nResultCode));
+			// @.거절당한 작업번호를 로직 슬롯에서 풀어 준다.
+			//   안 풀면 그 슬롯이 이 번호를 계속 물고 있어서, 다음 주기에도 같은
+			//   번호로 내고 ECS 는 "이미 지시된 작업입니다" 로 또 거절한다.
+			int nReleased = m_pDoc->ReleaseWorkingLugg(nLuggNum);
+
+			strLog.Format(_T("작업지시 거절 [작업번호:%d] [%d=%s] - 슬롯 %d개 해제. 다음 주기에 다시 시도한다."),
+						  nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode), nReleased);
 			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
 			return;
 		}
@@ -1028,7 +1034,10 @@ void CHostCl::Parsing(char *pFrame)
 		{
 			// 재 작업지시에 대한 전문 재보고 
 
-			strLog.Format(_T("재 작업 지시 응답 이상으로 재 작업 지시 재전송 [%d=%s]"), nResultCode, CLib::GetHostResultSting(nResultCode));
+			int nReleased = m_pDoc->ReleaseWorkingLugg(nLuggNum);
+
+			strLog.Format(_T("재작업 지시 거절 [작업번호:%d] [%d=%s] - 슬롯 %d개 해제. 다음 주기에 다시 시도한다."),
+						  nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode), nReleased);
 			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
 			return;
 		}

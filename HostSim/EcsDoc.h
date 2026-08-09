@@ -139,6 +139,12 @@ public:
 //	CArray<CDciStaticCtrl*, CDciStaticCtrl*> m_pStoDataChk2;
 	CArray<SLogicGorupInfo*, SLogicGorupInfo*> m_pLogicGorupInfos;
 
+	// @.거절당한(또는 어긋난) 작업번호를 로직 슬롯에서 풀어 준다.
+	//   nLuggNum 이 0 이면 전 슬롯을 푼다. 푼 개수를 돌려준다.
+	int ReleaseWorkingLugg(int nLuggNum = 0);
+
+	afx_msg void OnJobResetLugg();		// @.메뉴 [작업]-[로직 작업번호 초기화]
+
 	int m_nScRetFrontRemainJobCnt[SC1_PLC_CNT];
 	int m_nScRetRearRemainJobCnt[SC_PLC_TOT_CNT];
 

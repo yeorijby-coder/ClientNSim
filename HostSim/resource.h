@@ -1327,6 +1327,7 @@
 #define ID_INPUT_MESSAGE                32916
 #define ID_JOB_OFFLINE2                 32917
 #define ID_JOB_OFFLINE1                 32918
+#define ID_JOB_RESET_LUGG               32919
 
 // Next default values for new objects
 // 
@@ -1334,7 +1335,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        374
-#define _APS_NEXT_COMMAND_VALUE         32919
+#define _APS_NEXT_COMMAND_VALUE         32920
 #define _APS_NEXT_CONTROL_VALUE         1596
 #define _APS_NEXT_SYMED_VALUE           111
 #endif

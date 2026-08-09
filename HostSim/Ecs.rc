@@ -486,6 +486,8 @@ BEGIN
     POPUP "작업(&J)"
     BEGIN
         MENUITEM "작업정보 관리(J)...",               ID_JOB_MANAGER
+        MENUITEM SEPARATOR
+        MENUITEM "로직 작업번호 초기화(&R)",        ID_JOB_RESET_LUGG
         MENUITEM "반자동 작업(&O)...",               ID_JOB_OFFLINE
     END
     POPUP "로그(&L)"

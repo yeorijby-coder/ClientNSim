@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CEcsDoc, CDocument)
 	ON_COMMAND(ID_JOB_OFFLINE1, OnJobOffline1)
 	ON_COMMAND(ID_JOB_OFFLINE2, OnJobOffline2)
 	ON_COMMAND(ID_JOB_MANAGER, OnJobManager)
+	ON_COMMAND(ID_JOB_RESET_LUGG, OnJobResetLugg)
 	ON_COMMAND(ID_LOG_ALL, OnLogAll)
 	ON_COMMAND(ID_RACK_CONFIG, OnRackConfig)
 	ON_COMMAND_EX(ID_COM_HOST_CLIENT, OnComStatusHost)
@@ -1064,6 +1065,71 @@ void CEcsDoc::OnJobTestStop()
 	m_bTesting = FALSE;
 	return;
 	//*/
+}
+
+//==============================================================================
+//	Desc	: 로직 슬롯이 물고 있는 작업번호를 풀어 준다.
+//
+//	  지시를 낼 때 슬롯에 m_nWorkingLuggNum 을 채워 두는데, ECS 가 그 지시를
+//	  거절하면 그 번호가 그대로 남아 슬롯이 물린다. 다시 돌려도 같은 번호로 내서
+//	  "이미 지시된 작업입니다" 로 또 거절당한다. 그럴 때 이 함수로 풀어 준다.
+//	  nLuggNum 이 0 이면 전 슬롯을 푼다.
+//==============================================================================
+//==============================================================================
+//	Desc	: 메뉴 [작업]-[로직 작업번호 초기화]
+//
+//	  ECS 가 응답을 못 준 채로 끊겼거나, ECS 쪽 JOB_MST 를 손으로 지워서 양쪽이
+//	  어긋났을 때 쓴다. 로직 슬롯이 물고 있는 작업번호를 전부 풀어 다음 주기부터
+//	  새 번호로 다시 지시하게 한다.
+//==============================================================================
+void CEcsDoc::OnJobResetLugg()
+{
+	if (::AfxMessageBox(_T("로직이 물고 있는 작업번호를 모두 풀겠습니까?\n\n")
+						_T("ECS 가 거절했거나 응답을 못 받아 슬롯이 물렸을 때 씁니다.\n")
+						_T("풀고 나면 다음 주기에 새 번호로 다시 지시합니다."),
+						MB_YESNO | MB_ICONQUESTION) != IDYES)
+		return;
+
+	int nReleased = ReleaseWorkingLugg(0);
+
+	CString strLog;
+	strLog.Format(_T("로직 작업번호 초기화 - 슬롯 %d개 해제"), nReleased);
+	WriteLog(LOG_TYPE_EVENT, LOG_POS_HOST, strLog, _T("CEcsDoc::OnJobResetLugg"));
+	::AfxMessageBox(strLog, MB_OK | MB_ICONINFORMATION);
+}
+
+int CEcsDoc::ReleaseWorkingLugg(int nLuggNum /* = 0 */)
+{
+	int nReleased = 0;
+
+	for (int i = 0; i < m_pLogicGorupInfos.GetSize(); ++i)
+	{
+		SLogicGorupInfo* pGroup = m_pLogicGorupInfos[i];
+		if (pGroup == NULL)
+			continue;
+
+		for (int j = 0; j < pGroup->m_pJobInvokeInfos.GetSize(); ++j)
+		{
+			SJobInvokeInfo* pInfo = pGroup->m_pJobInvokeInfos[j];
+			if (pInfo == NULL)
+				continue;
+
+			if (pInfo->m_nWorkingLuggNum == 0)
+				continue;
+
+			if (nLuggNum != 0 && pInfo->m_nWorkingLuggNum != nLuggNum)
+				continue;
+
+			pInfo->m_nPrevLuggNum    = pInfo->m_nWorkingLuggNum;
+			pInfo->m_nWorkingLuggNum = 0;
+			pInfo->m_bCompleteStore  = FALSE;
+			pInfo->m_bCompleteMove   = FALSE;
+			pInfo->m_nWorkingJobType = 0;
+			nReleased++;
+		}
+	}
+
+	return nReleased;
 }
 
 void CEcsDoc::OnJobManager() 
