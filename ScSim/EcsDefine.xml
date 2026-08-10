@@ -282,6 +282,13 @@
 			<Sc plcno="02" number="902"/>
 			<Sc plcno="03" number="903"/>
 			<Sc plcno="04" number="904"/>
+			<Sc plcno="05" number="905"/>
+			<Sc plcno="06" number="906"/>
+			<Sc plcno="07" number="907"/>
+			<Sc plcno="08" number="908"/>
+			<Sc plcno="09" number="909"/>
+			<Sc plcno="10" number="910"/>
+			<Sc plcno="11" number="911"/>
 		</Scs>
 	</Equipment>
 	
