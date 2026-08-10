@@ -136,11 +136,11 @@
 				<action ANum="51" AKeyWord="RetStation"/>
 			</actions>
 		</Logic>
-		<Logic id="2" desc="OR 조건으로 들어가야 하는거 아닌가?">
-			<conditions desc="작번 無, 목적지 無, 수동, 화물 OFF, 출고대 ON">
+		<Logic id="2" desc="도착대가 비었으면 출고 신호를 내린다">
+			<conditions desc="작번 無, 목적지 無, 자동, 화물 OFF, 출고대 ON">
 				<condition CNum="3" CKeyWord="LuggNum"/>
 				<condition CNum="3" CKeyWord="DestPos"/>
-				<condition CNum="0" CKeyWord="Auto"/>
+				<condition CNum="1" CKeyWord="Auto"/>
 				<condition CNum="0" CKeyWord="ProductSensor"/>
 				<condition CNum="1" CKeyWord="RetStation"/>
 				<condition CNum="6" CKeyWord="ArvStation"/>

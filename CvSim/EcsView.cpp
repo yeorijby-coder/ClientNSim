@@ -208,6 +208,38 @@ void CEcsView::OnInitialUpdate()
 		}
 	}
 
+	/*
+	 * 입고대의 화물감지를 기동 때 한 번 내린다.
+	 *
+	 *   ForkLift 로직(DeviceMap.xml)은 빈 상태에서 시작해야 돈다.
+	 *     Logic 1  화물감지 OFF 이고 3초 지나면  -> 화물감지 ON
+	 *     Logic 2  화물감지 ON 이고 5초 지나면   -> 입고대 ON
+	 *   직전 실행의 화물감지가 켜진 채로 남아 있으면 Logic 1 의 조건이 계속 어긋나
+	 *   입고대 신호가 영영 올라오지 않는다. 실제로 224(입고대#2)가 그 상태로
+	 *   멈춰 있었다. 저장된 값을 믿지 않고 빈 상태에서 출발시킨다.
+	 */
+	for (i = 0; i < pDoc->m_pEquipments.GetSize(); ++i)
+	{
+		CCv* pCv = (CCv*)pDoc->m_pEquipments[i];
+
+		if (pCv == NULL || pCv->m_enKind != CEquipment::enCV || pCv->m_pInfo == NULL)
+			continue;
+
+		int nTrackCnt = pCv->m_pInfo->m_pTracks.GetSize();
+		for (int j = 0; j < nTrackCnt; ++j)
+		{
+			CTrackInfo* pTrack = pCv->m_pInfo->m_pTracks[j];
+
+			if (pTrack == NULL || pTrack->GetStoStation() == NULL)
+				continue;
+
+			int nDevNum = (pTrack->m_nNumber - pCv->m_nStTrNum + 1) * pDoc->m_nWordCnt;
+			int nSensor = pDoc->GetAddrByName(pCv->m_nNumber - 1, nDevNum, _T("SensorData"));
+
+			pDoc->SetAddrByName(pCv->m_nNumber - 1, nDevNum, _T("ProductSensor"), nSensor, 4);	// OFF
+		}
+	}
+
 	// 레이아웃당 1개의 탭을 구성할 수 있다.  - 레이아웃에 여러대의 SC를 넣을 수 있다. 
 	int nPlcCount = 0;
 	int nLayoutCnt = pDoc->m_pEcsLayOuts.GetSize();
