@@ -785,4 +785,41 @@
 			<Track	number="835" tabnumber="2"/>
 		</Tracks>
 	</Equipment>
+	<Equipment class="CSc" number="9" device="SC" thread="09" desc="크레인 11대. 반드시 CV 설비 뒤에 있어야 한다">
+		<Scs>
+			<Sc plcno="01" number="901" desc="구라인 1F(PLC02)/3F(PLC03)">
+				<ScStation name="S/C#1" bankpos="1" bank="2" bay="36" level="20" stohs="202" reths="203" stohs3f="316" reths3f="317"/>
+			</Sc>
+			<Sc plcno="02" number="902" desc="구라인 1F(PLC02)/3F(PLC03)">
+				<ScStation name="S/C#2" bankpos="1" bank="2" bay="36" level="20" stohs="210" reths="207" stohs3f="326" reths3f="324"/>
+			</Sc>
+			<Sc plcno="03" number="903" desc="구라인 1F(PLC02)/3F(PLC03)">
+				<ScStation name="S/C#3" bankpos="1" bank="2" bay="36" level="20" stohs="214" reths="215" stohs3f="331" reths3f="332"/>
+			</Sc>
+			<Sc plcno="04" number="904" desc="구라인 1F(PLC02)/3F(PLC03)">
+				<ScStation name="S/C#4" bankpos="1" bank="2" bay="36" level="20" stohs="222" reths="221" stohs3f="339" reths3f="338"/>
+			</Sc>
+			<Sc plcno="05" number="905" desc="구라인 1F(PLC02)/3F(PLC03)">
+				<ScStation name="S/C#5" bankpos="1" bank="2" bay="36" level="20" stohs="257" reths="258" stohs3f="344" reths3f="345"/>
+			</Sc>
+			<Sc plcno="06" number="906" desc="구라인 1F(PLC02)/3F(PLC03)">
+				<ScStation name="S/C#6" bankpos="1" bank="2" bay="36" level="20" stohs="254" reths="248" stohs3f="354" reths3f="348"/>
+			</Sc>
+			<Sc plcno="07" number="907" desc="신라인 1F(PLC05)/3F(PLC06)">
+				<ScStation name="S/C#7" bankpos="1" bank="2" bay="36" level="20" stohs="503" reths="504" stohs3f="603" reths3f="604"/>
+			</Sc>
+			<Sc plcno="08" number="908" desc="신라인 1F(PLC05)/3F(PLC06)">
+				<ScStation name="S/C#8" bankpos="1" bank="2" bay="36" level="20" stohs="509" reths="510" stohs3f="609" reths3f="610"/>
+			</Sc>
+			<Sc plcno="09" number="909" desc="신라인 1F(PLC05)/3F(PLC06)">
+				<ScStation name="S/C#9" bankpos="1" bank="2" bay="36" level="20" stohs="515" reths="516" stohs3f="615" reths3f="616"/>
+			</Sc>
+			<Sc plcno="10" number="910" desc="신라인 1F(PLC05)/3F(PLC06)">
+				<ScStation name="S/C#10" bankpos="1" bank="2" bay="36" level="20" stohs="521" reths="522" stohs3f="621" reths3f="622"/>
+			</Sc>
+			<Sc plcno="11" number="911" desc="P-BOX(PLC04) 트윈">
+				<ScStation name="S/C#11" bankpos="1" bank="2" bay="36" level="20" stohs="419,420" reths="410,411"/>
+			</Sc>
+		</Scs>
+	</Equipment>
 </ECS>
