@@ -209,14 +209,25 @@ void CEcsView::OnInitialUpdate()
 	}
 
 	/*
-	 * 입고대의 화물감지를 기동 때 한 번 내린다.
+	 * 기동 때 화물감지와 작업대 준비신호를 한 번 내린다.
 	 *
-	 *   ForkLift 로직(DeviceMap.xml)은 빈 상태에서 시작해야 돈다.
-	 *     Logic 1  화물감지 OFF 이고 3초 지나면  -> 화물감지 ON
-	 *     Logic 2  화물감지 ON 이고 5초 지나면   -> 입고대 ON
-	 *   직전 실행의 화물감지가 켜진 채로 남아 있으면 Logic 1 의 조건이 계속 어긋나
-	 *   입고대 신호가 영영 올라오지 않는다. 실제로 224(입고대#2)가 그 상태로
-	 *   멈춰 있었다. 저장된 값을 믿지 않고 빈 상태에서 출발시킨다.
+	 *   CvSim 은 레지스터를 Temp\*.ecs 에 저장하고 기동 때 되살린다.
+	 *   그런데 아래 값들은 "지금 화물이 있느냐"에서 나오는 것이라
+	 *   되살아나면 실제와 어긋난 채로 굳는다.
+	 *
+	 *   화물감지(입고대)
+	 *     ForkLift 로직(Logic.xml)은 빈 상태에서 시작해야 돈다.
+	 *       Logic 1  화물감지 OFF 이고 3초 지나면  -> 화물감지 ON
+	 *       Logic 2  화물감지 ON 이고 5초 지나면   -> 입고대 ON
+	 *     화물감지가 켜진 채로 남아 있으면 Logic 1 의 조건이 계속 어긋나
+	 *     입고대 신호가 영영 올라오지 않는다. 224(입고대#2)가 그 상태였다.
+	 *
+	 *   입고대/출고대 준비신호
+	 *     218(도착대)이 화물 없이 입고 신호(D550)와 출고 신호(D551)를 켠 채로
+	 *     올라왔다. 비트를 내려 보니 아무도 다시 세우지 않았다. 되살아난 값이었다.
+	 *     둘 다 로직이 현재 상태에서 몇 초 안에 다시 만들어 낸다.
+	 *     크레인 H/S(ScStoHS/ScRetHS)는 건드리지 않는다. 화물이 실제로 올라와
+	 *     있는 상태를 담고 있어 함부로 지울 값이 아니다.
 	 */
 	for (i = 0; i < pDoc->m_pEquipments.GetSize(); ++i)
 	{
@@ -230,13 +241,23 @@ void CEcsView::OnInitialUpdate()
 		{
 			CTrackInfo* pTrack = pCv->m_pInfo->m_pTracks[j];
 
-			if (pTrack == NULL || pTrack->GetStoStation() == NULL)
+			if (pTrack == NULL)
 				continue;
 
+			int nPlcNo = pCv->m_nNumber - 1;
 			int nDevNum = (pTrack->m_nNumber - pCv->m_nStTrNum + 1) * pDoc->m_nWordCnt;
-			int nSensor = pDoc->GetAddrByName(pCv->m_nNumber - 1, nDevNum, _T("SensorData"));
 
-			pDoc->SetAddrByName(pCv->m_nNumber - 1, nDevNum, _T("ProductSensor"), nSensor, 4);	// OFF
+			// 입고대는 빈 상태에서 출발해야 ForkLift 로직이 돈다
+			if (pTrack->GetStoStation() != NULL)
+			{
+				int nSensor = pDoc->GetAddrByName(nPlcNo, nDevNum, _T("SensorData"));
+				pDoc->SetAddrByName(nPlcNo, nDevNum, _T("ProductSensor"), nSensor, 4);	// OFF
+			}
+
+			// 작업대 준비신호는 현재 상태에서 다시 만들어진다. 되살린 값을 남기지 않는다.
+			// (그 영역에 없는 트랙이면 SetAddrByName 이 아무 일도 하지 않는다)
+			pDoc->SetAddrByName(nPlcNo, nDevNum, _T("StoStation"), 0, 4);	// OFF
+			pDoc->SetAddrByName(nPlcNo, nDevNum, _T("RetStation"), 0, 4);	// OFF
 		}
 	}
 
