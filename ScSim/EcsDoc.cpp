@@ -214,69 +214,70 @@ void CEcsDoc::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void CEcsDoc::DeleteData(int nPlcNum, int nFork) 
+void CEcsDoc::DeleteData(int nPlcNum, int nFork)
 {
-	int nCount = 8;
-	
-	BOOL bTemp = FALSE;
-	int nRegAddr = 0;
-	
+	// 포크 한 벌은 작번부터 9워드다 (D112~D120 / D122~D130).
+	int nCount = 9;
+
+	BOOL bOther = FALSE;
+	int nOtherAddr = 0;
+
 	switch(nFork)
 	{
-	case 1:	
-		DeleteData1(nPlcNum);
-		// 데이타가 2번 포크에도 없으면 작업구분을 없앤다.
-		nRegAddr = 123;
-		break;
-	case 2:		
-		DeleteData2(nPlcNum);							
-		// 데이타가 1번 포크에도 없으면 작업구분을 없앤다.
-		nRegAddr = 113;
-		break;
-	case 3:		
-		m_arrRegData[nPlcNum][111] = 0x00;	
-		DeleteData1(nPlcNum);		
-		DeleteData2(nPlcNum);		
-		break;		
+	case 1:	nOtherAddr = 122;	break;		// 반대편은 포크2
+	case 2:	nOtherAddr = 112;	break;		// 반대편은 포크1
+	case 3:	nOtherAddr = 0;		break;		// 양쪽 다 지운다
 	}
-	
-	// 반대편 포크에 데이타 있는지 확인한다.
-	if (nRegAddr != 0)
+
+	// 반대편 포크에 데이터가 남는지 먼저 본다.
+	if (nOtherAddr != 0)
 	{
-		for (int i=0;i<nCount;i++)
+		for (int i = 0 ; i < nCount ; i++)
 		{
-			int nTemp = m_arrRegData[nPlcNum][nRegAddr + i];
-			if (nTemp != 0x00)
-				bTemp = TRUE;
+			if (m_arrRegData[nPlcNum][nOtherAddr + i] != 0x00)
+			{
+				bOther = TRUE;
+				break;
+			}
 		}
 	}
-	
-	// 반대편 포크에도 데이터가 없으면... 작업구분을 없애준다.
-	if (bTemp == FALSE)
+
+	// 작업구분을 먼저 지운다.
+	//   작업구분이 남은 채 작번만 지워지는 순간이 있으면 감시가 그것을
+	//   "수신데이터 이상(141)"으로 보고 크레인을 에러로 만든다.
+	//   PLC 서버 스레드와 화면 타이머가 따로 돌기 때문에 그 짧은 순간에도 걸린다.
+	if (bOther == FALSE)
 	{
-		m_arrRegData[nPlcNum][111] = 0x00;		
+		m_arrRegData[nPlcNum][111] = 0x00;
+	}
+
+	switch(nFork)
+	{
+	case 1:	DeleteData1(nPlcNum);							break;
+	case 2:	DeleteData2(nPlcNum);							break;
+	case 3:	DeleteData1(nPlcNum);	DeleteData2(nPlcNum);	break;
 	}
 }
 
 void CEcsDoc::DeleteData1(int nPlcNum) 
 {
-	int nCount = 8;
+	int nCount = 9;		// D112 작번 ~ D120 도착 작업대
 	
 	for (int i = 0 ; i < nCount ; i++)
 	{
-		m_arrRegData[nPlcNum][113 + i] = 0x00;
+		m_arrRegData[nPlcNum][112 + i] = 0x00;
 	}
 }
 
 void CEcsDoc::DeleteData2(int nPlcNum) 
 {
-	int nCount = 8;
+	int nCount = 9;		// D122 작번 ~ D130 도착 작업대
 	
 	m_arrRegData[nPlcNum][121] = 0x00;
 	
 	for (int i = 0 ; i < nCount ; i++)
 	{
-		m_arrRegData[nPlcNum][123 + i] = 0x00;
+		m_arrRegData[nPlcNum][122 + i] = 0x00;
 	}
 }
 

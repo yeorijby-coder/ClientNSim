@@ -1431,8 +1431,32 @@ void CEcsView::CheckRequest(int nPlcNum)
 		case 0x0002:	pDoc->m_arrRegData[nPlcNum][109] = 1;															break;	// ACTIVE
 		case 0x0004:	pDoc->m_arrRegData[nPlcNum][109] = 0;															break;	// 정지
 		case 0x0008:	pDoc->m_arrRegData[nPlcNum][101] = 1;				pDoc->m_arrRegData[nPlcNum][105] = 0;		break;	// ERROR RESET
-		case 0x0010:	pDoc->DeleteData(nPlcNum, 1);						pDoc->m_arrRegData[nPlcNum][109] = 0;		break;	// FORK #1 삭제
-		case 0x0020:	pDoc->DeleteData(nPlcNum, 2);						pDoc->m_arrRegData[nPlcNum][109] = 0;		break;	// FORK #2 삭제
+		case 0x0010:
+			pDoc->DeleteData(nPlcNum, 1);
+			// 지운 포크의 적재/하역 단계도 되돌린다.
+			// (양쪽 삭제는 하는데 한쪽 삭제는 안 해서, 입고를 마친 크레인이
+			//  다음 출고를 하역 단계로 착각하고 움직이지 않았다)
+			m_bUnLoad[nPlcNum] = FALSE;
+			m_bLoad[nPlcNum] = TRUE;
+			m_bJob1[nPlcNum] = FALSE;
+			m_bJob2[nPlcNum] = FALSE;
+			m_bFirstComplete[nPlcNum] = FALSE;
+			m_bOldFirstComplete[nPlcNum] = FALSE;
+			pDoc->m_arrRegData[nPlcNum][109] = 0;
+			break;	// FORK #1 삭제
+		case 0x0020:
+			pDoc->DeleteData(nPlcNum, 2);
+			// 지운 포크의 적재/하역 단계도 되돌린다.
+			// (양쪽 삭제는 하는데 한쪽 삭제는 안 해서, 입고를 마친 크레인이
+			//  다음 출고를 하역 단계로 착각하고 움직이지 않았다)
+			m_bUnLoad[nPlcNum] = FALSE;
+			m_bLoad[nPlcNum] = TRUE;
+			m_bJob1[nPlcNum] = FALSE;
+			m_bJob2[nPlcNum] = FALSE;
+			m_bFirstComplete[nPlcNum] = FALSE;
+			m_bOldFirstComplete[nPlcNum] = FALSE;
+			pDoc->m_arrRegData[nPlcNum][109] = 0;
+			break;	// FORK #2 삭제
 		case 0x0040:																						
 			pDoc->DeleteData(nPlcNum, 3);	
 //			m_bLoad = TRUE;		 
