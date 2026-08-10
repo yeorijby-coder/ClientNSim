@@ -62,6 +62,22 @@ int CStationInfo::GetTrackDestination()
 		if (m_strID.GetLength() == 3)
 			nTemp = _ttoi(m_strID);
 
+		/*
+		 * 크레인 목적지는 호기 번호로 쓴다.
+		 *
+		 *   스테이션 ID 는 901~911 이지만, 설비(PLC)에 실리는 목적지 자리는
+		 *   한 바이트라 그 값이 들어가지 못한다. WCS 도 CV 에 지시할 때
+		 *   9NN 을 호기 번호로 되돌려 보낸다.
+		 *   (WCS_IO_SCH_Original 의 GfCvDestPos)
+		 *
+		 *   여기서 901 을 그대로 돌려주면 트랙의 목적지 표(m_nStationArray)에
+		 *   9NN 이 들어가고, 화물 이동이 그 표와 레지스터 값을 견주는데
+		 *   레지스터에는 호기 번호가 들어 있어 영영 맞지 않는다.
+		 *   그러면 화물이 다음 트랙으로 넘어가지 못한다.
+		 */
+		if ((nTemp > 900) && (nTemp < 1000))
+			nTemp -= 900;
+
 		return nTemp;
 	}
 
