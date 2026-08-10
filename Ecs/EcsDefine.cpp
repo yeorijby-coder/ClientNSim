@@ -109,7 +109,8 @@ BOOL CEcsDefine::ParseXml()
 				break;
 
 			case CEquipment::enSC: //무조건 페어로 생성
-				if (!ParseSc(pEquipment))
+				// ParseScSingle 은 통째로 주석 처리된 죽은 길이다. 위 주석대로 페어로 보낸다.
+				if (!ParseSc(pEquipment, 1))
 				{
 					DEBUGER_TRACE(_T("Fail to ParseSc!"), __WFUNCTION__);
 					return FALSE;
