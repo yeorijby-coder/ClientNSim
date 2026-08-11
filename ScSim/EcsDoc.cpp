@@ -710,7 +710,7 @@ BOOL CEcsDoc::Initialize()
 		CEcsLayout* pEcsLayout = new CEcsLayout();
 
 		CString strLayOutFilePath;
-		strLayOutFilePath.Format(_T(".\\EcsLayout%d.xml"), i + 1);
+		strLayOutFilePath.Format(_T(".\\ScLayout%d.XML"), i + 1);
 
 		if (!pEcsLayout->LoadXml(strLayOutFilePath))
 		{
