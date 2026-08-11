@@ -58,7 +58,7 @@
 
 
 #define ECS_CODE_FILE			g_strEcsPath + _T("\\EcsCode.dat")
-#define ECS_INI_FILE			g_strEcsPath + _T("\\Ecs.ini")
+#define ECS_INI_FILE			g_strEcsPath + _T("\\HostSim_DB.ini")
 #define ECS_CFG_FILE			g_strEcsPath + _T("\\SKI_SIM_EQP.cfg")
 
 #define IP_INI_FILE				g_strEcsPath  + _T("\\KioskIp.ini")
