@@ -1401,12 +1401,19 @@ void CEcsView::CheckRequest(int nPlcNum)
 				pDoc->m_arrRegData[nPlcNum][101] = 0x02;		// SC 상태를 '동작중'으로 바꾼다.
 				pDoc->m_arrRegData[nPlcNum][110] = 0x00;		// 작업 완료 상태를 작업중으로 바꾼다.
 
-				// 데이터 옮김
-				for (int i = 0 ; i < 20 ; i++)
+				// 데이터 옮김 (D171~190 -> D111~130)
+				//   작업구분(D111)을 마지막에 옮긴다.
+				//   작업구분만 먼저 들어가고 작번(D112)이 아직 0 인 순간이 있으면
+				//   CheckRuningJob 이 그것을 수신데이터 이상(141)으로 보고
+				//   크레인을 에러로 만든다. 화면 타이머가 따로 돌기 때문에
+				//   그 짧은 순간에도 걸린다.
+				for (int i = 1 ; i < 20 ; i++)
 				{
-					pDoc->m_arrRegData[nPlcNum][111+i] = pDoc->m_arrRegData[nPlcNum][171+i]; // D111~130 -> D171~190
+					pDoc->m_arrRegData[nPlcNum][111+i] = pDoc->m_arrRegData[nPlcNum][171+i];
 					pDoc->m_arrRegData[nPlcNum][171+i] = 0; //쓰기영역 0
 				}
+				pDoc->m_arrRegData[nPlcNum][111] = pDoc->m_arrRegData[nPlcNum][171];
+				pDoc->m_arrRegData[nPlcNum][171] = 0;
 				return;
 			}
 			#pragma endregion
