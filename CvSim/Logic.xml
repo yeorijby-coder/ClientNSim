@@ -51,8 +51,7 @@
 				<condition CNum="6"  CKeyWord="RetStation"/>
 				<condition CNum="15" CKeyWord="5"/>
 			</conditions>
-			<actions desc ="Track Data 삭제, StartFlagOff">
-				<action ANum="52" AKeyWord="Auto"/>
+			<actions desc ="Track Data 삭제, StartFlagOff (Auto OFF 는 뺐다 - 구역 비트라 지게차가 가져갈 때마다 PLC 전체가 수동으로 떨어졌다)">
 				<action ANum="57" AKeyWord="LuggNum"/>
 				<action ANum="57" AKeyWord="DestPos"/>
 				<action ANum="57" AKeyWord="D5n+1"/>
