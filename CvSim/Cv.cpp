@@ -73,10 +73,42 @@ BOOL CCv::CheckRequest(int nConnNum)
 	//CWordArray arrBuffer;
 
 	
-	if (m_pSocket[nConnNum]->CheckRequest(arrBuffer) == FALSE)
+	// PLC 번호가 레지스터 배열 범위 안인지 본다.
+	if (m_nPlcNum < 1 || m_nPlcNum > CV_PLC_CNT)
 	{
 		return FALSE;
 	}
+
+	// 소켓을 지역 변수에 한 번만 담아서 쓴다.
+	//   통신이 끊기면 OnClose 가 m_pSocket[nConnNum] 을 NULL 로 만든다.
+	//   (객체를 지우지는 않으므로 담아 둔 포인터는 계속 유효하다)
+	//   예전에는 쓸 때마다 배열에서 다시 읽었다. 그래서 아래에서 프레임을
+	//   받는 사이에 상대가 끊으면 그 다음 줄부터 NULL 을 건드려 죽었다.
+	//   접근 위반 0xC0000005 - 실제로 여러 번 여기서 죽었다.
+	CInterfaceSk* pSocket = m_pSocket[nConnNum];
+	if (pSocket == NULL)
+	{
+		return FALSE;
+	}
+
+	if (pSocket->CheckRequest(arrBuffer) == FALSE)
+	{
+		return FALSE;
+	}
+
+	// 프레임을 받는 사이에 끊겼으면 응답하지 않는다.
+	if (m_pSocket[nConnNum] != pSocket)
+	{
+		return FALSE;
+	}
+
+	// 헤더를 짚기 전에 프레임이 온전한지 본다.
+	// 조각난 프레임을 그대로 읽으면 배열 범위를 넘는다.
+	if (arrBuffer.GetSize() < 21)		// [20] 까지 읽는다
+	{
+		return FALSE;
+	}
+
 	int nHi = arrBuffer[12];
 	int nLow = arrBuffer[11];
 	int nnLen = (arrBuffer[8] << 8 ) | arrBuffer[7];
@@ -88,16 +120,23 @@ BOOL CCv::CheckRequest(int nConnNum)
 	if (nStartaddress > 10000)
 		return FALSE;
 
+	const int nRegSize = m_pDoc->m_arrRegData[m_nPlcNum - 1].GetTotalWordSize();
+
 	arrBuffer[9] = nLen;
 
-	m_pSocket[nConnNum]->m_bWriteLog = m_port.m_bWriteLog;
+	pSocket->m_bWriteLog = m_port.m_bWriteLog;
 
 	if (nCommand == 0x0401)
 	{
 		arrBuffer.SetSize(nLen*2);
 		for (int i=0; i<nLen; ++i)
 		{
-			WORD wTemp = m_pDoc->m_arrRegData[m_nPlcNum - 1][nStartaddress + i];
+			// 범위 밖은 0 으로 답한다. 버리면(응답을 안 보내면)
+			// 소켓 계층이 다음 요청부터 무너져 프로세스가 죽는다.
+			int nAddr = nStartaddress + i;
+			WORD wTemp = 0;
+			if (nAddr >= 0 && nAddr < nRegSize)
+				wTemp = m_pDoc->m_arrRegData[m_nPlcNum - 1][nAddr];
 			BYTE bTemp1 = CLib::GetByteH(wTemp);
 			BYTE bTemp2 = CLib::GetByteL(wTemp);
 
@@ -105,25 +144,35 @@ BOOL CCv::CheckRequest(int nConnNum)
 			arrBuffer[i*2]		= bTemp2;
 		}
  
-		if (m_pSocket[nConnNum]->ResponseReadWord(arrBuffer, nLen) == FALSE)
+		if (pSocket->ResponseReadWord(arrBuffer, nLen) == FALSE)
 		{
 			return FALSE;
 		}
 	}
 	else if (nCommand == 0x1401)
 	{
+		// 쓸 값이 다 왔는지 본다. 본문은 [21] 부터 워드당 2바이트다.
+		if (arrBuffer.GetSize() < (21 + nLen * 2))
+		{
+			return FALSE;
+		}
+
 		for (int i=0; i<nLen; ++i)
 		{
 			int aaa = arrBuffer[22+i];
 			int bbb = arrBuffer[21+i];
-			m_pDoc->m_arrRegData[m_nPlcNum-1][nStartaddress+i] = (arrBuffer[22+(i*2)] << 8) | arrBuffer[21+(i*2)];
-			int nLuggNum = m_pDoc->m_arrRegData[m_nPlcNum-1][nStartaddress+i];
+			int nAddr = nStartaddress + i;
+			if (nAddr < 0 || nAddr >= nRegSize)
+				continue;		// 범위 밖은 건너뛴다
+
+			m_pDoc->m_arrRegData[m_nPlcNum-1][nAddr] = (arrBuffer[22+(i*2)] << 8) | arrBuffer[21+(i*2)];
+			int nLuggNum = m_pDoc->m_arrRegData[m_nPlcNum-1][nAddr];
 
 			if(i ==  2 ||i ==  3)
 				int aaaaa= 0;
 		}
 
-		if (m_pSocket[nConnNum]->ResponseWriteWord(arrBuffer, nLen) == FALSE)
+		if (pSocket->ResponseWriteWord(arrBuffer, nLen) == FALSE)
 		{
 			return FALSE;
 		}
