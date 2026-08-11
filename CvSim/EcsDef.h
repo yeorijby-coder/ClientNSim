@@ -29,7 +29,7 @@
 #define ECS_CODE_FILE			g_strEcsPath + _T("\\EcsCode.dat")
 #define ECS_USER_FILE			g_strEcsPath + _T("\\Data\\EcsUser.dat")
 #define ECS_USER_BACK_FILE		g_strEcsPath + _T("\\Data\\EcsUser.bak")
-#define ECS_INI_FILE			g_strEcsPath + _T("\\Ecs.ini")
+#define ECS_INI_FILE			g_strEcsPath + _T("\\CvSim.ini")
 // </File Definition>
 ////////////////////////////////////////////////////////////////
 
