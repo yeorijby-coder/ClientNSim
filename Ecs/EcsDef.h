@@ -270,6 +270,15 @@ enum EN_HOST_ERROR_CODE {
 #define ECS_ALL_TAB_COUNT	4
 
 
+#define EVENT_RECEIVE			0		// 수신 이벤트
+#define EVENT_EXIT				1	// 스레드 종료 이벤트
+#define EVENT_COUNT				2					// 이벤트 갯수
+
+#define WAIT_EVENT_RECEIVE	WAIT_OBJECT_0+EVENT_RECEIVE
+#define WAIT_EVENT_EXIT		WAIT_OBJECT_0+EVENT_EXIT
+
+#define	LENGTH_OF_RECEIVE_BUFF	10240
+
 ////////////////////////////////////////////////////////////////
 // <Job Definition>
 enum EN_ERROR_GBN { enErrorDualStore=1, enErrorEmptyRetrieve=2 };

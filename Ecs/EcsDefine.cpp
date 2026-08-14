@@ -51,6 +51,7 @@ CEquipment* CEcsDefine::CreateEquipment(CString& strClassName, CString strThread
 
 	else if (strClassName == RUNTIME_CLASS(CBcr)->m_lpszClassName) return new CBcr(m_pDoc, strThreadNo, nIndex);
 	//else if (strClassName == RUNTIME_CLASS(CWc)->m_lpszClassName) return new CWc(m_pDoc, strThreadNo, nIndex);
+	else if (strClassName == RUNTIME_CLASS(CDisplay)->m_lpszClassName) return new CDisplay(m_pDoc, strThreadNo, nIndex);
 	else DEBUGER_ASSERT_VALID_LOG(FALSE, strClassName);
 
 	return NULL;	
@@ -109,8 +110,7 @@ BOOL CEcsDefine::ParseXml()
 				break;
 
 			case CEquipment::enSC: //무조건 페어로 생성
-				// ParseScSingle 은 통째로 주석 처리된 죽은 길이다. 위 주석대로 페어로 보낸다.
-				if (!ParseSc(pEquipment, 1))
+				if (!ParseSc(pEquipment))
 				{
 					DEBUGER_TRACE(_T("Fail to ParseSc!"), __WFUNCTION__);
 					return FALSE;
@@ -647,57 +647,41 @@ BOOL CEcsDefine::ParseBcr(CEquipment* pEquipment)
 	}
 	return TRUE;
 
-
-
-
-
-
-//  	DEBUGER_ASSERT_VALID(pEquipment != NULL);
-//  	DEBUGER_ASSERT_VALID(pEquipment->IsKindOf(RUNTIME_CLASS(CBcr)));
-// 
-// 	CString strValue;
-// 	CString strPLC_NO, strEQP_NO;
-// 	int nBcrCnt;
-// 	CBcr* pBcr = (CBcr*)pEquipment;
-// 	pBcr->m_WH_TYP = m_pDoc->m_WH_TYP;
-// 	CBcrInfo* pInfo = pBcr->m_pInfo;
-// 	DEBUGER_ASSERT_VALID(pBcr != NULL);
-// 	DEBUGER_ASSERT_VALID(pInfo != NULL);
-// 	MoveXPath(_T("./Bcrs"), FALSE);
-// 	nBcrCnt = GetChildElmtCount();
-// 	pInfo->m_MapBCR_DATA.InitHashTable(nBcrCnt);
-// 	for(int nIdxBcr = 0; nIdxBcr < nBcrCnt; nIdxBcr++)
-// 	{
-// 		MoveChild(nIdxSc);		
-// 		GetAttrValue(_T("plcno"), strPLC_NO);
-// 		GetAttrValue(_T("number"), strEQP_NO); 
-// 		pBcr->m_nNumber = CConvert::ToInt(strPLC_NO);//m_nNumber 사용되지 않음
-// 		CBCR_MST* pBCR_MST = pInfo->CreateBCR_MST(strEQP_NO);
-// 		pBcr->m_pInfo->m_MapBCR_MST.SetAt(pBCR_MST->K_BCR_NO, pBCR_MST);
-// 		pBCR_MST->m_pControl = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pBCR_MST->GetCid());
-// 		MoveParent();
-// 	}
- 
-//  	CString strValue;
-// 	CString strCID, strTID;
-//  	CBcr* pBcr = (CBcr*)pEquipment;
-//  	CBcrInfo* pInfo = NULL;
-//  	DEBUGER_ASSERT_VALID(pBcr != NULL);
-//  	GetAttrValue(_T("cid"), strCID);
-// 
-//  	MoveChildFirst();
-//  	GetAttrValue(_T("tid"), strTID);
-// 
-// 	pInfo = new CBcrInfo(pEquipment);
-// 	pInfo->m_pControl = (CDciButtonCtrl*)m_pDoc->GetDciControl(strCID);
-// 	DEBUGER_ASSERT_VALID(CLib::IsValidControlID(strCID));
-// 	DEBUGER_ASSERT_VALID(pInfo->m_pControl != NULL);
-// 
-// 	pInfo->m_pTrack = m_pDoc->GetTrackInfo(CConvert::ToInt(strTID));
-// 	DEBUGER_ASSERT_VALID(pInfo->m_pTrack != NULL);
-
-	return TRUE;
 }
+
+//BOOL CEcsDefine::ParseDisplay(CEquipment* pEquipment)
+//{
+//	DEBUGER_ASSERT_VALID(pEquipment != NULL);
+//	DEBUGER_ASSERT_VALID(pEquipment->IsKindOf(RUNTIME_CLASS(CDisplay)));
+//
+//	CString strValue;
+//	CString strPLC_NO, strDISP_NO;
+//	CString strTRACK_NO;
+//	int nBcrCnt;
+//
+//	CDisplay* pDisplay= (CDisplay*)pEquipment;
+//	pDisplay->m_WH_TYP = m_pDoc->m_WH_TYP;
+//	CDisplayInfo* pInfo = pDisplay->m_pInfo;
+//	DEBUGER_ASSERT_VALID(pDisplay != NULL);
+//	DEBUGER_ASSERT_VALID(pInfo != NULL);
+//	MoveXPath(_T("./Bcrs"), FALSE);
+//	nDisplayCnt = GetChildElmtCount();
+//	pInfo->m_MapBCR_MST.InitHashTable(nDisplayCnt);
+//	for (int nIdxDisplay = 0; nIdxDisplay < nDisplayCnt; nIdxDisplay++)
+//	{
+//		MoveChild(nIdxDisplay);
+//		GetAttrValue(_T("plcno"), strPLC_NO);
+//		GetAttrValue(_T("disp_no"), strDISP_NO);
+//		pDisplay->m_nNumber = CConvert::ToInt(strPLC_NO);
+//		CBCR_MST* pBCR_MST = pInfo->CreateBCR_MST(strPLC_NO, strTRACK_NO);
+//		pDisplay->m_pInfo->m_MapBCR_MST.SetAt(pBCR_MST->K_BCR_NO, pBCR_MST);
+//		pBCR_MST->m_strBCR_MC_NO = strTRACK_NO;
+//		pBCR_MST->m_pControl = (CDciButtonCtrl*)m_pDoc->GetDciControl_FindAllLayout(pBCR_MST->GetCid());
+//		MoveParent();
+//	}
+//	return TRUE;
+//
+//}
 
 //BOOL CEcsDefine::ParseWc(CEquipment* pEquipment)
 //{

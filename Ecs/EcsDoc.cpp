@@ -1039,6 +1039,60 @@ CBCR_MST* CEcsDoc::GetBCR_MST(int nBCR_NO)
 	return NULL;
 }
 
+CDisplayData* CEcsDoc::GetDisplayData(int nDISP_NO)
+{
+	CString strDISP_NO;
+	strDISP_NO.Format(_T("%05s"), nDISP_NO);
+	CString strDispKey;
+	CString strValue;
+	CEquipment* pEqp = NULL;
+	for (POSITION pPosDisplay = m_MapEqps.GetStartPosition(); pPosDisplay != NULL; )
+	{
+		CDisplay* pDisplay = NULL;
+		m_MapEqps.GetNextAssoc(pPosDisplay, strDispKey, pEqp);
+		if (pEqp == NULL)
+			continue;
+
+		if (pEqp->m_enKind != CEquipment::enSC)
+			continue;
+
+		pDisplay = (CDisplay*)pEqp;
+		CDisplayData* pDisplayData = NULL;	// pSc->m_pInfo->m_MapSC_DATA[strSC_NO];
+		BOOL bResult = pDisplay->m_pInfo->m_MapDisplayData.Lookup(strDISP_NO, pDisplayData);
+		if (pDisplayData != NULL)
+			return pDisplayData;
+	}
+	return NULL;
+}
+
+
+CDisplayData* CEcsDoc::GetDisplayData(CString pstrDISP_NO)
+{
+	CString strDispKey;
+	CString strValue;
+	CEquipment* pEqp = NULL;
+
+	for (POSITION pPosDisplay = m_MapEqps.GetStartPosition(); pPosDisplay != NULL; )
+	{
+		CDisplay* pDisplay = NULL;
+		m_MapEqps.GetNextAssoc(pPosDisplay, strDispKey, pEqp);
+		if (pEqp == NULL)
+			continue;
+
+		if (pEqp->m_enKind != CEquipment::enSC)
+			continue;
+
+		pDisplay = (CDisplay*)pEqp;
+		CDisplayData* pDisplayData = NULL;	// pSc->m_pInfo->m_MapSC_DATA[strSC_NO];
+		BOOL bResult = pDisplay->m_pInfo->m_MapDisplayData.Lookup(pstrDISP_NO, pDisplayData);
+		if (pDisplayData != NULL)
+			return pDisplayData;
+	}
+	return NULL;
+}
+
+
+
 CTrackInfo* CEcsDoc::GetTrackInfoNew(CString strTrackNo)
 {
 	// pEN_KIND, m_strThreadNo
@@ -1492,14 +1546,9 @@ void CEcsDoc::InitializeErrorMst()
 			CString strACTION_KOR, strACTION_ENG, strACTION_CHIN, strACTION_HUN;
 			CString strMSG_KOR, strMSG_ENG, strMSG_CHIN, strMSG_HUN;
 			strEQP_TYP = pRswError->GetItem(_T("EQP_TYP"));
-			// (예전의 strEQP_TYP.Format(_T("%s"), strEQP_TYP) 는 자기 자신을
-			//  인자로 넘기는 미정의 동작이라 기동 중 액세스 위반으로 죽었다.
-			//  값 그대로 쓰면 되므로 Format 자체가 필요 없다)
+			strEQP_TYP.Format(_T("%s"), strEQP_TYP);
 			strERROR_CODE = pRswError->GetItem(_T("EQP_ERR_CD"));
-			// 에러코드는 4자리 0 채움 (%04s 는 표준상 0 패딩이 안 된다)
-			strERROR_CODE.TrimLeft(); strERROR_CODE.TrimRight();
-			while (strERROR_CODE.GetLength() < 4)
-				strERROR_CODE = _T("0") + strERROR_CODE;
+			strERROR_CODE.Format(_T("%04s"), strERROR_CODE);
 			CEQP_ECD_MST* pMapItem = new CEQP_ECD_MST(strEQP_TYP, strERROR_CODE);
 			strACTION_KOR = pRswError->GetItem(_T("ACTION_KOR"));
 			strACTION_ENG = pRswError->GetItem(_T("ACTION_ENG"));

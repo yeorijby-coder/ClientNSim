@@ -540,6 +540,13 @@ LRESULT CEcsView::OnRefreshDialog(WPARAM wParam, LPARAM lParam)
 			::ShowWindow(pDoc->m_pBcrSkinDlg->m_hWnd, SW_SHOW);
 			::SendMessage(pDoc->m_pBcrSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //임시저장소 LPARM 추가파람
 		}
+	case CEquipment::enDISPLAY:
+		{
+			//CDisplayDlg m_DisplayDlg(GetDocument(), GetDocument()->m_pDisplay, this);
+			//m_DisplayDlg.DoModal();
+
+		break;
+		}
 	}
 	return 0;
 }

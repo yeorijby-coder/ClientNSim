@@ -24,7 +24,7 @@
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -32,7 +32,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -192,6 +192,10 @@ copy "$(TargetDir)*.pdb" "$(TargetDir)Ecs\mapfile\"%DirName%</Command>
     <ClInclude Include="CV_DATA.h" />
     <ClInclude Include="Debuger.h" />
     <ClInclude Include="DialogScDelFork.h" />
+    <ClInclude Include="Display.h" />
+    <ClInclude Include="DisplayData.h" />
+    <ClInclude Include="DisplayDlg.h" />
+    <ClInclude Include="DisplayInfo.h" />
     <ClInclude Include="Ecs.h" />
     <ClInclude Include="EcsDef.h" />
     <ClInclude Include="EcsDefine.h" />
@@ -246,6 +250,7 @@ copy "$(TargetDir)*.pdb" "$(TargetDir)Ecs\mapfile\"%DirName%</Command>
     <ClInclude Include="ScSkinDlg.h" />
     <ClInclude Include="EqpSuspendDlg.h" />
     <ClInclude Include="SC_DATA.h" />
+    <ClInclude Include="SerialToEthernet.h" />
     <ClInclude Include="SizingControlBar.h" />
     <ClInclude Include="SkinButton.h" />
     <ClInclude Include="SkinDialog.h" />
@@ -259,6 +264,7 @@ copy "$(TargetDir)*.pdb" "$(TargetDir)Ecs\mapfile\"%DirName%</Command>
     <ClInclude Include="SystemLoginDlg.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TGroupBox.h" />
+    <ClInclude Include="Thread.h" />
     <ClInclude Include="TrackInfo.h" />
     <ClInclude Include="URMDBAccess.h" />
     <ClInclude Include="ViewJobListDlg.h" />
@@ -288,6 +294,10 @@ copy "$(TargetDir)*.pdb" "$(TargetDir)Ecs\mapfile\"%DirName%</Command>
     <ClCompile Include="CV_DATA.cpp" />
     <ClCompile Include="Debuger.cpp" />
     <ClCompile Include="DialogScDelFork.cpp" />
+    <ClCompile Include="Display.cpp" />
+    <ClCompile Include="DisplayData.cpp" />
+    <ClCompile Include="DisplayDlg.cpp" />
+    <ClCompile Include="DisplayInfo.cpp" />
     <ClCompile Include="Ecs.cpp" />
     <ClCompile Include="EcsDefine.cpp" />
     <ClCompile Include="EcsDoc.cpp" />
@@ -337,6 +347,7 @@ copy "$(TargetDir)*.pdb" "$(TargetDir)Ecs\mapfile\"%DirName%</Command>
     <ClCompile Include="ScSkinDlg.cpp" />
     <ClCompile Include="EqpSuspendDlg.cpp" />
     <ClCompile Include="SC_DATA.cpp" />
+    <ClCompile Include="SerialToEthernet.cpp" />
     <ClCompile Include="SizingControlBar.cpp" />
     <ClCompile Include="SkinButton.cpp" />
     <ClCompile Include="SkinDialog.cpp" />

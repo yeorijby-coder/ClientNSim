@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<WCS>
+	<Equipment class="CCv" thread="01" number="1" device="CV_E01">
+		<Tracks plcno="01" cid="17110000" FirstTrack="101">
+			<Track	number="101"/>
+			<Track	number="102">
+				<Status>
+          <RtvArriveHS/>
+          <RtvDepartHS/>
+          <RetStation name="입출고대#1" DestCode="102"/>
+          <StoStation name="입출고대#1" DestCode="0"/>
+				</Status>
+			</Track>
+			<Track	number="103"/>
+			<Track	number="104"/>	
+			<Track	number="105">
+				<Status>
+          <RtvArriveHS/>
+          <RtvDepartHS/>
+          <RetStation name="입출고대#2" DestCode="105"/>
+          <StoStation name="입출고대#2" DestCode="0"/>
+				</Status>
+			</Track>
+			<Track	number="106"/>
+			<Track	number="107"/>
+			<Track	number="108"/>
+			<Track	number="109"/>
+			<Track	number="110"/>	
+			<Track	number="111">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track	number="112"/>
+			<Track	number="113">
+				<Status>
+					<RtvDepartHS/>
+				</Status>
+			</Track>
+			<Track	number="114">
+				<Status>
+					<RtvArriveHS/>
+				</Status>
+			</Track>
+		    <Track	number="115"/>
+			<Track	number="116">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track	number="117">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track	number="118"/>
+			<Track	number="119">
+				<Status>
+					<RtvDepartHS/>
+				</Status>
+			</Track>
+			<Track	number="120">
+				<Status>
+					<RtvArriveHS/>
+				</Status>
+			</Track>
+			<Track	number="121"/>
+			<Track	number="122">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+		</Tracks>
+	</Equipment>
+
+	<Equipment class="CScPair" number="2" device="SC" thread="01">
+		<Scs>
+			<Sc plcno="01" number="901">
+				<ScStation name="S/C#1" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="02" number="902">
+				<ScStation name="S/C#2" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+		</Scs>
+	</Equipment>
+	  <Equipment class="CRtv" number="1" device="SC" thread="01">
+		<Rtvs>
+			<Rtv plcno="01" number="801"/>
+		</Rtvs>
+	</Equipment>
+	  <Equipment class="CBcr" number="2" device="BCR" thread="01">
+		<Bcrs>
+			<Bcr plcno="01" number="701" bcrtrack="102"/>
+			<Bcr plcno="02" number="702" bcrtrack="105"/>
+		</Bcrs>
+	</Equipment>
+</WCS>

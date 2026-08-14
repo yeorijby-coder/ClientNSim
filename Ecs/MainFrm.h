@@ -96,6 +96,13 @@ public:
 	void AddStatusBarPane();
 	void InsertButtonPainToStatusBar(CString strCaption, int nID, int nPos, int nWidth);
 	afx_msg void OnUpdateStatusCv1(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateStatusCv2(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusCv3(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusCv4(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusCv5(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusCv6(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusCv7(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusCv8(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateStatusSc1(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateStatusSc2(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateStatusSc3(CCmdUI* pCmdUI);
@@ -106,6 +113,7 @@ public:
 	afx_msg void OnUpdateStatusSc8(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateStatusSc9(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateStatusSc10(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusSc11(CCmdUI* pCmdUI);
 	
 	//afx_msg void OnUpdateStatusRtv1(CCmdUI* pCmdUI);
 	//afx_msg void OnUpdateStatusBcr1(CCmdUI* pCmdUI);

@@ -19,6 +19,7 @@
 #include "ScPair.h"
 #include "Rtv.h"
 #include "ScManualRet.h"
+#include "Display.h"
 
 #include "AdoDB.h"
 #include "URMDBAccess.h"
@@ -172,6 +173,8 @@ public:
 	CRTV_DATA* GetRTV_DATA(int nRTV_NO);
 	CBCR_MST* GetBCR_MST(CString strBCR_NO);
 	CBCR_MST* GetBCR_MST(int nBCR_NO);
+	CDisplayData* GetDisplayData(CString strDISP_NO);
+	CDisplayData* GetDisplayData(int nDISP_NO);
 	
 
 public:
@@ -212,6 +215,7 @@ public:
 	CDialog*			m_pScSkinDlg;
 	CDialog*			m_pRtvSkinDlg;
 	CDialog*			m_pBcrSkinDlg;
+	CDialog*			m_pDisplayDlg;
 	
 	CDialog*			m_pLogBcrSkinDlg;
 	CDialog*			m_pLogIoSkinDlg;
@@ -222,7 +226,7 @@ public:
 	CDialog*			m_pLogWcsSkinDlg;
 	CDialog*			m_pLogJobHis;	
 	CDialog*			m_pViewSearchDlg;
-	CDialog* m_pUserUserDlg;
+	CDialog*			m_pUserUserDlg;
 
 
 public:

@@ -785,19 +785,49 @@
 			<Track	number="835" tabnumber="2"/>
 		</Tracks>
 	</Equipment>
-	<Equipment class="CScPair" thread="09">
+	<Equipment class="CSc" number="11" device="S_SC" thread="01">
 		<Scs>
-			<Sc plcno="01" number="901"/>
-			<Sc plcno="02" number="902"/>
-			<Sc plcno="03" number="903"/>
-			<Sc plcno="04" number="904"/>
-			<Sc plcno="05" number="905"/>
-			<Sc plcno="06" number="906"/>
-			<Sc plcno="07" number="907"/>
-			<Sc plcno="08" number="908"/>
-			<Sc plcno="09" number="909"/>
-			<Sc plcno="10" number="910"/>
-			<Sc plcno="11" number="911"/>
+			<Sc plcno="01" number="901">
+				<ScStation name="S/C#1" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="02" number="902">
+				<ScStation name="S/C#2" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="03" number="903">
+				<ScStation name="S/C#3" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="04" number="904">
+				<ScStation name="S/C#4" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="05" number="905">
+				<ScStation name="S/C#5" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="06" number="906">
+				<ScStation name="S/C#6" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="07" number="907">
+				<ScStation name="S/C#7" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="08" number="908">
+				<ScStation name="S/C#8" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="09" number="909">
+				<ScStation name="S/C#9" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+			<Sc plcno="10" number="910">
+				<ScStation name="S/C#10" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
 		</Scs>
 	</Equipment>
+	<Equipment class="CScPair" number="12" device="T_SC" thread="02">
+		<Scs>
+			<Sc plcno="11" number="911">
+				<ScStation name="S/C#11" bankpos="1" bank="2" bay="36" level="20"/>
+			</Sc>
+		</Scs>
+	</Equipment>
+	<Equipment class="CDisplay" thread="01" number="1">
+		<display	plcno="1" disp_no="1"/>
+		<display	plcno="1" disp_no="2"/>
+	</Equipment>		
 </ECS>

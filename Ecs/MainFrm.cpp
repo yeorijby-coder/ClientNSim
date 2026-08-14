@@ -39,6 +39,13 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_MESSAGE(WM_USER_LANG_NOTIFY, &CMainFrame::OnLangUpdate)
 
 	ON_UPDATE_COMMAND_UI(ID_STATUS_CV_1, &CMainFrame::OnUpdateStatusCv1)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_CV_2, &CMainFrame::OnUpdateStatusCv2)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_CV_3, &CMainFrame::OnUpdateStatusCv3)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_CV_4, &CMainFrame::OnUpdateStatusCv4)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_CV_5, &CMainFrame::OnUpdateStatusCv5)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_CV_6, &CMainFrame::OnUpdateStatusCv6)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_CV_7, &CMainFrame::OnUpdateStatusCv7)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_CV_8, &CMainFrame::OnUpdateStatusCv8)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_1, &CMainFrame::OnUpdateStatusSc1)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_2, &CMainFrame::OnUpdateStatusSc2)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_3, &CMainFrame::OnUpdateStatusSc3)
@@ -49,11 +56,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_8, &CMainFrame::OnUpdateStatusSc8)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_9, &CMainFrame::OnUpdateStatusSc9)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_10, &CMainFrame::OnUpdateStatusSc10)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_11, &CMainFrame::OnUpdateStatusSc11)
 	//ON_UPDATE_COMMAND_UI(ID_STATUS_RTV_1, &CMainFrame::OnUpdateStatusRtv1)
 	//ON_UPDATE_COMMAND_UI(ID_STATUS_BCR_1, &CMainFrame::OnUpdateStatusBcr1)
 	//ON_UPDATE_COMMAND_UI(ID_STATUS_BCR_2, &CMainFrame::OnUpdateStatusBcr2)
 
-	ON_CONTROL_RANGE(BN_CLICKED, ID_STATUS_CV_1, ID_STATUS_SC_10, &CMainFrame::OnButtonComm)
+	ON_CONTROL_RANGE(BN_CLICKED, ID_STATUS_CV_1, ID_STATUS_SC_11, &CMainFrame::OnButtonComm)
 
 END_MESSAGE_MAP()
 
@@ -586,27 +594,44 @@ void CMainFrame::ExcuteTheme()
 
 void CMainFrame::AddStatusBarPane()
 {
-	m_wndStatusBar.GetStatusBarCtrl().SetMinHeight(30);
-	m_wndStatusBar.SetPaneWidth(0, 30);
+	m_wndStatusBar.GetStatusBarCtrl().SetMinHeight(10);
+	m_wndStatusBar.SetPaneWidth(0, 20);
 
+	int iwitdh = 80;
 	int i=0;
 	++i;
-	InsertButtonPainToStatusBar(_T("CV_1그룹"), ID_STATUS_CV_1, i + 1, 80);
-	InsertButtonPainToStatusBar(_T("SC_1호기"), ID_STATUS_SC_1, i + 2, 80);
-	InsertButtonPainToStatusBar(_T("SC_2호기"), ID_STATUS_SC_2, i + 3, 80);
-	InsertButtonPainToStatusBar(_T("SC_3호기"), ID_STATUS_SC_3, i + 4, 80);
-	InsertButtonPainToStatusBar(_T("SC_4호기"), ID_STATUS_SC_4, i + 5, 80);
-	InsertButtonPainToStatusBar(_T("SC_5호기"), ID_STATUS_SC_5, i + 6, 80);
-	InsertButtonPainToStatusBar(_T("SC_6호기"), ID_STATUS_SC_6, i + 7, 80);
-	InsertButtonPainToStatusBar(_T("SC_7호기"), ID_STATUS_SC_7, i + 8, 80);
-	InsertButtonPainToStatusBar(_T("SC_8호기"), ID_STATUS_SC_8, i + 9, 80);
-	InsertButtonPainToStatusBar(_T("SC_9호기"), ID_STATUS_SC_9, i + 10, 80);
-	InsertButtonPainToStatusBar(_T("SC_10호기"), ID_STATUS_SC_10, i + 11, 80);
+
+	InsertButtonPainToStatusBar(_T("CV_1그룹"), ID_STATUS_CV_1, i + 1, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_2그룹"), ID_STATUS_CV_2, i + 2, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_3그룹"), ID_STATUS_CV_3, i + 3, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_4그룹"), ID_STATUS_CV_4, i + 4, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_5그룹"), ID_STATUS_CV_5, i + 5, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_6그룹"), ID_STATUS_CV_6, i + 6, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_7그룹"), ID_STATUS_CV_7, i + 7, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_8그룹"), ID_STATUS_CV_8, i + 8, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_1호기"), ID_STATUS_SC_1, i + 9, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_2호기"), ID_STATUS_SC_2, i + 10, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_3호기"), ID_STATUS_SC_3, i + 11, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_4호기"), ID_STATUS_SC_4, i + 12, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_5호기"), ID_STATUS_SC_5, i + 13, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_6호기"), ID_STATUS_SC_6, i + 14, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_7호기"), ID_STATUS_SC_7, i + 15, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_8호기"), ID_STATUS_SC_8, i + 16, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_9호기"), ID_STATUS_SC_9, i + 17, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_10호기"), ID_STATUS_SC_10, i + 18, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_11호기"), ID_STATUS_SC_11, i + 19, iwitdh);
 	//InsertButtonPainToStatusBar(_T("RTV_1호기"), ID_STATUS_RTV_1, i + 4, 80);
 	//InsertButtonPainToStatusBar(_T("BCR_1호기"), ID_STATUS_BCR_1, i + 5, 80);
 	//InsertButtonPainToStatusBar(_T("BCR_2호기"), ID_STATUS_BCR_2, i + 6, 80);
 		
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_2, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_3, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_4, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_5, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_6, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_7, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_8, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_2, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
@@ -617,6 +642,7 @@ void CMainFrame::AddStatusBarPane()
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	//m_wndStatusBar.SetPaneInfo(ID_STATUS_RTV_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	//m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	//m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_2, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
@@ -678,6 +704,125 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 		#pragma endregion
+	case ID_STATUS_CV_2:
+#pragma region ID_STATUS_CV_2
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("102"));
+
+		if (pTrackInfo == NULL)
+			return;
+
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch문 밑에서 만들기
+
+		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("CV");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
+
+#pragma endregion
+	case ID_STATUS_CV_3:
+#pragma region ID_STATUS_CV_3
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("103"));
+
+		if (pTrackInfo == NULL)
+			return;
+
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch문 밑에서 만들기
+
+		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("CV");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
+
+#pragma endregion
+	case ID_STATUS_CV_4:
+#pragma region ID_STATUS_CV_4
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("104"));
+
+		if (pTrackInfo == NULL)
+			return;
+
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch문 밑에서 만들기
+
+		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("CV");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
+
+#pragma endregion
+	case ID_STATUS_CV_5:
+#pragma region ID_STATUS_CV_5
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("105"));
+
+		if (pTrackInfo == NULL)
+			return;
+
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch문 밑에서 만들기
+
+		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("CV");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
+
+#pragma endregion
+	case ID_STATUS_CV_6:
+#pragma region ID_STATUS_CV_6
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("106"));
+
+		if (pTrackInfo == NULL)
+			return;
+
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch문 밑에서 만들기
+
+		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("CV");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
+
+#pragma endregion
+	case ID_STATUS_CV_7:
+#pragma region ID_STATUS_CV_7
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("107"));
+
+		if (pTrackInfo == NULL)
+			return;
+
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch문 밑에서 만들기
+
+		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("CV");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
+
+#pragma endregion
+	case ID_STATUS_CV_8:
+#pragma region ID_STATUS_CV_8
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("108"));
+
+		if (pTrackInfo == NULL)
+			return;
+
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch문 밑에서 만들기
+
+		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("CV");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
+
+#pragma endregion
 		break;
 	case ID_STATUS_SC_1:
 		#pragma region ID_STATUS_SC_1
@@ -844,6 +989,24 @@ void CMainFrame::OnButtonComm(UINT nID)
 	case ID_STATUS_SC_10:
 #pragma region ID_STATUS_SC_10
 		pSC_DATA = pDoc->GetSC_DATA(_T("910"));
+
+		if (pSC_DATA == NULL)
+			return;
+
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switch문 밑에서 만들기
+
+		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pSC_DATA->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("SC");
+		nEQP_NUM = 2;
+		nCheckTime = 5;
+
+#pragma endregion
+		break;
+	case ID_STATUS_SC_11:
+#pragma region ID_STATUS_SC_11
+		pSC_DATA = pDoc->GetSC_DATA(_T("911"));
 
 		if (pSC_DATA == NULL)
 			return;
@@ -1047,6 +1210,266 @@ void CMainFrame::OnUpdateStatusCv1(CCmdUI *pCmdUI)
 	return;
 }
 
+void CMainFrame::OnUpdateStatusCv2(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CTrackInfo* pTrackInfo = pDoc->GetTrackInfoNew(_T("201"));
+
+	if (pTrackInfo == NULL)
+		return;
+
+
+	CString strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pTrackInfo->m_pCV_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_2, _T("CV_2G"), RED, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_2, _T("CV_2G"), GREEN, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+void CMainFrame::OnUpdateStatusCv3(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CTrackInfo* pTrackInfo = pDoc->GetTrackInfoNew(_T("301"));
+
+	if (pTrackInfo == NULL)
+		return;
+
+
+	CString strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pTrackInfo->m_pCV_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_3, _T("CV_3G"), RED, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_3, _T("CV_3G"), GREEN, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+void CMainFrame::OnUpdateStatusCv4(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CTrackInfo* pTrackInfo = pDoc->GetTrackInfoNew(_T("401"));
+
+	if (pTrackInfo == NULL)
+		return;
+
+
+	CString strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pTrackInfo->m_pCV_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_4, _T("CV_4G"), RED, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_4, _T("CV_4G"), GREEN, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+void CMainFrame::OnUpdateStatusCv5(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CTrackInfo* pTrackInfo = pDoc->GetTrackInfoNew(_T("501"));
+
+	if (pTrackInfo == NULL)
+		return;
+
+
+	CString strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pTrackInfo->m_pCV_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_5, _T("CV_5G"), RED, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_5, _T("CV_5G"), GREEN, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+void CMainFrame::OnUpdateStatusCv6(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CTrackInfo* pTrackInfo = pDoc->GetTrackInfoNew(_T("601"));
+
+	if (pTrackInfo == NULL)
+		return;
+
+
+	CString strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pTrackInfo->m_pCV_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_6, _T("CV_6G"), RED, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_6, _T("CV_6G"), GREEN, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+void CMainFrame::OnUpdateStatusCv7(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CTrackInfo* pTrackInfo = pDoc->GetTrackInfoNew(_T("701"));
+
+	if (pTrackInfo == NULL)
+		return;
+
+
+	CString strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pTrackInfo->m_pCV_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_7, _T("CV_7G"), RED, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_7, _T("CV_7G"), GREEN, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+void CMainFrame::OnUpdateStatusCv8(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CTrackInfo* pTrackInfo = pDoc->GetTrackInfoNew(_T("801"));
+
+	if (pTrackInfo == NULL)
+		return;
+
+
+	CString strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pTrackInfo->m_pCV_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_8, _T("CV_8G"), RED, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_8, _T("CV_8G"), GREEN, BLACK);
+			pTrackInfo->m_pCV_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+
 void CMainFrame::OnUpdateStatusSc1(CCmdUI *pCmdUI)
 {
 	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
@@ -1176,7 +1599,7 @@ void CMainFrame::OnUpdateStatusSc4(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_4호기"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_4, _T("SC_4호기"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1184,7 +1607,7 @@ void CMainFrame::OnUpdateStatusSc4(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_4호기"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_4, _T("SC_4호기"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1212,7 +1635,7 @@ void CMainFrame::OnUpdateStatusSc5(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_5호기"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_5, _T("SC_5호기"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1220,7 +1643,7 @@ void CMainFrame::OnUpdateStatusSc5(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_5호기"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_5, _T("SC_5호기"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1248,7 +1671,7 @@ void CMainFrame::OnUpdateStatusSc6(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_6호기"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_6, _T("SC_6호기"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1256,7 +1679,7 @@ void CMainFrame::OnUpdateStatusSc6(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_6호기"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_6, _T("SC_6호기"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1284,7 +1707,7 @@ void CMainFrame::OnUpdateStatusSc7(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_7호기"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_7, _T("SC_7호기"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1292,7 +1715,7 @@ void CMainFrame::OnUpdateStatusSc7(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_7호기"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_7, _T("SC_7호기"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1320,7 +1743,7 @@ void CMainFrame::OnUpdateStatusSc8(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_8호기"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, _T("SC_8호기"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1328,7 +1751,7 @@ void CMainFrame::OnUpdateStatusSc8(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_8호기"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, _T("SC_8호기"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1356,7 +1779,7 @@ void CMainFrame::OnUpdateStatusSc9(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_9호기"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, _T("SC_9호기"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1364,7 +1787,7 @@ void CMainFrame::OnUpdateStatusSc9(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_9호기"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, _T("SC_9호기"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1392,7 +1815,7 @@ void CMainFrame::OnUpdateStatusSc10(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_10호기"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, _T("SC_10호기"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1400,13 +1823,48 @@ void CMainFrame::OnUpdateStatusSc10(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_10호기"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, _T("SC_10호기"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
 	return;
 }
 
+void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CSC_DATA* pSC_DATA = pDoc->GetSC_DATA(_T("911"));
+
+	if (pSC_DATA == NULL)
+		return;
+
+	CString strEQP_TIME = pSC_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pSC_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, _T("SC_11호기"), RED, BLACK);
+			pSC_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, _T("SC_11호기"), GREEN, BLACK);
+			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
 
 
 //void CMainFrame::OnUpdateStatusRtv1(CCmdUI* pCmdUI)
