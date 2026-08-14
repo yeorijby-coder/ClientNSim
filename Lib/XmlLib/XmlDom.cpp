@@ -547,30 +547,44 @@ MSXML2::IXMLDOMNodePtr CXmlDom::AddChild(MSXML2::IXMLDOMNodePtr pCurrentNode, MS
 	return pNewChildNode;
 }
 
+//	찾는 노드가 없으면 여기로 NULL 이 넘어온다.
+//	XML 에 없는 속성을 GetAttrValue 로 찾거나, 기대한 것과 다른 파일을 읽었을 때 그렇다.
+//
+//	예전엔 ASSERT 로 걸려 Debug 빌드가 그 자리에서 죽었다. 디버거가 없는 테스트 서버에서는
+//	어느 파일의 무엇이 빠졌는지도 모른 채 프로세스만 사라진다. 그래서 빈 값을 돌려주고
+//	TRACE 로 남긴다. 값을 받는 쪽에서 빈 값을 보고 판단하라는 뜻이다.
+#define XMLDOM_RETURN_IF_NULL(fn, out)											\
+	if (nodePtr == NULL)														\
+	{																			\
+		TRACE(_T("CXmlDom::") _T(fn) _T(" : 노드가 NULL 이다. XML 에 찾는 속성/요소가 없다.\n"));	\
+		(out).Empty();															\
+		return;																	\
+	}
+
 void CXmlDom::GetXML(MSXML2::IXMLDOMNodePtr nodePtr, CString& strXml)
 {
-	ASSERT(nodePtr != NULL);
+	XMLDOM_RETURN_IF_NULL("GetXML", strXml)
 
 	strXml = (LPCTSTR)nodePtr->xml;
 }
 
 void CXmlDom::GetNodeText(MSXML2::IXMLDOMNodePtr nodePtr, CString& strText)
 {
-	ASSERT(nodePtr != NULL);
+	XMLDOM_RETURN_IF_NULL("GetNodeText", strText)
 
 	strText = (LPCTSTR)nodePtr->text;
 }
 
 void CXmlDom::GetNodeName(MSXML2::IXMLDOMNodePtr nodePtr, CString& strName)
 {
-	ASSERT(nodePtr != NULL);
+	XMLDOM_RETURN_IF_NULL("GetNodeName", strName)
 
 	strName = (LPCTSTR)nodePtr->nodeName;
 }
 
 void CXmlDom::GetNodeValue(MSXML2::IXMLDOMNodePtr nodePtr, CString& strValue)
 {
-	ASSERT(nodePtr != NULL);
+	XMLDOM_RETURN_IF_NULL("GetNodeValue", strValue)
 
 	MSXML2::IXMLDOMNodeListPtr& childNodes = nodePtr->childNodes;
 
@@ -592,7 +606,11 @@ void CXmlDom::GetNodeValue(MSXML2::IXMLDOMNodePtr nodePtr, CString& strValue)
 
 void CXmlDom::SetNodeValue(MSXML2::IXMLDOMNodePtr nodePtr, const CString& strValue)
 {
-	ASSERT(nodePtr != NULL);
+	if (nodePtr == NULL)
+	{
+		TRACE(_T("CXmlDom::SetNodeValue : 노드가 NULL 이라 쓰지 않고 나간다.\n"));
+		return;
+	}
 
 	MSXML2::IXMLDOMNodeListPtr& childNodes = nodePtr->childNodes;
 

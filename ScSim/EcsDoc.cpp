@@ -311,8 +311,34 @@ BOOL CEcsDoc::LoadXML()
 		dom.InitializeXmlDom();
 		if (dom.LoadXmlFile(strXmlFile) == FALSE)
 		{
+			CString strMsg;
+			strMsg.Format(_T("%s 를 읽지 못했습니다.\n\n작업 디렉터리 : %s\n\n")
+						  _T("ScSim 은 자기 폴더의 데이터 파일을 상대경로로 읽습니다.\n")
+						  _T("바로가기의 \"시작 위치\" 를 ScSim 폴더로 잡아 주세요."),
+						  strXmlFile, g_strEcsPath);
+			AfxMessageBox(strMsg);
 			return FALSE;
 		}
+
+		//	여기서 한 번 걸러 준다.
+		//	CvSim 폴더에도 이름만 같은 SC.XML 이 있는데, 그것은 루트가 <SC> 인 옛 한 대짜리
+		//	정의라 자식(<CV> <BAY> <LEVEL>)에 TYPE/class 속성이 없다. 그것을 읽으면 예전에는
+		//	XmlDom.cpp 의 ASSERT 로 죽었다. 무엇을 잘못 읽었는지 말해 주는 편이 낫다.
+		CString strRoot;
+		dom.MoveRoot();
+		dom.GetElmtName(strRoot);
+		if (strRoot.CompareNoCase(_T("ECS")) != 0)
+		{
+			CString strMsg;
+			strMsg.Format(_T("%s 가 ScSim 의 것이 아닙니다.\n\n")
+						  _T("루트가 <ECS> 여야 하는데 <%s> 입니다.\n")
+						  _T("CvSim 폴더의 SC.XML 을 읽고 있을 수 있습니다.\n\n")
+						  _T("작업 디렉터리 : %s"),
+						  strXmlFile, strRoot, g_strEcsPath);
+			AfxMessageBox(strMsg);
+			return FALSE;
+		}
+
 		int i, nCount = dom.GetChildElmtCount();
 
 		m_pEquipments.SetSize(nCount);

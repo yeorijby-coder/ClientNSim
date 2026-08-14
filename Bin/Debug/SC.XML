@@ -1,78 +1,400 @@
 <?xml version="1.0" encoding="euc-kr"?>
-<SC TYPE="0" class="CSc" number="1" device="SC01_W1" cid="111200001">
-	<CV>
-		<CV_GROUP>
-			<CV_PLC class="CCv" number="1" device="CV01_W1_1F" cid="111101000">
-				<Tracks cid="111101000">
-					<Track number="001"/>
-					<Track number="002"/>
-					<Track number="003"/>
-					<Track number="004"/>
-					<Track number="005"/>
-					<Track number="006">
-						<Status>
-							<ScStoHS/>
-						</Status>
-					</Track>							
-					<Track number="007"/>
-					<Track number="008">
-						<Status>
-							<ScStoHS/>
-						</Status>
-					</Track>						
-					<Track number="009">
-						<Status>
-							<ScRetHS/>
-						</Status>
-					</Track>							
-					<Track number="010"/>
-					<Track number="011"/>
-					<Track number="012"/>
-					<Track number="013"/>
-					<Track number="014"/>
-					<Track number="015"/>										
-					<Track number="016"/>
-					<Track number="017"/>
-					<Track number="018"/>
-					<Track number="019"/>
-					<Track number="020"/>
-					<Track number="021"/>
-					<Track number="022"/>
-					<Track number="023"/>
-					<Track number="024"/>
-					<Track number="025">
-						<Status>
-							<ScStoHS/>
-						</Status>
-					</Track>								
-					<Track number="026">
-						<Status>
-							<ScRetHS/>
-						</Status>
-					</Track>							
-					<Track number="027"/>
-					<Track number="028">
-						<Status>
-							<ScRetHS/>
-						</Status>
-					</Track>							
-					<Track number="029"/>
-				</Tracks>
-			</CV_PLC>
-		</CV_GROUP>
+<ECS>
+
+	<CV TYPE="0" class="CCv" number="2" device="CV02" cid="1111000200" com="E" desc="CvSim PLC 02 (Ecs.ini [CV02] Port1=9202). H/S 완료시 여기 워드를 지우거나 화물감지를 쓴다.">
+		<Tracks cid="1111000200">
+			<Track number="202">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="203">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="207">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="210">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="214">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="215">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="221">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="222">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="248">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="254">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="257">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="258">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+		</Tracks>
+	</CV>
+
+	<CV TYPE="0" class="CCv" number="3" device="CV03" cid="1111000300" com="E" desc="CvSim PLC 03 (Ecs.ini [CV03] Port1=9302). H/S 완료시 여기 워드를 지우거나 화물감지를 쓴다.">
+		<Tracks cid="1111000300">
+			<Track number="316">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="317">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="324">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="326">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="331">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="332">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="338">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="339">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="344">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="345">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="348">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="354">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+		</Tracks>
+	</CV>
+
+	<CV TYPE="0" class="CCv" number="4" device="CV04" cid="1111000400" com="E" desc="CvSim PLC 04 (Ecs.ini [CV04] Port1=9402). H/S 완료시 여기 워드를 지우거나 화물감지를 쓴다.">
+		<Tracks cid="1111000400">
+			<Track number="410">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="411">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="419">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="420">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+		</Tracks>
+	</CV>
+
+	<CV TYPE="0" class="CCv" number="5" device="CV05" cid="1111000500" com="E" desc="CvSim PLC 05 (Ecs.ini [CV05] Port1=9502). H/S 완료시 여기 워드를 지우거나 화물감지를 쓴다.">
+		<Tracks cid="1111000500">
+			<Track number="503">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="504">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="509">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="510">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="515">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="516">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="521">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="522">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+		</Tracks>
+	</CV>
+
+	<CV TYPE="0" class="CCv" number="6" device="CV06" cid="1111000600" com="E" desc="CvSim PLC 06 (Ecs.ini [CV06] Port1=9602). H/S 완료시 여기 워드를 지우거나 화물감지를 쓴다.">
+		<Tracks cid="1111000600">
+			<Track number="603">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="604">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="609">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="610">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="615">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="616">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+			<Track number="621">
+				<Status>
+					<ScStoHS/>
+				</Status>
+			</Track>
+			<Track number="622">
+				<Status>
+					<ScRetHS/>
+				</Status>
+			</Track>
+		</Tracks>
+	</CV>
+
+	<SC TYPE="0" class="CSc" number="1" device="SC_E01" cid="1112029001" com="E" desc="DB sc_no 901. 원본 ECS SC_2. H/S 4개(1층 입출고 + 3층 입출고)">
 		<HS_GROUP>
 			<STO_HS>
-				<HS NO="1" TID="005" CV_PLC_NO="1" PAIR="0" BANK="1" BAY="0" LEVEL="0"/>
-				<HS NO="3" TID="008" CV_PLC_NO="1" PAIR="0" BANK="2" BAY="0" LEVEL="0"/>
-				<HS NO="5" TID="025" CV_PLC_NO="1" PAIR="0" BANK="2" BAY="0" LEVEL="0"/>
+				<HS NO="1"  TID="202"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="10" DEL_CNT="5" PROD_ADDR="12" desc="1층 입고 H/S (트랙 202)"/>
+				<HS NO="3"  TID="316"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="80" DEL_CNT="5" PROD_ADDR="82" desc="3층 입고 H/S (트랙 316)"/>
 			</STO_HS>
 			<RET_HS>
-				<HS NO="2" TID="028" CV_PLC_NO="1" PAIR="0" BANK="2" BAY="0" LEVEL="0"/>
-				<HS NO="4" TID="026" CV_PLC_NO="1" PAIR="0" BANK="2" BAY="0" LEVEL="0"/>
-				<HS NO="6" TID="009" CV_PLC_NO="1" PAIR="0" BANK="2" BAY="0" LEVEL="0"/>
+				<HS NO="2"  TID="203"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="17" desc="1층 출고 H/S (트랙 203)"/>
+				<HS NO="4"  TID="317"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="87" desc="3층 출고 H/S (트랙 317)"/>
 			</RET_HS>
 		</HS_GROUP>
-	</CV>
-	<BAY COUNT="10"/>
-	<LEVEL COUNT="10"/>
-</SC>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="2" device="SC_E02" cid="1112029002" com="E" desc="DB sc_no 902. 원본 ECS SC_3. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="210"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="50" DEL_CNT="5" PROD_ADDR="52" desc="1층 입고 H/S (트랙 210)"/>
+				<HS NO="3"  TID="326"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="130" DEL_CNT="5" PROD_ADDR="132" desc="3층 입고 H/S (트랙 326)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="207"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="37" desc="1층 출고 H/S (트랙 207)"/>
+				<HS NO="4"  TID="324"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="122" desc="3층 출고 H/S (트랙 324)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="3" device="SC_E03" cid="1112029003" com="E" desc="DB sc_no 903. 원본 ECS SC_4. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="214"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="70" DEL_CNT="5" PROD_ADDR="72" desc="1층 입고 H/S (트랙 214)"/>
+				<HS NO="3"  TID="331"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="155" DEL_CNT="5" PROD_ADDR="157" desc="3층 입고 H/S (트랙 331)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="215"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="77" desc="1층 출고 H/S (트랙 215)"/>
+				<HS NO="4"  TID="332"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="162" desc="3층 출고 H/S (트랙 332)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="4" device="SC_E04" cid="1112029004" com="E" desc="DB sc_no 904. 원본 ECS SC_5. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="222"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="110" DEL_CNT="5" PROD_ADDR="112" desc="1층 입고 H/S (트랙 222)"/>
+				<HS NO="3"  TID="339"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="195" DEL_CNT="5" PROD_ADDR="197" desc="3층 입고 H/S (트랙 339)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="221"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="107" desc="1층 출고 H/S (트랙 221)"/>
+				<HS NO="4"  TID="338"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="192" desc="3층 출고 H/S (트랙 338)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="5" device="SC_E05" cid="1112029005" com="E" desc="DB sc_no 905. 원본 ECS SC_6. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="257"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="285" DEL_CNT="5" PROD_ADDR="287" desc="1층 입고 H/S (트랙 257)"/>
+				<HS NO="3"  TID="344"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="220" DEL_CNT="5" PROD_ADDR="222" desc="3층 입고 H/S (트랙 344)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="258"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="292" desc="1층 출고 H/S (트랙 258)"/>
+				<HS NO="4"  TID="345"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="227" desc="3층 출고 H/S (트랙 345)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="6" device="SC_E06" cid="1112029006" com="E" desc="DB sc_no 906. 원본 ECS SC_7. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="254"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="270" DEL_CNT="5" PROD_ADDR="272" desc="1층 입고 H/S (트랙 254)"/>
+				<HS NO="3"  TID="354"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="270" DEL_CNT="5" PROD_ADDR="272" desc="3층 입고 H/S (트랙 354)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="248"  CV_PLC_NO="2"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="242" desc="1층 출고 H/S (트랙 248)"/>
+				<HS NO="4"  TID="348"  CV_PLC_NO="3"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="242" desc="3층 출고 H/S (트랙 348)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="7" device="SC_E07" cid="1112029007" com="E" desc="DB sc_no 907. 원본 ECS SC_8. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="503"  CV_PLC_NO="5"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="15" DEL_CNT="5" PROD_ADDR="17" desc="1층 입고 H/S (트랙 503)"/>
+				<HS NO="3"  TID="603"  CV_PLC_NO="6"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="15" DEL_CNT="5" PROD_ADDR="17" desc="3층 입고 H/S (트랙 603)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="504"  CV_PLC_NO="5"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="22" desc="1층 출고 H/S (트랙 504)"/>
+				<HS NO="4"  TID="604"  CV_PLC_NO="6"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="22" desc="3층 출고 H/S (트랙 604)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="8" device="SC_E08" cid="1112029008" com="E" desc="DB sc_no 908. 원본 ECS SC_9. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="509"  CV_PLC_NO="5"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="45" DEL_CNT="5" PROD_ADDR="47" desc="1층 입고 H/S (트랙 509)"/>
+				<HS NO="3"  TID="609"  CV_PLC_NO="6"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="45" DEL_CNT="5" PROD_ADDR="47" desc="3층 입고 H/S (트랙 609)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="510"  CV_PLC_NO="5"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="52" desc="1층 출고 H/S (트랙 510)"/>
+				<HS NO="4"  TID="610"  CV_PLC_NO="6"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="52" desc="3층 출고 H/S (트랙 610)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="9" device="SC_E09" cid="1112029009" com="E" desc="DB sc_no 909. 원본 ECS SC_10. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="515"  CV_PLC_NO="5"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="75" DEL_CNT="5" PROD_ADDR="77" desc="1층 입고 H/S (트랙 515)"/>
+				<HS NO="3"  TID="615"  CV_PLC_NO="6"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="75" DEL_CNT="5" PROD_ADDR="77" desc="3층 입고 H/S (트랙 615)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="516"  CV_PLC_NO="5"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="82" desc="1층 출고 H/S (트랙 516)"/>
+				<HS NO="4"  TID="616"  CV_PLC_NO="6"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="82" desc="3층 출고 H/S (트랙 616)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="0" class="CSc" number="10" device="SC_E10" cid="1112029010" com="E" desc="DB sc_no 910. 원본 ECS SC_11. H/S 4개(1층 입출고 + 3층 입출고)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="521"  CV_PLC_NO="5"  PAIR="0"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="105" DEL_CNT="5" PROD_ADDR="107" desc="1층 입고 H/S (트랙 521)"/>
+				<HS NO="3"  TID="621"  CV_PLC_NO="6"  PAIR="0"  BANK="2"  BAY="10"  LEVEL="0" DEL_ADDR="105" DEL_CNT="5" PROD_ADDR="107" desc="3층 입고 H/S (트랙 621)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="522"  CV_PLC_NO="5"  PAIR="0"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="112" desc="1층 출고 H/S (트랙 522)"/>
+				<HS NO="4"  TID="622"  CV_PLC_NO="6"  PAIR="0"  BANK="2"  BAY="8"  LEVEL="0" PROD_ADDR="112" desc="3층 출고 H/S (트랙 622)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+
+	<SC TYPE="1" class="CScPair" number="11" device="SC_E11" cid="1112029011" com="E" desc="DB sc_no 911. P-BOX 트윈 크레인 (원본 SC_1, H/S 2개)">
+		<HS_GROUP>
+			<STO_HS>
+				<HS NO="1"  TID="420"  CV_PLC_NO="4"  PAIR="419"  BANK="2"  BAY="15"  LEVEL="0" DEL_ADDR="100" DEL_CNT="5" PROD_ADDR="102" DEL_ADDR2="95" DEL_CNT2="5" PROD_ADDR2="97" desc="1층 입고 H/S (트랙 420, 포크#2 트랙 419)"/>
+			</STO_HS>
+			<RET_HS>
+				<HS NO="2"  TID="410"  CV_PLC_NO="4"  PAIR="411"  BANK="2"  BAY="12"  LEVEL="0" PROD_ADDR="52" PROD_ADDR2="57" desc="1층 출고 H/S (트랙 410, 포크#2 트랙 411)"/>
+			</RET_HS>
+		</HS_GROUP>
+		<RACK_INFO LEVEL_START="11" LEVEL_END="20"/>
+	</SC>
+</ECS>

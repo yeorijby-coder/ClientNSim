@@ -38,3 +38,5 @@ HostSim/HostSim.sdf
 /Bin/Debug/*.RPT
 ASSERT.LOG
 *.dmp
+# Tools\Deploy.ps1 가 만드는 배포 폴더
+/Deploy/
