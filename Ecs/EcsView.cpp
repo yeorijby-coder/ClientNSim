@@ -132,7 +132,11 @@ void CEcsView::OnInitialUpdate()
 		if (pEcsLayout == NULL)
 			continue;
 
-		m_tabLayout.InsertItem(nPlcCount, pEcsLayout->m_strText, nPlcCount);	
+		CString strTabName = pEcsLayout->m_strText;
+		if (strTabName.IsEmpty())
+			strTabName.Format(_T("%dF"), i + 1);
+
+		m_tabLayout.InsertItem(nPlcCount, strTabName, nPlcCount);	
 		m_tabLayout.HighlightItem(nPlcCount++, FALSE);
 		m_tabLayout.SetItemSize(CSize(200, 20));				// ?
 
@@ -143,8 +147,45 @@ void CEcsView::OnInitialUpdate()
 
 
 
+	//	탭을 하나라도 넣었으면 첫 층을 골라 둔다. 안 그러면 GetCurSel() 이 -1 이라
+	//	OnDraw 가 아무것도 그리지 않는다.
+	if (m_tabLayout.GetSafeHwnd() && m_tabLayout.GetItemCount() > 0)
+		SelectLayout(pDoc->GetLayoutIndex());
+
 	pDoc->UpdateRibbonLang();
 	::SetTimer(this->m_hWnd, 1000, NULL, NULL);
+	Invalidate(TRUE);
+}
+
+//	리본의 1F/2F/3F 버튼이 부른다.
+//	그리기/마우스/휠 처리가 모두 m_tabLayout.GetCurSel() 을 보고 있으므로
+//	탭 선택만 옮겨 주면 나머지는 그대로 따라온다.
+void CEcsView::SelectLayout(int nIndex)
+{
+	if (!m_tabLayout.GetSafeHwnd())
+		return;
+
+	if (nIndex < 0 || nIndex >= m_tabLayout.GetItemCount())
+		return;
+
+	if (m_tabLayout.GetCurSel() != nIndex)
+		m_tabLayout.SetCurSel(nIndex);
+
+
+	//	고른 층에 지금 화면 크기를 넘겨 준다.
+	//	CEcsView::OnSize 는 그때 선택돼 있던 층 하나에만 크기를 알려 주기 때문에,
+	//	한 번도 선택된 적 없는 층은 그리기 사각형이 0 이라 아무것도 그려지지 않는다.
+	CEcsDoc* pDoc = GetDocument();
+	if (pDoc != NULL)
+	{
+		CEcsLayout* pEcsLayout = pDoc->GetLayoutAt(nIndex);
+		if (pEcsLayout != NULL)
+		{
+			CRect rcClient;
+			GetClientRect(&rcClient);
+			pEcsLayout->OnSize(this, SIZE_RESTORED, rcClient.Width(), rcClient.Height());
+		}
+	}
 	Invalidate(TRUE);
 }
 

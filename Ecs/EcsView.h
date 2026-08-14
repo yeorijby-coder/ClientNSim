@@ -108,6 +108,9 @@ public:
 	afx_msg void OnSearch();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	CTabCtrl m_tabLayout;
+public:
+	//	리본의 1F/2F/3F 버튼이 부른다. 탭을 옮기고 다시 그린다.
+	void SelectLayout(int nIndex);
 };
 
 #ifndef _DEBUG  // EcsView.cpp의 디버그 버전

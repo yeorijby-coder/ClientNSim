@@ -62,6 +62,7 @@ public:
 
 public:
 	void InitializeRibbonMenu(EN_LANG penLang = EN_LANG::EN_ENG);
+	void AddPanelLAYOUT(CMFCRibbonCategory* pCategory);	// 1F / 2F / 3F
 	void RenameRibbonText(EN_LANG penLang = EN_ENG);
 	HICON HICONFromPATH(CString pstrPath);
 	CString GetConcatPath_LANG(CString pstrAppPath, CString pstrFileName, CString pstrExtension, EN_LANG penLang);

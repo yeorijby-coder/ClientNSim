@@ -106,6 +106,8 @@ public:
 	afx_msg void OnCommandRangeMainFrameMANUAL(UINT nID);
 	afx_msg void OnCommandRangeMainFrameLOG(UINT nID);
 	afx_msg void OnCommandRangeMainFrameSTATUS(UINT nID);
+	afx_msg void OnCommandRangeMainFrameLAYOUT(UINT nID);
+	afx_msg void OnUpdateMainFrameLAYOUT(CCmdUI* pCmdUI);
 
 
 // 특성입니다.
@@ -120,6 +122,10 @@ public:
 	CString			m_strDebug;
 
 	EN_LAYOUT		m_enSelectedLayout;
+
+	//	지금 화면에 그리는 레이아웃 (0=1F, 1=2F, 2=3F).
+	//	m_pEcsLayOuts 의 첨자이고, 리본의 레이아웃 버튼과 화면 아래 탭이 이 값을 같이 본다.
+	int				m_nLayoutIndex;
 
 	CEcsLayout		m_layout;
 
@@ -266,6 +272,10 @@ public:
 public:
 	CEcsLayout* GetSelectedLayout();
 	CEcsLayout* GetLayout_PARM(EN_LAYOUT penLAYOUT);
+	CEcsLayout* GetLayoutAt(int nIndex);
+	int			GetLayoutCount()	{ return (int)m_pEcsLayOuts.GetSize(); }
+	int			GetLayoutIndex()	{ return m_nLayoutIndex; }
+	void		SelectLayout(int nIndex);
 	CDciControl* GetDciControl_FindAllLayout(CString& strCID);
 	CDciControl* GetDciControl_FindAllLayout(CString& strCID, int& nLayoutNo);
 	void RefreshLayout();

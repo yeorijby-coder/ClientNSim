@@ -571,6 +571,10 @@ BOOL CEcsLayout::LoadXml(LPCTSTR lpszFullPath, CString strKioskNo)
 		dom.GetAttrValue(_T("t"), strValue);	rcLayout.top = CConvert::ToInt(strValue);
 		m_pDCI->SetLayoutL(rcLayout);
 
+		//	루트의 text 가 이 레이아웃의 이름이다 ("1F" "2F" "3F").
+		//	화면 아래 탭 이름으로 쓴다. 예전에는 아무도 넣어 주지 않아 탭이 빈칸이었다.
+		dom.GetAttrValue(_T("text"), m_strText);
+
 		m_pDCI->m_rcLayoutLTemp = m_pDCI->GetLayoutL();	
 
 		if (dom.SelectElements(_T("//Control")))

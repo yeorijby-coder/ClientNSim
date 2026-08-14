@@ -422,6 +422,42 @@ void CMainFrame::AddCategoryWCS()
 		pBtnPl->SetAlwaysLargeImage();
 		pPanelMonitor->Add(pBtnPl);
 	}
+
+	AddPanelLAYOUT(pCategory);
+}
+
+//	층을 오가는 버튼.
+//	EcsLayout1.xml = 1F, EcsLayout2.xml = 2F, EcsLayout3.xml = 3F 이고
+//	Ecs.ini 의 [COMMON] TabCount 만큼 읽어 들인다.
+//	누르면 CEcsDoc::OnCommandRangeMainFrameLAYOUT 이 받는다.
+//	읽지 못한 층의 버튼은 OnUpdateMainFrameLAYOUT 이 회색으로 만든다.
+void CMainFrame::AddPanelLAYOUT(CMFCRibbonCategory* pCategory)
+{
+	if (pCategory == NULL)
+		return;
+
+	TCHAR chrFileName[500];
+	GetModuleFileName(NULL, chrFileName, MAX_PATH);
+
+	CString strAppPath;
+	strAppPath.Format(_T("%s"), chrFileName);
+	strAppPath = strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\mainframe_layout\\");
+	CString strExtension = _T(".png");
+
+	CMFCRibbonPanel* pPanelLayout = pCategory->AddPanel(_T("레이아웃"));
+
+	const UINT nIDs[3]      = { ID_LAYOUT_1F, ID_LAYOUT_2F, ID_LAYOUT_3F };
+	LPCTSTR     szTexts[3]  = { _T("1F"), _T("2F"), _T("3F") };
+	LPCTSTR     szImages[3] = { _T("1f"), _T("2f"), _T("3f") };
+
+	for (int i = 0; i < 3; ++i)
+	{
+		CMFCRibbonButton* pBtn = new CMFCRibbonButton(
+			nIDs[i], szTexts[i],
+			HICONFromPATH(GetConcatPath(strAppPath, szImages[i], strExtension)), TRUE);
+		pBtn->SetAlwaysLargeImage();
+		pPanelLayout->Add(pBtn);
+	}
 }
 	
 void CMainFrame::AddCategoryMANUAL()

@@ -63,6 +63,8 @@ BEGIN_MESSAGE_MAP(CEcsDoc, CDocument)
 	ON_COMMAND_RANGE(ID_LOG_IO, IDD_LOG_WCS_LOG_PGR, &CEcsDoc::OnCommandRangeMainFrameLOG)
 	//ON_COMMAND_RANGE(ID_LOG_IO, ID_LOG_CLIENT, &CEcsDoc::OnCommandRangeMainFrameLOG)
 	ON_COMMAND_RANGE(ID_STATUS_CV, ID_STATUS_WC1, &CEcsDoc::OnCommandRangeMainFrameSTATUS)
+	ON_COMMAND_RANGE(ID_LAYOUT_1F, ID_LAYOUT_3F, &CEcsDoc::OnCommandRangeMainFrameLAYOUT)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_LAYOUT_1F, ID_LAYOUT_3F, &CEcsDoc::OnUpdateMainFrameLAYOUT)
 END_MESSAGE_MAP()
 
 
@@ -87,6 +89,7 @@ CEcsDoc::CEcsDoc()
 
 	m_WH_TYP = m_pConfig->m_strWH_WH_TYP;
 	m_enSelectedLayout = (EN_LAYOUT)m_pConfig->m_nUSER_LAST_TAB_INDEX;
+	m_nLayoutIndex = 0;
 	if (m_enSelectedLayout < 0 || m_enSelectedLayout > EN_CHIN_LAST)
 	{
 		m_enSelectedLayout = EN_KET;
@@ -1336,16 +1339,17 @@ CDciControl* CEcsDoc::GetDciControl_FindAllLayout(CString& strCID)
 	CEcsView* pView = (CEcsView*)GetViewObject();
 	if (pView == NULL) { return NULL; };
 
-	CDciControl* pDciControl = NULL; //보류4
+	CDciControl* pDciControl = NULL;
 
-	int nLast = 2;
-
-	if (m_WH_TYP == _T("10"))
-		nLast = EN_CHIN_LAST;
-
-	for (int nIdxLayout = (EN_CHIN_INIT + 1); nIdxLayout < nLast; nIdxLayout++)
+	//	읽어들인 레이아웃을 전부 뒤진다. 예전에는 EN_CHIN_LAST(=2) 까지만 돌아
+	//	사실상 첫 번째 것만 봤다. 2F/3F 의 컨트롤이 안 잡히던 원인이다.
+	int nLayoutCnt = (int)m_pEcsLayOuts.GetSize();
+	for (int nIdxLayout = 0; nIdxLayout < nLayoutCnt; nIdxLayout++)
 	{
-		pDciControl = GetLayout_PARM((EN_LAYOUT)nIdxLayout)->GetDciControl(strCID);
+		CEcsLayout* pEcsLayout = GetLayoutAt(nIdxLayout);
+		if (pEcsLayout == NULL) { continue; }
+
+		pDciControl = pEcsLayout->GetDciControl(strCID);
 		if (pDciControl != NULL) { break; }
 	}
 	//pDciControl = GetSelectedLayout()->GetDciControl(strCID);
@@ -1357,16 +1361,15 @@ CDciControl* CEcsDoc::GetDciControl_FindAllLayout(CString& strCID, int& nLayoutN
 	CEcsView* pView = (CEcsView*)GetViewObject();
 	if (pView == NULL) { return NULL; };
 
-	CDciControl* pDciControl = NULL; //보류4
+	CDciControl* pDciControl = NULL;
 
-	int nLast = 2;
-
-	if (m_WH_TYP == _T("10"))
-		nLast = EN_CHIN_LAST;
-
-	for (int nIdxLayout = (EN_CHIN_INIT + 1); nIdxLayout < nLast; nIdxLayout++)
+	int nLayoutCnt = (int)m_pEcsLayOuts.GetSize();
+	for (int nIdxLayout = 0; nIdxLayout < nLayoutCnt; nIdxLayout++)
 	{
-		pDciControl = GetLayout_PARM((EN_LAYOUT)nIdxLayout)->GetDciControl(strCID);
+		CEcsLayout* pEcsLayout = GetLayoutAt(nIdxLayout);
+		if (pEcsLayout == NULL) { continue; }
+
+		pDciControl = pEcsLayout->GetDciControl(strCID);
 		if (pDciControl != NULL)
 		{
 			nLayoutNo = nIdxLayout;
@@ -1465,40 +1468,61 @@ void CEcsDoc::UpdateRibbonLang()
 }
 
 
+//	예전에는 첨자를 무시하고 무조건 첫 번째 레이아웃을 돌려줬다.
+//	층이 하나일 때는 티가 나지 않았지만, 2F/3F 를 붙이면 그 층의 컨트롤을
+//	영영 찾지 못해 화면이 갱신되지 않는다.
 CEcsLayout* CEcsDoc::GetLayout_PARM(EN_LAYOUT penLAYOUT)
 {
-	int nLayoutCnt = m_pEcsLayOuts.GetSize();
-	for (int i = 0; i < nLayoutCnt; i++)
-	{
-		CEcsLayout* pEcsLayout = m_pEcsLayOuts[i];
+	return GetLayoutAt((int)penLAYOUT);
+}
 
-		if (pEcsLayout == NULL)
-			continue;
+CEcsLayout* CEcsDoc::GetLayoutAt(int nIndex)
+{
+	if (nIndex < 0 || nIndex >= m_pEcsLayOuts.GetSize())
+		return NULL;
 
-		return pEcsLayout;
-
-		//if (pEcsLayout->GetDciControl(strCID) != NULL)
-		//	return pEcsLayout->GetDciControl(strCID);
-	}
-
-	return NULL;
+	return m_pEcsLayOuts[nIndex];
 }
 
 
 CEcsLayout* CEcsDoc::GetSelectedLayout()
 {
-	int nLayoutCnt = m_pEcsLayOuts.GetSize();
-	for (int i = 0; i < nLayoutCnt; i++)
-	{
-		CEcsLayout* pEcsLayout = m_pEcsLayOuts[i];
-
-		if (pEcsLayout == NULL)
-			continue;
-
+	CEcsLayout* pEcsLayout = GetLayoutAt(m_nLayoutIndex);
+	if (pEcsLayout != NULL)
 		return pEcsLayout;
-	}
 
-	return NULL;
+	//	고른 층이 없으면(파일을 못 읽었을 때) 있는 것 아무거나
+	return GetLayoutAt(0);
+}
+
+//	리본의 1F/2F/3F 버튼과 화면 아래 탭이 같이 부른다.
+void CEcsDoc::SelectLayout(int nIndex)
+{
+	if (nIndex < 0 || nIndex >= m_pEcsLayOuts.GetSize())
+		return;
+
+	m_nLayoutIndex = nIndex;
+
+	CEcsView* pView = (CEcsView*)GetViewObject();
+	if (pView != NULL)
+		pView->SelectLayout(nIndex);
+}
+
+void CEcsDoc::OnCommandRangeMainFrameLAYOUT(UINT nID)
+{
+	SelectLayout((int)(nID - ID_LAYOUT_1F));
+}
+
+//	지금 보고 있는 층의 버튼을 눌린 상태로 두고, 파일이 없는 층은 못 누르게 한다.
+void CEcsDoc::OnUpdateMainFrameLAYOUT(CCmdUI* pCmdUI)
+{
+	if (pCmdUI == NULL)
+		return;
+
+	int nIndex = (int)(pCmdUI->m_nID - ID_LAYOUT_1F);
+
+	pCmdUI->Enable(GetLayoutAt(nIndex) != NULL);
+	pCmdUI->SetCheck(nIndex == m_nLayoutIndex);
 }
 
 CString CEcsDoc::GetDefineXmlPATH()
@@ -1545,10 +1569,13 @@ void CEcsDoc::InitializeErrorMst()
 			CString strEQP_TYP, strERROR_CODE;
 			CString strACTION_KOR, strACTION_ENG, strACTION_CHIN, strACTION_HUN;
 			CString strMSG_KOR, strMSG_ENG, strMSG_CHIN, strMSG_HUN;
+			//	CString::Format 에 자기 자신을 넘기면 안 된다.
+			//	Format 이 대상 버퍼를 먼저 놓아 버려서 %s 가 엉뚱한 곳을 가리킨다.
+			//	여기서 ucrtbase.dll 의 ACCESS_VIOLATION 으로 기동 중에 죽고 있었다.
 			strEQP_TYP = pRswError->GetItem(_T("EQP_TYP"));
-			strEQP_TYP.Format(_T("%s"), strEQP_TYP);
-			strERROR_CODE = pRswError->GetItem(_T("EQP_ERR_CD"));
-			strERROR_CODE.Format(_T("%04s"), strERROR_CODE);
+
+			CString strErrCodeRaw = pRswError->GetItem(_T("EQP_ERR_CD"));
+			strERROR_CODE.Format(_T("%04s"), (LPCTSTR)strErrCodeRaw);
 			CEQP_ECD_MST* pMapItem = new CEQP_ECD_MST(strEQP_TYP, strERROR_CODE);
 			strACTION_KOR = pRswError->GetItem(_T("ACTION_KOR"));
 			strACTION_ENG = pRswError->GetItem(_T("ACTION_ENG"));

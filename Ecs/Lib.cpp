@@ -1429,7 +1429,10 @@ void CLib::CellMasking( CString& pstrCELL_NO_TO )
    if(pstrCELL_NO_TO.GetLength() < 7)
       return;
 
-   pstrCELL_NO_TO.Format(_T("%02s-%03s-%02s"), pstrCELL_NO_TO.Left(2), pstrCELL_NO_TO.Mid(2,3), pstrCELL_NO_TO.Right(2));
+   //	Format 에 자기 자신에서 뽑은 것을 넘기면 안 된다.
+   //	대상 버퍼를 먼저 놓아 버려서 %s 가 엉뚱한 곳을 가리킨다. 임시로 받아 둔다.
+   CString strCellNoRaw = pstrCELL_NO_TO;
+   pstrCELL_NO_TO.Format(_T("%02s-%03s-%02s"), (LPCTSTR)strCellNoRaw.Left(2), (LPCTSTR)strCellNoRaw.Mid(2,3), (LPCTSTR)strCellNoRaw.Right(2));
 }
 
 CString CLib::GetCommonCodeLang( CString pstrSql, int pnLang )
