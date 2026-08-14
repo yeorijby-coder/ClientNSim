@@ -33,6 +33,7 @@ protected:
 	BOOL ParseBcr(CEquipment* pEquipment);
 	BOOL ParseScPair(CEquipment* pEquipment);
 	BOOL ParseScSingle(CEquipment* pEquipment);
+	BOOL ParseDisplay(CEquipment* pEquipment);
 
 private:
 	BOOL ParseTracks(CCv* pEquipment);

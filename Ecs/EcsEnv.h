@@ -102,5 +102,16 @@
 #define ERR_PORT_NOT_OPEN		-1
 #define ERR_INIT_FAIL			-2
 
-
+#define NOTIFY_REFRESH					1
+#define NOTIFY_SEND						2
+#define NOTIFY_RECEIVE 					3
+#define NOTIFY_ERROR					4
+#define	NOTIFY_CONNECT					5
+#define	NOTIFY_CLOSE					6
+#define	NOTIFY_DISPLAY					7
+#define	NOTIFY_BCR_REQUEST				8
+#define	NOTIFY_SC_SOCK_LOG_JOB			9
+#define	NOTIFY_SC_SOCK_LOG_DEBUG		10
+#define	NOTIFY_SC_SOCK_LOG_ERROR		11
+#define	NOTIFY_SC_SOCK_LOG_EVENT		12
 #endif //__ECSENV_H__

@@ -27,7 +27,7 @@ public:
 
 public:
 	enum EN_SIZE_EQP_KIND { enEQP_CV = 1, enEQP_SIZE };
-	enum EN_KIND { enNone = 0, enCV = 10, enCV1 = 11, enSC = 20, enRTV= 30, enCM = 40, enLGV = 50, enBCR = 70, enTHS = 90, enOther = 99 };//enDISPLAY = 80
+	enum EN_KIND { enNone = 0, enCV = 10, enCV1 = 11, enSC = 20, enRTV= 30, enCM = 40, enLGV = 50, enBCR = 70, enDISPLAY = 80, enTHS = 90, enOther = 99 };//enDISPLAY = 80
 	enum {	enBit_0 = 0x0001, enBit_1 = 0x0002, enBit_2 = 0x0004, enBit_3 = 0x0008, 
 			enBit_4 = 0x0010, enBit_5 = 0x0020, enBit_6 = 0x0040, enBit_7 = 0x0080,
 			enBit_8 = 0x0100, enBit_9 = 0x0200, enBit_10 = 0x0400, enBit_11 = 0x0800,

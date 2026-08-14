@@ -456,7 +456,7 @@ void CScSkinDlg::RedrawSize()
 	{
 		CRect rect;
 
-		if (m_pSC_DATA->V_SC_TYP == "TWIN")
+		if (m_pSC_DATA->V_SC_TYP == "SINGLE")
 		{
 			m_grpScScJobInformationFork2.ShowWindow(SW_HIDE);
 
@@ -476,8 +476,27 @@ void CScSkinDlg::RedrawSize()
 
 			m_grpScScJobInformationFork1.GetWindowRect(&rect);
 			ScreenToClient(&rect);
+			m_grpScScJobInformationFork1.MoveWindow(rect.left, rect.top, 485, rect.Height(), true);
 
-			m_grpScScJobInformationFork1.MoveWindow(rect.left, rect.top, 300, rect.Height(), true);
+			m_edtScJobNoFork1.GetWindowRect(&rect);
+			ScreenToClient(&rect);
+			m_edtScJobNoFork1.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
+
+			m_edtScJobTypFork1.GetWindowRect(&rect);
+			ScreenToClient(&rect);
+			m_edtScJobTypFork1.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
+
+			m_edtScStartLocFork1.GetWindowRect(&rect);
+			ScreenToClient(&rect);
+			m_edtScStartLocFork1.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
+
+			m_edtScDestLocFork1.GetWindowRect(&rect);
+			ScreenToClient(&rect);
+			m_edtScDestLocFork1.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
+
+			m_edtScErrStaFk1Rd.GetWindowRect(&rect);
+			ScreenToClient(&rect);
+			m_edtScErrStaFk1Rd.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
 
 		}
 	}
