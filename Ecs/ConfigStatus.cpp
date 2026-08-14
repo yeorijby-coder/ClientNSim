@@ -113,9 +113,10 @@ void CConfigStatus::OnClose()
 BOOL CConfigStatus::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
+	RenameResource(pEn);
 	CSkinDialog::SetFont(this->GetFont());
 	if( !m_bInitialized )
 	{	
@@ -202,4 +203,75 @@ void CConfigStatus::OnBnClickedInitColor()
 
 	// 레이아웃 수정
 	m_pDoc->m_pEquipments.InvokeControl(TRUE);
+}
+
+
+//	캡션을 rc_resource\dlg_legend\dlg_legend.ini 에서 읽는다.
+//	예전에는 Ecs.rc 값 그대로라 언어를 바꿔도 그대로였다.
+void CConfigStatus::RenameResource(EN_LANG m_enLang)
+{
+	TCHAR chrFileName[500];
+	GetModuleFileName(NULL, chrFileName, MAX_PATH);
+	CString strAppPath;
+	strAppPath.Format(_T("%s"), chrFileName);
+	CString strExtension = _T(".ini");
+	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_legend\\"), _T("dlg_legend"), strExtension);
+
+	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
+	if (!strValue.IsEmpty())	SetWindowText(strValue);
+
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("close"), (int)m_enLang);
+	SetDlgItemText(IDOK, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("clear"), (int)m_enLang);
+	SetDlgItemText(IDC_INIT_COLOR, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("save"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_SAVE, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvsto"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_STO, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvret"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_RET, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvmove"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_MOVE, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("railsto"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_RAIL_STO, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("railret"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_RAIL_RET, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("railstoret"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_RAIL_STORET, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("railerr"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_RAIL_ERR, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("railitnlugg"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_RAIL_ITN_LUGG, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("err"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_ERR, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvstoready"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_STO_READY, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvretready"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_RET_READY, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvstohs"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_STO_HS, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvreths"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_RET_HS, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvata"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_ATA, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvrtr"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_RTR, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvsuspend"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_SUSPEND, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("manual"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_MANUAL, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("disconnect"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_DISCONNECT, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvsearch"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CV_SEARCH, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("grpscstatus"), (int)m_enLang);
+	SetDlgItemText(IDC_GRP_SC_STATUS, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("grprailstatus"), (int)m_enLang);
+	SetDlgItemText(IDC_GRP_RAIL_STATUS, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("grpstatus"), (int)m_enLang);
+	SetDlgItemText(IDC_GRP_STATUS, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("grpcvjobstatus"), (int)m_enLang);
+	SetDlgItemText(IDC_GRP_CV_JOB_STATUS, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("grpcvstatus"), (int)m_enLang);
+	SetDlgItemText(IDC_GRP_CV_STATUS, strValue);
 }

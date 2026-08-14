@@ -61,7 +61,7 @@ BOOL CSystemLoginDlg::OnInitDialog()
 	if(m_pDoc == NULL)
 		return FALSE;
 	
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
 	CSkinDialog::SetFont(this->GetFont());
@@ -227,6 +227,10 @@ void CSystemLoginDlg::RenameResource( EN_LANG m_enLang)
 
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("sign"), (int)m_enLang);
 	SetDlgItemText(IDOK, strValue);
+	//	예전에는 Ecs.rc 캡션 그대로라 언어를 바꿔도 안 바뀌던 것들
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_login\\"), _T("dlg_login"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("logout"), (int)m_enLang);
+	SetDlgItemText(ID_LOCK, strValue);
 }
 
 void CSystemLoginDlg::RedrawImage()

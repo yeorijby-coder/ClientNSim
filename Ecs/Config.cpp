@@ -94,7 +94,8 @@ void CConfig::LoadConfigDATABASE()
 
 void CConfig::LoadConfigUSER()
 {
-	m_nUSER_LAST_LANG = ::GetPrivateProfileInt(_T("USER"), _T("LAST_LANG"), 1, ECS_INI_FILE);
+	//	저장된 것이 없으면 한국어로 시작한다. (0:KOR 1:ENG 2:HUN 3:CHIN)
+	m_nUSER_LAST_LANG = ::GetPrivateProfileInt(_T("USER"), _T("LAST_LANG"), 0, ECS_INI_FILE);
 	m_nUSER_LAST_TAB_INDEX = ::GetPrivateProfileInt(_T("USER"), _T("LAST_TAB_INDEX"), 1, ECS_INI_FILE);
 
 	if (m_strWH_WH_TYP == _T("40"))

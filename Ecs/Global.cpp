@@ -470,7 +470,7 @@ CString CGlobal::GetFontName( int pnLang )
 	if(pnLang == 2) {		return _T("Comicool Regular");	}
 	//if(pnLang == 3) {		return _T("Nokia Font YanTi");	}
 	if(pnLang == 3) {		return _T("Microsoft YaHei UI Bold");	}
-	return _T("Arial");	
+	return _T("돋움체");		//	기본은 한국어	
 }
 
 HBITMAP CGlobal::BITMAPFromPATH( CString pstrFullPath )

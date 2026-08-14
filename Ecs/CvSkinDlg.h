@@ -230,6 +230,7 @@ public:
 	CTGroupBox m_grpCvJobReadyStaInfo;
 
 public:
+	CString GetResString(LPCTSTR lpszKey);	// dlg_cv.ini 한 줄 읽기
 	void RenameResource( EN_LANG m_enLang = EN_ENG );
 	void RedrawImage();
 	void InitializeResource(EN_LANG pnLANG);

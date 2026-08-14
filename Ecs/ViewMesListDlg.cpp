@@ -166,7 +166,7 @@ void CViewMesListDlg::RelocationControls()
 BOOL CViewMesListDlg::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	CTime tStartD, tStartT, tEndD, tEndT;
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
@@ -374,6 +374,10 @@ void CViewMesListDlg::RenameResource(EN_LANG enLang)
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_ifinfo\\"), _T("dlg_ifinfo"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("update"), (int)enLang);
 	SetDlgItemText(ID_MES_UPDATE, strValue);
+	//	예전에는 Ecs.rc 캡션 그대로라 언어를 바꿔도 안 바뀌던 것들
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_ifinfo\\"), _T("dlg_ifinfo"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("autosel"), (int)enLang);
+	SetDlgItemText(IDC_CHK_MES_VIEW_AUTO_SEL, strValue);
 	
 }
 

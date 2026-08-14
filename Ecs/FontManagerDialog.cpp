@@ -47,7 +47,7 @@ int CFontManagerDialog::GetLangDefaultWidth(int pnLang)
 	if(pnLang == 1){ return nFontSizeDefaultWidth_ENG;};
 	if(pnLang == 2){ return nFontSizeDefaultWidth_HUN;};
 	if(pnLang == 3){ return nFontSizeDefaultWidth_CHIN;};
-	return 8;
+	return nFontSizeDefaultWidth_KOR;
 }
 
 int CFontManagerDialog::GetLangDefaultHeight(int pnLang)
@@ -56,7 +56,7 @@ int CFontManagerDialog::GetLangDefaultHeight(int pnLang)
 	if(pnLang == 1){ return nFontSizeDefaultHeight_ENG;};
 	if(pnLang == 2){ return nFontSizeDefaultHeight_HUN;};
 	if(pnLang == 3){ return nFontSizeDefaultHeight_CHIN;};
-	return 11;
+	return nFontSizeDefaultHeight_KOR;
 }
 
 BOOL CFontManagerDialog::SetFontNation(int pnLang, int pnWidth, int pnHeight, BOOL pbRedraw, BOOL pbMessage,  CWnd* pWnd)

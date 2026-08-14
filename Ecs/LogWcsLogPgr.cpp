@@ -78,7 +78,7 @@ END_MESSAGE_MAP()
 BOOL CLogWcsLogPgr::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	CTime tStartD, tStartT, tEndD, tEndT;
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
@@ -449,6 +449,10 @@ void CLogWcsLogPgr::RenameResource(EN_LANG enLang)
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_wcslog\\"), _T("dlg_wcslog"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("selectresult"), (int)enLang);
 	SetDlgItemText(IDC_GRP_WCS_SEARCH2, strValue);
+	//	예전에는 Ecs.rc 캡션 그대로라 언어를 바꿔도 안 바뀌던 것들
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_wcslog\\"), _T("dlg_wcslog"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("search"), (int)enLang);
+	SetDlgItemText(IDC_BTN_WCS_LOG_SEARCH, strValue);
 }
 
 CString CLogWcsLogPgr::GetQrySelect_Main(int nRowCheck, BOOL bSearch)

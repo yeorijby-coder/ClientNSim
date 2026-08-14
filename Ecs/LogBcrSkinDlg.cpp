@@ -87,7 +87,7 @@ END_MESSAGE_MAP()
 BOOL CLogBcrSkinDlg::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
 	CSkinDialog::SetFont(this->GetFont());

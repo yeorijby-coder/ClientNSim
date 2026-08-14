@@ -57,7 +57,7 @@ BOOL CViewSearchDlg::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
 
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
 	CSkinDialog::SetFont(this->GetFont());
@@ -168,7 +168,7 @@ void CViewSearchDlg::RenameResource( EN_LANG m_enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_search\\"), _T("dlg_search"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
-	SetWindowText(_T("찾기"));
+	SetWindowText(strValue);		//	읽어 놓고 쓰지 않아 제목이 늘 한글이었다
 
 	//
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_search\\"), _T("dlg_search"), strExtension);

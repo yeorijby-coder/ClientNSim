@@ -190,7 +190,7 @@ BOOL CViewJobListDlg::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
 
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
 	CSkinDialog::SetFont(this->GetFont());
@@ -523,15 +523,19 @@ void CViewJobListDlg::JobComplete(CString strJOB_STATUS)
 
 void CViewJobListDlg::InitializeControlLanguage()
 {
-	m_lblBcrTop.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("상단바코드"), m_pDoc->m_enLang));
-	m_lblBcrBottom.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("팔렛트바코드"), m_pDoc->m_enLang));
-	m_lblJobTyp.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("작업구분"), m_pDoc->m_enLang));
-	m_lblJobStatus.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("작업상태"), m_pDoc->m_enLang));
+	//	아래는 RenameResource 가 ini 에서 넣어 준 라벨을 다시 덮어쓴다.
+	//	GetLangValue 는 영문 표가 비어 있어 한국어를 그대로 돌려주므로
+	//	언어를 바꿔도 이 라벨들만 한글로 남았다. EqpSuspendDlg 도 같은 이유로
+	//	예전에 통째로 주석 처리되어 있다.
+	//m_lblBcrTop.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("상단바코드"), m_pDoc->m_enLang));
+	//m_lblBcrBottom.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("팔렛트바코드"), m_pDoc->m_enLang));
+	//m_lblJobTyp.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("작업구분"), m_pDoc->m_enLang));
+	//m_lblJobStatus.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("작업상태"), m_pDoc->m_enLang));
 
-	m_lblLuggNum.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("작업번호"), m_pDoc->m_enLang));
-	m_lblStartPos.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("출발지"), m_pDoc->m_enLang));
-	m_lblDestPos.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("도착지"), m_pDoc->m_enLang));
-	m_lblWhType.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("창고타입"), m_pDoc->m_enLang));
+	//m_lblLuggNum.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("작업번호"), m_pDoc->m_enLang));
+	//m_lblStartPos.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("출발지"), m_pDoc->m_enLang));
+	//m_lblDestPos.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("도착지"), m_pDoc->m_enLang));
+	//m_lblWhType.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("창고타입"), m_pDoc->m_enLang));
 	m_lblSpdMainCnt.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("0"), m_pDoc->m_enLang));
 }
 
@@ -792,6 +796,19 @@ void CViewJobListDlg::RenameResource(EN_LANG m_enLang)
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_jobinfo\\"), _T("dlg_jobinfo"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("jobpriority"), (int)m_enLang);
 	SetDlgItemText(IDC_LBL_JOB_PRIORITY, strValue);
+	//	예전에는 Ecs.rc 캡션 그대로라 언어를 바꿔도 안 바뀌던 것들
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_jobinfo\\"), _T("dlg_jobinfo"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("autosel"), (int)m_enLang);
+	SetDlgItemText(IDC_CHK_AUTO_SEL, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_jobinfo\\"), _T("dlg_jobinfo"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("jobstatus2"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_JOB_STATUS2, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_jobinfo\\"), _T("dlg_jobinfo"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("sccomplete"), (int)m_enLang);
+	SetDlgItemText(ID_JOB_SC_COMPLETE, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_jobinfo\\"), _T("dlg_jobinfo"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvcomplete"), (int)m_enLang);
+	SetDlgItemText(ID_JOB_CV_COMPLETE, strValue);
 }
 
 void CViewJobListDlg::RedrawImage()

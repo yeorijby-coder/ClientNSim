@@ -673,7 +673,7 @@ CString CLib::GetIniStringFromPath(CString pstrPath, CString pstrKey, int penLan
    else if(penLang == 1){strSection = _T("eng");}
    else if(penLang == 2){strSection = _T("hun");}
    else if(penLang == 3){strSection = _T("chin");}
-   else{strSection = _T("eng");}
+   else{strSection = _T("kor");}
 
    CString strReturn = _T("");
    ::GetPrivateProfileString(strSection, pstrKey, _T(""), szTemp, _MAX_PATH, pstrPath);

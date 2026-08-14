@@ -109,9 +109,10 @@ LRESULT CConfigLogDelete::OnSpreadLClick(WPARAM wParam, LPARAM lParam)
 BOOL CConfigLogDelete::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
+	RenameResource(pEn);
 	CSkinDialog::SetFont(this->GetFont());
 	if( !m_bInitialized )
 	{		
@@ -484,4 +485,27 @@ void CConfigLogDelete::OnBnClickedBtnConfigLogDeleteUpdate()
 	AfxMessageBox(m_pDoc->GetMsgLangDef(_T("세팅값 변경 실패")));
 
 	return;	
+}
+
+
+//	캡션을 rc_resource\dlg_config\dlg_config.ini 에서 읽는다.
+//	예전에는 Ecs.rc 값 그대로라 언어를 바꿔도 그대로였다.
+void CConfigLogDelete::RenameResource(EN_LANG m_enLang)
+{
+	TCHAR chrFileName[500];
+	GetModuleFileName(NULL, chrFileName, MAX_PATH);
+	CString strAppPath;
+	strAppPath.Format(_T("%s"), chrFileName);
+	CString strExtension = _T(".ini");
+	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_config\\"), _T("dlg_config"), strExtension);
+
+	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
+	if (!strValue.IsEmpty())	SetWindowText(strValue);
+
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("settingvalue"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_CONFIG_LOG_DELETE_DAY, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("apply"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_CONFIG_LOG_DELETE_UPDATE, strValue);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("grpsetting"), (int)m_enLang);
+	SetDlgItemText(IDC_GRP_CONFIG_LOG_DELETE, strValue);
 }

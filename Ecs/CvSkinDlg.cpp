@@ -242,7 +242,7 @@ LRESULT CCvSkinDlg::OnMessageSwitch(WPARAM wParam, LPARAM lParam)
 BOOL CCvSkinDlg::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
 	CSkinDialog::SetFont(this->GetFont());
@@ -267,6 +267,20 @@ BOOL CCvSkinDlg::OnInitDialog()
 	UpdateData(FALSE);
 
 	return TRUE;
+}
+
+//	rc_resource\dlg_cv\dlg_cv.ini 에서 한 줄 읽는다.
+//	상태에 따라 글자가 바뀌는 자리(자동/수동 모드)도 언어를 타야 해서 둔다.
+CString CCvSkinDlg::GetResString(LPCTSTR lpszKey)
+{
+	TCHAR chrFileName[500];
+	GetModuleFileName(NULL, chrFileName, MAX_PATH);
+	CString strAppPath;
+	strAppPath.Format(_T("%s"), chrFileName);
+	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), _T(".ini"));
+
+	EN_LANG enLang = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;
+	return CLib::GetIniStringFromPath(strFullPath, lpszKey, (int)enLang);
 }
 
 void CCvSkinDlg::RenameResource( EN_LANG m_enLang)
@@ -438,6 +452,67 @@ void CCvSkinDlg::RenameResource( EN_LANG m_enLang)
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("cvsuspend"), (int)m_enLang);
 	SetDlgItemText(IDC_LBL_CV_SUSPEND, strValue);
+	//	예전에는 Ecs.rc 캡션 그대로라 언어를 바꿔도 안 바뀌던 것들
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("autosel"), (int)m_enLang);
+	SetDlgItemText(IDC_CHK_AUTO_SEL, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("stoready"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_STO_READY, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("retready"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_RET_READY, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("stohsready"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_STOHS_READY, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("rethsready"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_RETHS_READY, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("automode"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_AUTO_MODE, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("prodsensor"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_SENSOR_PROD0, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("divhsup"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_DEVERTER_HS_UP, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("divhsdown"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_DEVERTER_HS_DOWN, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("dooropen"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_DOOR_OPEN, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("retreadysta"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_RET_READY_STA, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("picking4bypass"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_PICKING_4_BYPASS, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("rgvload"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_RGV_STATUS_LOAD, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("scpapk"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_SC_PA_PK_POSSIBLE, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("dooropenreq"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_DOOR_OPEN_REQ, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("doorclosereq"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_DOOR_CLOSE_REQ, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("moter1run"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_MOTER_1_RUN, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("moter2run"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_MOTER_2_RUN, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("sizecheckerlow"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_SIZE_CHECKER_LOW, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("sizecheckerhigh"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_SIZE_CHECKER_HIGH, strValue);
 }
 
 void CCvSkinDlg::RedrawImage()
@@ -695,11 +770,11 @@ void CCvSkinDlg::InvalidateTrackData(EN_LANG pLang)
 	m_btnCvAutoMode.SetIcon((m_pTrackInfo->m_pCV_DATA->V_AUTO_MODE_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
 	if (m_pTrackInfo->m_pCV_DATA->V_AUTO_MODE_RD == _T("0"))
 	{
-		m_btnCvAutoMode.SetWindowText(_T("수동모드"));
+		m_btnCvAutoMode.SetWindowText(GetResString(_T("modemanual")));
 	}
 	else
 	{
-		m_btnCvAutoMode.SetWindowText(_T("자동모드"));
+		m_btnCvAutoMode.SetWindowText(GetResString(_T("modeauto")));
 	}
 	m_btnCvStoReady.SetIcon((m_pTrackInfo->m_pCV_DATA->V_STO_READY_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
 	m_btnCvRetReady.SetIcon((m_pTrackInfo->m_pCV_DATA->V_RET_READY_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
@@ -1645,7 +1720,7 @@ void CCvSkinDlg::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CString strGro
 {
 	if(m_pDoc == NULL){return;};
 
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_ENG : m_pDoc->m_enLang;
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	기본은 한국어
 
 	CStringList strList;
 	CString strSql;

@@ -98,6 +98,7 @@ public:
 	
 	afx_msg void OnClose();
 	virtual BOOL OnInitDialog();
+	void RenameResource(EN_LANG m_enLang = EN_KOR);	// 캡션을 ini 에서 읽는다
 
 public :
 	void LoadColor();
