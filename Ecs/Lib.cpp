@@ -677,6 +677,13 @@ CString CLib::GetIniStringFromPath(CString pstrPath, CString pstrKey, int penLan
 
    CString strReturn = _T("");
    ::GetPrivateProfileString(strSection, pstrKey, _T(""), szTemp, _MAX_PATH, pstrPath);
+
+   //	고른 언어에 그 키가 없으면 한국어를 쓴다.
+   //	빈 글자를 그대로 돌려주면 부르는 쪽이 SetDlgItemText 로 넣어 라벨이 사라진다.
+   //	eng/chin/hun 은 예전부터 채워지지 않은 칸이 많다.
+   if (szTemp[0] == 0 && strSection != _T("kor"))
+      ::GetPrivateProfileString(_T("kor"), pstrKey, _T(""), szTemp, _MAX_PATH, pstrPath);
+
    strReturn.Format(_T("%s"), szTemp);
    return strReturn;
 }
