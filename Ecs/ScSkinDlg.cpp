@@ -124,8 +124,10 @@ void CScSkinDlg::DoDataExchange(CDataExchange* pDX)
 
 	//그룹박스
 	DDX_Control(pDX, IDC_GRP_SC_SC_JOB_INFORMATION, m_grpScScJobInformation);
-	DDX_Control(pDX, IDC_GRP_SC_SC_STA_INFO, m_grpScScJobInformation);
-	DDX_Control(pDX, IDC_GRP_SC_FORK_STA, m_grpScScJobInformation);
+	DDX_Control(pDX, IDC_GRP_SC_SC_STA_INFO, m_grpScScScStaInfo);
+	DDX_Control(pDX, IDC_GRP_SC_FORK_STA, m_grpScScForkSta);
+	DDX_Control(pDX, IDC_GRP_SC_SC_STATUS_COMMAND, m_grpScScStautsCommand);
+	DDX_Control(pDX, IDC_GRP_SC_SUSPEND, m_grpScSuspend);
 	DDX_Control(pDX, IDC_GRP_SC_INFORMATION, m_grpScInformation);
 	DDX_Control(pDX, IDC_GRP_SC_ERROR_INFORMATION, m_grpScErrorInformation);
 	DDX_Control(pDX, IDC_GRP_SC_SC_JOB_INFORMATION_FORK1, m_grpScScJobInformationFork1);
@@ -700,8 +702,8 @@ void CScSkinDlg::InvalidateScData(EN_LANG pLang)
 		m_edtScScStatusRd.SetWindowText(pRsw->GetItem(_T("UCSTATUS_RD")));
 		m_edtScCompleteRd.SetWindowText(pRsw->GetItem(_T("COMPLETE_RD")));
 		m_edtScActiveModeRd.SetWindowText(pRsw->GetItem(_T("ACTIVE_MODE_RD")));
-		m_edtScPosVRd.SetWindowText(pRsw->GetItem(_T("POS_H_RD")));
-		m_edtScPosHRd.SetWindowText(pRsw->GetItem(_T("POS_V_RD")));
+		m_edtScPosVRd.SetWindowText(pRsw->GetItem(_T("POS_V_RD")));	// 수직 위치 = 승강(POS_V)
+		m_edtScPosHRd.SetWindowText(pRsw->GetItem(_T("POS_H_RD")));	// 수평 위치 = 주행(POS_H)
 		m_edtScSensorFkRd.SetWindowText(pRsw->GetItem(_T("SENSOR_FK_RD")));
 
 		m_edtScErrStaFk1Rd.SetWindowText(pRsw->GetItem(_T("ERR_STA_FK1_RD")));
@@ -1234,19 +1236,35 @@ void CScSkinDlg::OnCheckStore()
 	{
 	case 0:
 		strSUSPEND = _T("1"); //정상 -> 입고정지
-		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 입고금지 하시겠습니까?")), MB_YESNO) != IDYES) 	InvalidateScDataSuspend(EN_KOR);	return;
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 입고금지 하시겠습니까?")), MB_YESNO) != IDYES)
+		{
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
 		break;
 	case 1:
 		strSUSPEND = _T("0"); //입고정지 -> 정상
-		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 입고금지 해제 하시겠습니까?")), MB_YESNO) != IDYES)	InvalidateScDataSuspend(EN_KOR);	return;
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 입고금지 해제 하시겠습니까?")), MB_YESNO) != IDYES)
+		{
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
 		break;
 	case 2:
 		strSUSPEND = _T("3"); //출고정지 -> 입출고정지
-		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 입고금지 하시겠습니까?")), MB_YESNO) != IDYES)	InvalidateScDataSuspend(EN_KOR);	return;
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 입고금지 하시겠습니까?")), MB_YESNO) != IDYES)
+		{
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
 		break;
 	case 3:
 		strSUSPEND = _T("2"); //입출고정지 -> 출고정지
-		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 입고금지 해제 하시겠습니까?")), MB_YESNO) != IDYES)	InvalidateScDataSuspend(EN_KOR);	return;
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 입고금지 해제 하시겠습니까?")), MB_YESNO) != IDYES)
+		{
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
 		break;
 	}
 
@@ -1314,19 +1332,35 @@ void CScSkinDlg::OnCheckRetrieve()
 	{
 	case 0:
 		strSUSPEND = _T("2"); //정상 -> 출고정지
-		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 출고금지 하시겠습니까?")), MB_YESNO) != IDYES)	InvalidateScDataSuspend(EN_KOR);	return;
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 출고금지 하시겠습니까?")), MB_YESNO) != IDYES)
+		{
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
 		break;
 	case 1:
 		strSUSPEND = _T("3"); //입고정지 -> 입출고정지
-		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 출고금지 하시겠습니까?")), MB_YESNO) != IDYES)	InvalidateScDataSuspend(EN_KOR);	return;
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 출고금지 하시겠습니까?")), MB_YESNO) != IDYES)
+		{
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
 		break;
 	case 2:
 		strSUSPEND = _T("0"); //출고정지 -> 정상
-		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 출고금지 해제 하시겠습니까?")), MB_YESNO) != IDYES)	InvalidateScDataSuspend(EN_KOR);	return;
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 출고금지 해제 하시겠습니까?")), MB_YESNO) != IDYES)
+		{
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
 		break;
 	case 3:
 		strSUSPEND = _T("1"); //입출고정지 -> 입고정지
-		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 출고금지 해제 하시겠습니까?")), MB_YESNO) != IDYES)	InvalidateScDataSuspend(EN_KOR);	return;
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(_T("S/C 출고금지 해제 하시겠습니까?")), MB_YESNO) != IDYES)
+		{
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
 		break;
 	}
 

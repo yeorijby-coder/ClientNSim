@@ -206,31 +206,31 @@ COLORREF CScInfo::GetRailColor(CSC_DATA* pSC_DATA)
 	if (pSC_DATA == NULL)
 		DEBUGER_ASSERT_VALID(FALSE);
 
+	CConfig* pConfig = m_pEquipment->m_pDoc->m_pConfig;
+
+	// 1) 일시정지(입고/출고/전체) - 빨간색
 	if (pSC_DATA->V_SUSPEND == _T("1"))
-		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_STO_SUSPEND;
+		return pConfig->m_clrUSER_COLOR_STO_SUSPEND;
 
 	if (pSC_DATA->V_SUSPEND == _T("2"))
-		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_RET_SUSPEND;
+		return pConfig->m_clrUSER_COLOR_RET_SUSPEND;
 
 	if (pSC_DATA->V_SUSPEND == _T("3"))
-		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_ALL_SUSPEND;
+		return pConfig->m_clrUSER_COLOR_ALL_SUSPEND;
 
+	// 2) 크레인 에러 - 빨간색
 	if (pSC_DATA->V_ERR_CODE_RD != _T("0") && pSC_DATA->V_ERR_CODE_RD != _T("0000") && !pSC_DATA->V_ERR_CODE_RD.IsEmpty())
-		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_RAIL_ERROR;
+		return pConfig->m_clrUSER_COLOR_RAIL_ERROR;
 
-	if (pSC_DATA->V_JOB_TYP == _T("1"))
-		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_STO;
+	// 3) 작업 배정(작업구분 또는 반송중 화물 있음) - 파란색
+	if (!pSC_DATA->V_JOB_TYP.IsEmpty() && pSC_DATA->V_JOB_TYP != _T("0"))
+		return pConfig->m_clrUSER_COLOR_SC_INVK;
 
-	if (pSC_DATA->V_JOB_TYP == _T("2"))
-		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_RET;
+	if (!pSC_DATA->V_ITN_LUGG.IsEmpty() && pSC_DATA->V_ITN_LUGG != _T("0") && pSC_DATA->V_ITN_LUGG != _T("0000"))
+		return pConfig->m_clrUSER_COLOR_SC_INVK;
 
-	if (pSC_DATA->V_JOB_TYP == _T("3"))
-		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_MOVE;
-
-	if (pSC_DATA->V_JOB_TYP == _T("4") || pSC_DATA->V_JOB_TYP == _T("5") || pSC_DATA->V_JOB_TYP == _T("6"))
-		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_RTR;
-
-	return (pSC_DATA->V_ITN_LUGG != _T("0")) ? m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_SC_INVK : BLACK;
+	// 4) 그 외 - 기본색
+	return BLACK;
 }
 
 COLORREF CScInfo::GetPostColor()
