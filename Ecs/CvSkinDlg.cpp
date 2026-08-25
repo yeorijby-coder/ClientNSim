@@ -69,6 +69,7 @@ void CCvSkinDlg::DoDataExchange(CDataExchange* pDX)
 
 	//GRP
 	DDX_Control(pDX, IDC_GRP_CV_CV_STATUS,			   m_grpCvCvStatus);
+	DDX_Control(pDX, IDC_GRP_CV_CV_STATUS_COMMAND,     m_grpCvCvStatusCommand);	// 명령 그룹박스도 다른 그룹박스와 동일 스타일로
 	DDX_Control(pDX, IDC_GRP_CV_CV_STATUS_ITEM,        m_grpCvCvStatusItem);
 	DDX_Control(pDX, IDC_GRP_CV_CV_STATUS_VALUE,       m_grpCvCvStatusValue);
 	DDX_Control(pDX, IDC_GRP_CV_JOB_STATUS_VALUE5,	   m_grpCvJobStatusValue5);
