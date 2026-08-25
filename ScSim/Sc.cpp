@@ -366,7 +366,7 @@ void CSc::UpdateScInfo()
 {
 	CString strTemp="", strDepartInfo="", strArriveInfo="", strDepartInfo2="", strArriveInfo2="";
 
-	m_pInfo->SetRcMode(CLib::GetByteL(m_pDoc->m_arrRegData[m_nNumber-1][99]));			// D 99
+	m_pInfo->SetRcMode(CLib::GetByteL(m_pDoc->m_arrRegData[m_nNumber-1][95]));			// D 95
 	m_pInfo->SetScMode(CLib::GetByteL(m_pDoc->m_arrRegData[m_nNumber-1][100]));		// D100 - L
 	m_pInfo->SetProdLoad(CLib::GetByteH(m_pDoc->m_arrRegData[m_nNumber-1][100]));		// D100 - H
 	m_pInfo->SetScStatus(CLib::GetByteL(m_pDoc->m_arrRegData[m_nNumber-1][101]));		// D101

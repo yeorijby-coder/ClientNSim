@@ -2216,7 +2216,7 @@ void CEcsView::OnBtnRunMode()
 	int nIndex = 0;
 //	pDoc->m_spdgPlc2Ecs.m_arrData[nIndex] = (WORD)nTemp;
 //	pDoc->m_arrRegData[0][pDoc->m_spdgPlc2Ecs.m_nStartAddress + nIndex] = nTemp;
-	pDoc->m_arrRegData[nPlcNum-1][99] = nTemp;
+	pDoc->m_arrRegData[nPlcNum-1][95] = nTemp;	// D95 : SC 동작모드(현장 PLC 스펙)
 }
 
 void CEcsView::OnBtnScMode() 
@@ -2400,7 +2400,7 @@ void CEcsView::OnAllRunMode()
 	{
 		if(pDoc->m_pEquipments[i]->m_enKind == CEquipment::enSC)
 		{
-			pDoc->m_arrRegData[nPlcNum++][99] = 0x01;
+			pDoc->m_arrRegData[nPlcNum++][95] = 0x01;
 		}
 	}
 }
