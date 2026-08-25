@@ -12,7 +12,8 @@
 
 ////////////////////////////////////////////////////////////////
 // <File Definition>
-#define ECS_DEFINE_FILE			            _T(".\\EcsDefine.xml")
+// CvSim 전용 설비정의 파일 (Ecs.exe의 EcsDefine.xml과 같은 폴더 공유시 충돌 방지 - CvSim.ini 분리와 동일)
+#define ECS_DEFINE_FILE			            _T(".\\CvSimDefine.xml")
 #define ECS_LAYOUT_FILE_LAOUT		        _T(".\\EcsLayout.xml")
 #define ECS_LAYOUT_FILE_LAOUT_G		        _T(".\\EcsLayout_G.xml")
 #define ECS_LAYOUT_FILE_LAOUT_G_DECK		_T(".\\EcsLayout_G_DECK.xml")

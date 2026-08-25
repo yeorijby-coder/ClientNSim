@@ -241,8 +241,10 @@ void CJobDlg::UpdateList()
 		if (pStation->m_enKind == CStationInfo::enScStation)
 		{
 			//strStation.Format(_T("[%05s] %05d"), pStation->m_strID, m_pTrack->m_nStationArray[k]);
-			strStation.Format(_T("[%s] %05s"), pStation->m_strName, pStation->m_strID);
+			// 크레인 호기번호와 목적지코드를 함께 표시 (예: [SC #01호기 S/C#1] 00001) - 목적지번호는 호기번호와 같음
+			strStation.Format(_T("[SC #%02d호기 %s] %05d"), pStation->GetTrackDestination(), pStation->m_strName, pStation->GetTrackDestination());
 			m_lstJobList.InsertItem(uMask, i, strStation, 0, 0, nImage, 0);
+			m_lstJobList.SetItemData(i, k);		// 행-스테이션 인덱스 매핑(스킵된 행 보정용)
 
 			strStation = CConvert::ToString(m_pTrack->m_nNextTrArray[k]);
 			m_lstJobList.SetItem(i, ++j, uMask, strStation, nImage, 0, 0, 0);
@@ -251,6 +253,7 @@ void CJobDlg::UpdateList()
 		{
 			strStation.Format(_T("[TR #%03d] %05d"), pStation->m_pTrack->m_nNumber, pStation->m_pTrack->m_nDestCode);
 			m_lstJobList.InsertItem(uMask, i, strStation, 0, 0, nImage, 0);
+			m_lstJobList.SetItemData(i, k);		// 행-스테이션 인덱스 매핑(스킵된 행 보정용)
 
 			strStation = CConvert::ToString(m_pTrack->m_nNextTrArray[k]);
 			m_lstJobList.SetItem(i, ++j, uMask, strStation, nImage, 0, 0, 0);
@@ -334,18 +337,20 @@ void CJobDlg::OnBtnAdd2()
 	if (nNextTr <= 0)
 		return;
 
-	//int nLen = m_pTrack->m_nStationArray.GetSize();
-	int nLen = m_itemindex; //list에서 선택한 로우 값
-	if(nLen < 0)
+	// "나머지 목적지" : 아직 다음트랙이 지정되지 않은(0) 목적지 전부를 일괄 등록한다
+	int nLen = m_pTrack->m_nStationArray.GetSize();
+	for (int i = 0; i < nLen; i++)
 	{
-		return;
+		if (m_pTrack->m_nNextTrArray[i] == 0)
+		{
+			m_pTrack->m_nNextTrArray[i] = nNextTr;
+			m_pTrack->m_nNextPlcArray[i] = m_pDoc->m_nNextPlcNum2;
+		}
 	}
-
-	m_pTrack->m_nNextTrArray[nLen] = nNextTr;
-	m_pTrack->m_nNextPlcArray[nLen] = m_pDoc->m_nNextPlcNum2;
 
 	UpdateList();
 }
+
 
 void CJobDlg::OnBtnSave()
 {
@@ -709,6 +714,39 @@ void CJobDlg::OnNMClickListJob(NMHDR *pNMHDR, LRESULT *pResult)
 
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 	m_itemindex = pNMListView->iItem;
+
+	// 클릭한 행을 실제 스테이션 인덱스로 보정하고(목록에서 스킵된 종류가 있으면 어긋남),
+	// 해당 스테이션의 목적지 번호를 목적지 입력란에 자동으로 채워준다.
+	// 크레인 행이면 호기번호(1~11)가 들어가므로 다음트랙 입력 후 [등록]만 누르면 된다.
+	if (pNMListView->iItem >= 0)
+	{
+		int nStnIdx = (int)m_lstJobList.GetItemData(pNMListView->iItem);
+		if (nStnIdx >= 0 && nStnIdx < m_pDoc->m_pStationInfos.GetSize())
+		{
+			m_itemindex = nStnIdx;
+
+			CStationInfo* pStation = m_pDoc->m_pStationInfos[nStnIdx];
+			if (pStation != NULL)
+			{
+				int nDestPos = 0;
+				if (pStation->m_enKind == CStationInfo::enScStation)
+					nDestPos = pStation->GetTrackDestination();		// 크레인 호기번호(1~11)
+				else if (pStation->m_enKind == CStationInfo::enRetStation && pStation->m_pTrack != NULL && pStation->m_pTrack->m_nDestCode != 0)
+					nDestPos = pStation->m_pTrack->m_nDestCode;
+				else if (_ttoi(pStation->m_strID) != 0)
+					nDestPos = _ttoi(pStation->m_strID);
+				else if (pStation->m_pTrack != NULL)
+					nDestPos = pStation->m_pTrack->m_nNumber;
+
+				if (nDestPos > 0)
+				{
+					CString strDest;
+					strDest.Format(_T("%d"), nDestPos);
+					SET(IDC_EDT_DEST_POS, strDest);
+				}
+			}
+		}
+	}
 
 	*pResult = 0;
 }

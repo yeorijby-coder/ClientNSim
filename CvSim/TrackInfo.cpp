@@ -936,6 +936,8 @@ BOOL CTrackInfo::SaveXML()
 		}
 
 		CString strXmlFile;
+		// 저장 폴더가 없으면 만들어 준다 (없으면 msxml이 "지정된 경로를 찾을 수 없습니다" 오류)
+		::CreateDirectory(_T("..\\TRACK"), NULL);
 		strXmlFile.Format(_T("..\\TRACK\\TRACK#%05d.xml"), m_nNumber);
 
 		if (dom.SaveXmlFile(strXmlFile) == FALSE)

@@ -364,7 +364,14 @@ BOOL CEcsView::IsBitOnOffByKeyWord(int m_nNumber, int nDevNum, CString strKeyWor
 
 	CTrackProperty* pTrackProperty = NULL;
 	if ((pTrackProperty = pDoc->GetTrackPropertyByKeyword(m_nNumber, nTrackNo, strKeyWord)) == NULL)
+	{
+		// OpBox(Auto) 비트가 정의되지 않은 트랙(DeviceMap의 Use="0" 구간)은 항상 자동으로 간주한다.
+		// 조작반이 없는 구간이 Auto OFF로 판정되어 디버터/일반 이동이 전부 멈추는 것을 막기 위함.
+		if (strKeyWord == _T("Auto"))
+			return (bOn == TRUE);
+
 		return 0;
+	}
 
 	if (pTrackProperty->m_strType != "b")
 		return FALSE;
