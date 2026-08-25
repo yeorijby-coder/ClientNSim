@@ -37,7 +37,11 @@ CSc::CSc(CEcsDoc* pDoc, CString pstrThreadNo, int nIndex) : CEquipment(pDoc,pstr
 
 CSc::~CSc()
 {
-	delete m_pInfo;
+	if (m_pInfo != NULL)
+	{
+		delete m_pInfo;
+		m_pInfo = NULL;
+	}
 }
 
 
@@ -66,6 +70,17 @@ CString CSc::GetSelectQry() //kdh20190521
 		          _T("							  SD.MC_NO,																														\n")
 		          _T("							  SD.MC_NO_NM,																													\n")
 				  _T("       					  SD.SC_TYP,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.ONLINE_MODE_RD,'0') AS ONLINE_MODE_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.AUTO_MODE_RD,'0') AS AUTO_MODE_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.ACTIVE_MODE_RD,'0') AS ACTIVE_MODE_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.UCSTATUS_RD,'0') AS UCSTATUS_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.SENSOR_FK_RD,'0') AS SENSOR_FK_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.POS_H_RD,'0') AS POS_H_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.POS_V_RD,'0') AS POS_V_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.COMPLETE_RD,'0') AS COMPLETE_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.ERR_CODE_RD,'0') AS ERR_CODE_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.ERR_STA_FK1_RD,'0') AS ERR_STA_FK1_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.ERR_STA_FK2_RD,'0') AS ERR_STA_FK2_RD,\n")
 				  _T("    ") + m_pDoc->NVL + _T("(SD.JOB_TYP_RD,'0') AS JOB_TYP,\n")
 				  _T("    CASE WHEN ") + m_pDoc->NVL + _T("(SD.LUGG_NO_FK1_RD,'0') IN ('','0','0000')\n")
 				  _T("              THEN '0' ELSE SD.LUGG_NO_FK1_RD END AS LUGG_NO,\n")

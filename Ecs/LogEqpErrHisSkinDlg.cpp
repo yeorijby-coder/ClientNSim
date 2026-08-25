@@ -286,7 +286,9 @@ void CLogEqpErrHisSkinDlg::RenameResource( EN_LANG enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_eqphislog\\"), _T("dlg_eqphislog"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)enLang);
-	SetWindowText(strValue);
+	if (strValue.IsEmpty())
+		strValue = _T("설비에러기록");	// 리소스 ini 부재 시 기본 제목
+	SetWindowText(strValue + _T(" [EQP_ERR_HIS]"));
 		
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_eqphislog\\"), _T("dlg_eqphislog"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("whtyp"), (int)enLang);

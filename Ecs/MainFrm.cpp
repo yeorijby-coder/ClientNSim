@@ -509,9 +509,14 @@ void CMainFrame::AddCategoryLOG()
 	pBtnEQP_HIS_LOG->SetAlwaysLargeImage();
 	pPanelLog->Add(pBtnEQP_HIS_LOG);
 
-	CMFCRibbonButton* pBtnBCR_LOG = new CMFCRibbonButton(ID_LOG_BCR, _T("BCR_LOG"), HICONFromPATH(GetConcatPath(strAppPath, _T("bcrlog"), strExtension)), TRUE);
-	pBtnBCR_LOG->SetAlwaysLargeImage();
-	pPanelLog->Add(pBtnBCR_LOG);	   
+	TCHAR szTempBcrView[_MAX_PATH] = {0};
+	::GetPrivateProfileString(_T("LOG"), _T("BCR_LOG_VIEW"), _T("1"), szTempBcrView, _MAX_PATH, ECS_INI_FILE);
+	if (CString(szTempBcrView) != _T("0"))	// Ecs.ini [LOG] BCR_LOG_VIEW=0 이면 BCR(WC)로그 버튼 숨김
+	{
+		CMFCRibbonButton* pBtnBCR_LOG = new CMFCRibbonButton(ID_LOG_BCR, _T("BCR_LOG"), HICONFromPATH(GetConcatPath(strAppPath, _T("bcrlog"), strExtension)), TRUE);
+		pBtnBCR_LOG->SetAlwaysLargeImage();
+		pPanelLog->Add(pBtnBCR_LOG);
+	}
 
 	CMFCRibbonButton* pBtnCLIENT_LOG = new CMFCRibbonButton(ID_LOG_CLIENT, _T("CLIENT_LOG"), HICONFromPATH(GetConcatPath(strAppPath, _T("clientlog"), strExtension)), TRUE);
 	pBtnCLIENT_LOG->SetAlwaysLargeImage();
@@ -596,12 +601,18 @@ void CMainFrame::RenameRibbonText(EN_LANG penLang)
 	pBtnLogMesLog->SetText(CLib::GetIniStringFromPath(strFullPath, _T("mes_log"), (int)penLang));
 	CMFCRibbonButton* pBtnLogEqpHisLog = (CMFCRibbonButton*)pPanel_Wrap_Log->GetElement(2);
 	pBtnLogEqpHisLog->SetText(CLib::GetIniStringFromPath(strFullPath, _T("eqphislog"), (int)penLang));
-	CMFCRibbonButton* pBtnLogBcrLog = (CMFCRibbonButton*)pPanel_Wrap_Log->GetElement(3);
-	pBtnLogBcrLog->SetText(CLib::GetIniStringFromPath(strFullPath, _T("bcrlog"), (int)penLang));
- 	CMFCRibbonButton* pBtnLogClientLog = (CMFCRibbonButton*)pPanel_Wrap_Log->GetElement(4);
- 	pBtnLogClientLog->SetText(CLib::GetIniStringFromPath(strFullPath, _T("client_log"), (int)penLang));
-	CMFCRibbonButton* pBtnLogWcsLog = (CMFCRibbonButton*)pPanel_Wrap_Log->GetElement(5);
- 	pBtnLogWcsLog->SetText(CLib::GetIniStringFromPath(strFullPath, _T("wcs_log"), (int)penLang));
+	TCHAR szTempBcrView2[_MAX_PATH] = {0};
+	::GetPrivateProfileString(_T("LOG"), _T("BCR_LOG_VIEW"), _T("1"), szTempBcrView2, _MAX_PATH, ECS_INI_FILE);
+	int nLogBtnIdx = 3;
+	if (CString(szTempBcrView2) != _T("0"))	// BCR(WC)로그 버튼이 있을 때만 (숨김 시 인덱스 밀림 방지)
+	{
+		CMFCRibbonButton* pBtnLogBcrLog = (CMFCRibbonButton*)pPanel_Wrap_Log->GetElement(nLogBtnIdx++);
+		if (pBtnLogBcrLog) pBtnLogBcrLog->SetText(CLib::GetIniStringFromPath(strFullPath, _T("bcrlog"), (int)penLang));
+	}
+	CMFCRibbonButton* pBtnLogClientLog = (CMFCRibbonButton*)pPanel_Wrap_Log->GetElement(nLogBtnIdx++);
+	if (pBtnLogClientLog) pBtnLogClientLog->SetText(CLib::GetIniStringFromPath(strFullPath, _T("client_log"), (int)penLang));
+	CMFCRibbonButton* pBtnLogWcsLog = (CMFCRibbonButton*)pPanel_Wrap_Log->GetElement(nLogBtnIdx++);
+	if (pBtnLogWcsLog) pBtnLogWcsLog->SetText(CLib::GetIniStringFromPath(strFullPath, _T("wcs_log"), (int)penLang));
 
 	m_wndRibbonBar.ForceRecalcLayout();	
 

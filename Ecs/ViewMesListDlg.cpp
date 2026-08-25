@@ -300,7 +300,9 @@ void CViewMesListDlg::RenameResource(EN_LANG enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_ifinfo\\"), _T("dlg_ifinfo"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)enLang);
-	SetWindowText(strValue);
+	if (strValue.IsEmpty())
+		strValue = _T("인터페이스 정보");	// 리소스 ini 부재 시 기본 제목
+	SetWindowText(strValue + _T(" [IF_LUGG_STA]"));
 
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_ifinfo\\"), _T("dlg_ifinfo"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("search"), (int)enLang);

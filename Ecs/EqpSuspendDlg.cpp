@@ -258,7 +258,9 @@ void CEqpSuspendDlg::RenameResource( EN_LANG m_enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_eqpsuspend\\"), _T("dlg_eqpsuspend"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
-	SetWindowText(strValue);
+	if (strValue.IsEmpty())
+		strValue = _T("통신 연결 정의");	// 리소스 ini 부재 시 기본 제목
+	SetWindowText(strValue + _T(" [EQP_MST]"));
 
 
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_eqpsuspend\\"), _T("dlg_eqpsuspend"), strExtension);

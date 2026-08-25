@@ -5,12 +5,14 @@
 CSC_DATA::CSC_DATA(void)
 {
 	m_pControl = NULL;
+	m_bModified = TRUE;
 }
 
 
 CSC_DATA::CSC_DATA(CString pstrWH_TYP, CString pstrPLC_NO, CString pstrSC_NO)
 {
 	m_pControl = NULL;
+	m_bModified = TRUE;
 
 	K_WH_TYP = pstrWH_TYP;
 	K_PLC_NO = pstrPLC_NO;
@@ -42,6 +44,96 @@ void CSC_DATA::SetSC_GRP_NO(CString pSC_GRP_NO)
 		return;
 
 	V_SC_GRP_NO = pSC_GRP_NO;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetONLINE_MODE_RD(CString pONLINE_MODE_RD)
+{
+	if(V_ONLINE_MODE_RD == pONLINE_MODE_RD)
+		return;
+
+	V_ONLINE_MODE_RD = pONLINE_MODE_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetAUTO_MODE_RD(CString pAUTO_MODE_RD)
+{
+	if(V_AUTO_MODE_RD == pAUTO_MODE_RD)
+		return;
+
+	V_AUTO_MODE_RD = pAUTO_MODE_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetACTIVE_MODE_RD(CString pACTIVE_MODE_RD)
+{
+	if(V_ACTIVE_MODE_RD == pACTIVE_MODE_RD)
+		return;
+
+	V_ACTIVE_MODE_RD = pACTIVE_MODE_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetUCSTATUS_RD(CString pUCSTATUS_RD)
+{
+	if(V_UCSTATUS_RD == pUCSTATUS_RD)
+		return;
+
+	V_UCSTATUS_RD = pUCSTATUS_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetSENSOR_FK_RD(CString pSENSOR_FK_RD)
+{
+	if(V_SENSOR_FK_RD == pSENSOR_FK_RD)
+		return;
+
+	V_SENSOR_FK_RD = pSENSOR_FK_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetPOS_H_RD(CString pPOS_H_RD)
+{
+	if(V_POS_H_RD == pPOS_H_RD)
+		return;
+
+	V_POS_H_RD = pPOS_H_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetPOS_V_RD(CString pPOS_V_RD)
+{
+	if(V_POS_V_RD == pPOS_V_RD)
+		return;
+
+	V_POS_V_RD = pPOS_V_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetCOMPLETE_RD(CString pCOMPLETE_RD)
+{
+	if(V_COMPLETE_RD == pCOMPLETE_RD)
+		return;
+
+	V_COMPLETE_RD = pCOMPLETE_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetERR_STA_FK1_RD(CString pERR_STA_FK1_RD)
+{
+	if(V_ERR_STA_FK1_RD == pERR_STA_FK1_RD)
+		return;
+
+	V_ERR_STA_FK1_RD = pERR_STA_FK1_RD;
+	m_bModified = true;
+}
+
+void CSC_DATA::SetERR_STA_FK2_RD(CString pERR_STA_FK2_RD)
+{
+	if(V_ERR_STA_FK2_RD == pERR_STA_FK2_RD)
+		return;
+
+	V_ERR_STA_FK2_RD = pERR_STA_FK2_RD;
 	m_bModified = true;
 }
 

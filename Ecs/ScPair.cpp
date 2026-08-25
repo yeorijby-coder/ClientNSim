@@ -26,13 +26,19 @@ CScPair::CScPair(CEcsDoc* pDoc, CString pstrThreadNo, int nIndex)
 {
 	m_pDoc = pDoc;
 	m_enKind = CEquipment::enSC;
+	if (m_pInfo != NULL)
+		delete m_pInfo;	// CSc 생성자가 이미 할당한 것 정리 (이중 생성 방지)
 	m_pInfo = new CScInfo(this);
 	DEBUGER_ASSERT_VALID(m_pInfo != NULL);
 }
 
 CScPair::~CScPair()
 {
-	delete m_pInfo;
+	if (m_pInfo != NULL)
+	{
+		delete m_pInfo;
+		m_pInfo = NULL;	// CSc 소멸자에서의 이중 delete(0xDDDDDDDD) 방지
+	}
 }
 
 
@@ -54,8 +60,8 @@ void CScPair::AutoRunProc()
 //		pSC_DATA = (m_pDoc != NULL)? m_pDoc->GetSC_DATA(strSC_NO) : NULL;
 
 		// JBY
-		m_pInfo->m_MapSC_DATA.Lookup(strSC_NO, pSC_DATA);
-		pSC_DATA = m_pInfo->m_MapSC_DATA[strSC_NO];
+		if (m_pInfo->m_MapSC_DATA.Lookup(strSC_NO, pSC_DATA) == FALSE)
+			pSC_DATA = NULL;
 
 		if(pSC_DATA == NULL)
 		{ 
@@ -66,7 +72,7 @@ void CScPair::AutoRunProc()
 		pSC_DATA->SetMC_NO(m_pRsw->GetItem(_T("MC_NO")));
 		pSC_DATA->SetMC_NO_NM(m_pRsw->GetItem(_T("MC_NO_NM")));
 		//pSC_DATA->SetRESPONSE_CODE_RD(m_pRsw->GetItem( _T("RESPONSE_CODE_RD")));
-		pSC_DATA->SetERR_CODE_RD(m_pRsw->GetItem(_T("ERROR_CODE_RD")));
+		pSC_DATA->SetERR_CODE_RD(m_pRsw->GetItem(_T("ERR_CODE_RD")));
 		//pSC_DATA->SetCRANE_STATUS_RD(m_pRsw->GetItem(_T("CRANE_STATUS_RD")));
 		//pSC_DATA->SetCRANE_ONLINE_RD(m_pRsw->GetItem(_T("CRANE_ONLINE_RD")));
 		//pSC_DATA->SetCRANE_REQUEST_RD(m_pRsw->GetItem(_T("CRANE_REQUEST_RD")));
@@ -76,6 +82,16 @@ void CScPair::AutoRunProc()
 		//pSC_DATA->SetWARMING_UP_RD(m_pRsw->GetItem(_T("WARMING_UP_RD")));
 		//pSC_DATA->SetPROD_CHECK_RD(m_pRsw->GetItem(_T("PROD_CHECK_RD")));
 		//pSC_DATA->SetORDER_CHECK_RD(m_pRsw->GetItem(_T("ORDER_CHECK_RD")));
+		pSC_DATA->SetONLINE_MODE_RD(m_pRsw->GetItem(_T("ONLINE_MODE_RD")));
+		pSC_DATA->SetAUTO_MODE_RD(m_pRsw->GetItem(_T("AUTO_MODE_RD")));
+		pSC_DATA->SetACTIVE_MODE_RD(m_pRsw->GetItem(_T("ACTIVE_MODE_RD")));
+		pSC_DATA->SetUCSTATUS_RD(m_pRsw->GetItem(_T("UCSTATUS_RD")));
+		pSC_DATA->SetSENSOR_FK_RD(m_pRsw->GetItem(_T("SENSOR_FK_RD")));
+		pSC_DATA->SetPOS_H_RD(m_pRsw->GetItem(_T("POS_H_RD")));
+		pSC_DATA->SetPOS_V_RD(m_pRsw->GetItem(_T("POS_V_RD")));
+		pSC_DATA->SetCOMPLETE_RD(m_pRsw->GetItem(_T("COMPLETE_RD")));
+		pSC_DATA->SetERR_STA_FK1_RD(m_pRsw->GetItem(_T("ERR_STA_FK1_RD")));
+		pSC_DATA->SetERR_STA_FK2_RD(m_pRsw->GetItem(_T("ERR_STA_FK2_RD")));
 		pSC_DATA->SetJOB_TYP(m_pRsw->GetItem(_T("JOB_TYP")));
 		pSC_DATA->SetLUGG_NO(m_pRsw->GetItem(_T("LUGG_NO")));
 		pSC_DATA->SetITN_LUGG(m_pRsw->GetItem(_T("ITN_LUGG")));

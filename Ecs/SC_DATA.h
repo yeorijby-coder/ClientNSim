@@ -53,6 +53,16 @@ public:
 	CString V_DEST_DEEP_CELL;
 	CString V_SUSPEND;
 	CString V_SC_TYP;
+	CString V_ONLINE_MODE_RD;
+	CString V_AUTO_MODE_RD;
+	CString V_ACTIVE_MODE_RD;
+	CString V_UCSTATUS_RD;
+	CString V_SENSOR_FK_RD;
+	CString V_POS_H_RD;
+	CString V_POS_V_RD;
+	CString V_COMPLETE_RD;
+	CString V_ERR_STA_FK1_RD;
+	CString V_ERR_STA_FK2_RD;
 	CString V_OD_RQ_YN;
 	CString V_OD_RQ_FLAG;
 	CString V_CMD_RQ_ID;
@@ -121,6 +131,14 @@ public:
 	void SetDEST_DEEP_CELL(CString V_DEST_DEEP_CELL);
 	void SetSUSPEND(CString V_SUSPEND);
 	void SetSC_TYP(CString V_SC_TYP);
+	void SetACTIVE_MODE_RD(CString pACTIVE_MODE_RD);
+	void SetUCSTATUS_RD(CString pUCSTATUS_RD);
+	void SetSENSOR_FK_RD(CString pSENSOR_FK_RD);
+	void SetPOS_H_RD(CString pPOS_H_RD);
+	void SetPOS_V_RD(CString pPOS_V_RD);
+	void SetCOMPLETE_RD(CString pCOMPLETE_RD);
+	void SetERR_STA_FK1_RD(CString pERR_STA_FK1_RD);
+	void SetERR_STA_FK2_RD(CString pERR_STA_FK2_RD);
 
 	void SetOD_RQ_YN(CString pOD_RQ_YN);
 	void SetOD_RQ_FLAG(CString pOD_RQ_FLAG);

@@ -500,7 +500,9 @@ void CConfigLogDelete::RenameResource(EN_LANG m_enLang)
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_config\\"), _T("dlg_config"), strExtension);
 
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
-	if (!strValue.IsEmpty())	SetWindowText(strValue);
+	if (strValue.IsEmpty())
+		strValue = _T("환경설정");
+	SetWindowText(strValue + _T(" [DEL_HIS_SETTING]"));
 
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("settingvalue"), (int)m_enLang);
 	SetDlgItemText(IDC_LBL_CONFIG_LOG_DELETE_DAY, strValue);

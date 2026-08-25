@@ -296,7 +296,9 @@ void CLogIoSkinDlg::RenameResource( EN_LANG enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_iolog\\"), _T("dlg_iolog"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)enLang);
-	SetWindowText(strValue);
+	if (strValue.IsEmpty())
+		strValue = _T("IO 로그");	// 리소스 ini 부재 시 기본 제목
+	SetWindowText(strValue + _T(" [JOB_MST_HIS]"));
 
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_iolog\\"), _T("dlg_iolog"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("search"), (int)enLang);

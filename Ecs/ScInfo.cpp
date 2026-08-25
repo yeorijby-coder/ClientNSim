@@ -38,13 +38,15 @@ COLORREF CScInfo::GetForkColor1(CSC_DATA* pSC_DATA)
 	CConfig* pConfig = m_pEquipment->m_pDoc->m_pConfig;
 	DEBUGER_ASSERT_VALID(pConfig != NULL);
 
-	if (pSC_DATA->V_IS_ERROR_RD != _T("0"))
+	if (pSC_DATA->V_ERR_CODE_RD != _T("0") && pSC_DATA->V_ERR_CODE_RD != _T("0000") && !pSC_DATA->V_ERR_CODE_RD.IsEmpty())
 		return pConfig->m_clrUSER_COLOR_ERROR;
 
-	if (pSC_DATA->V_RESPONSE_CODE_RD != _T("00"))
-		return ORANGE;
+	if (pSC_DATA->V_ERR_STA_FK1_RD != _T("0") && !pSC_DATA->V_ERR_STA_FK1_RD.IsEmpty())
+		return pConfig->m_clrUSER_COLOR_ERROR;
 
-	if (pSC_DATA->V_CRANE_ONLINE_RD == _T("0"))
+	if (pSC_DATA->V_ONLINE_MODE_RD == _T("0") ||
+		pSC_DATA->V_AUTO_MODE_RD   == _T("0") ||
+		pSC_DATA->V_ACTIVE_MODE_RD == _T("0"))
 		return DARK_GRAY;
 
 	if (pSC_DATA->V_LUGG_NO != "0")
@@ -67,9 +69,6 @@ COLORREF CScInfo::GetForkColor1(CSC_DATA* pSC_DATA)
 		case enJobTypeManual: return pConfig->m_clrUSER_COLOR_MANUAL;
 		}
 	}
-
-	if (pSC_DATA->V_CRANE_REQUEST_RD == _T("0"))
-		return DARK_GRAY;
 
 	return LIGHT_GRAY;
 }
@@ -216,7 +215,7 @@ COLORREF CScInfo::GetRailColor(CSC_DATA* pSC_DATA)
 	if (pSC_DATA->V_SUSPEND == _T("3"))
 		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_ALL_SUSPEND;
 
-	if (pSC_DATA->V_IS_ERROR_RD != _T("0"))
+	if (pSC_DATA->V_ERR_CODE_RD != _T("0") && pSC_DATA->V_ERR_CODE_RD != _T("0000") && !pSC_DATA->V_ERR_CODE_RD.IsEmpty())
 		return m_pEquipment->m_pDoc->m_pConfig->m_clrUSER_COLOR_RAIL_ERROR;
 
 	if (pSC_DATA->V_JOB_TYP == _T("1"))
@@ -258,22 +257,23 @@ void CScInfo::InvokeControl(CSC_DATA* pSC_DATA)
 	BOOL bErase = FALSE;	// (m_pControl->m_nForkPos != m_wHorizontalPos);
 
 	if (pSC_DATA->m_pControl)
+	{
 		pSC_DATA->m_pControl->m_clrFork = GetForkColor1(pSC_DATA);
-
-	if (pSC_DATA->V_CRANE_AT_HP_RD == _T("1"))
-	{
-		if (pSC_DATA->m_pControl)
-			pSC_DATA->m_pControl->m_nForkPos = 1;
-	}
-	else if (pSC_DATA->V_ORDER_CHECK_RD == _T("0") && pSC_DATA->V_PROD_CHECK_RD == _T("0"))
-	{
-		if (pSC_DATA->m_pControl)
-			pSC_DATA->m_pControl->m_nForkPos = CConvert::ToInt(pSC_DATA->V_Prev_DEST_BAY) + 1; //지속적으로 봐야할듯
+		pSC_DATA->m_pControl->m_clrFork2 = GetForkColor1(pSC_DATA);
 	}
 
-	CString strSENSOR_FK_RD = pSC_DATA->V_PROD_CHECK_RD;
+	// 크레인 수평위치(POS_H_RD)로 화면 위치 표현
+	int nForkPos = (CConvert::ToInt(pSC_DATA->V_POS_H_RD) < 1) ? 0 : CConvert::ToInt(pSC_DATA->V_POS_H_RD);
+	if (pSC_DATA->m_pControl)
+	{
+		pSC_DATA->m_pControl->m_nForkPos = nForkPos;
+		bErase = TRUE;
+	}
+
+	CString strSENSOR_FK_RD = pSC_DATA->V_SENSOR_FK_RD;
 	int nProd = 0;
-	if (strSENSOR_FK_RD != _T("0"))
+	if (strSENSOR_FK_RD != _T("0") && !strSENSOR_FK_RD.IsEmpty())
+		nProd = 1;
 		nProd = 1;
 
 	if (pSC_DATA->m_pControl)

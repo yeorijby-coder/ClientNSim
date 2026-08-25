@@ -1765,7 +1765,7 @@ BOOL CEcsDoc::GetQueryInsertClientLog(CString pWIN_ID, CString pLUGG_NO, CString
 	strSql += CRLF + _T("				( '") + m_WH_TYP + _T("' 		");
 	strSql += CRLF + _T("				, ") + SYSDATE + _T("			");
 	strSql += CRLF + _T("				, '") + m_PC_IP + _T("'			");
-	strSql += CRLF + _T("				, '") + m_strId + _T("'			");
+	strSql += CRLF + _T("				, 'KET_WCS_CLIENT'			");	// USER_ID : 프로그램 식별자 고정
 	strSql += CRLF + _T("				, '") + pWIN_ID + _T("'			");
 	strSql += CRLF + _T("				, '") + pLUGG_NO + _T("'		");
 	strSql += CRLF + _T("				, '") + pBARCODE + _T("'	");

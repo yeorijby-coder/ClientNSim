@@ -40,13 +40,12 @@ CEquipment* CEcsDefine::CreateEquipment(CString& strClassName, CString strThread
 	}
 
 	if (strClassName == RUNTIME_CLASS(CCv)->m_lpszClassName) return new CCv(m_pDoc, strThreadNo, nIndex);
-	//else if(strClassName == RUNTIME_CLASS(CSc)->m_lpszClassName || strClassName == RUNTIME_CLASS(CScPair)->m_lpszClassName)
-	//{
-	//	strClassName = RUNTIME_CLASS(CScPair)->m_lpszClassName;
-	//	return new CScPair(m_pDoc, strThreadNo, nIndex);
-	//}
-	else if (strClassName == RUNTIME_CLASS(CSc)->m_lpszClassName) return new CSc(m_pDoc, strThreadNo, nIndex);
-	else if (strClassName == RUNTIME_CLASS(CScPair)->m_lpszClassName) return new CScPair(m_pDoc, strThreadNo, nIndex);
+	// CSc도 CScPair로 생성해야 AutoRunProc가 동작함 (CSc::AutoRunProc는 빈 함수)
+	else if(strClassName == RUNTIME_CLASS(CSc)->m_lpszClassName || strClassName == RUNTIME_CLASS(CScPair)->m_lpszClassName)
+	{
+		strClassName = RUNTIME_CLASS(CScPair)->m_lpszClassName;
+		return new CScPair(m_pDoc, strThreadNo, nIndex);
+	}
 	else if (strClassName == RUNTIME_CLASS(CRtv)->m_lpszClassName) return new CRtv(m_pDoc, strThreadNo, nIndex);
 
 	else if (strClassName == RUNTIME_CLASS(CBcr)->m_lpszClassName) return new CBcr(m_pDoc, strThreadNo, nIndex);

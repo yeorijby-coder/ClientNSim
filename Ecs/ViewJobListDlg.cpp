@@ -712,7 +712,9 @@ void CViewJobListDlg::RenameResource(EN_LANG m_enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_jobinfo\\"), _T("dlg_jobinfo"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
-	SetWindowText(strValue);
+	if (strValue.IsEmpty())
+		strValue = _T("작업정보");	// 리소스 ini 부재 시 기본 제목
+	SetWindowText(strValue + _T(" [JOB_MST]"));
 
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_jobinfo\\"), _T("dlg_jobinfo"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("whtyp"), (int)m_enLang);

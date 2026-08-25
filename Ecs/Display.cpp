@@ -30,11 +30,11 @@ CString CDisplay::GetSelectQry() //kdh20190521
 	//	strPlcNo = m_strThreadNo;
 
 
-	strSql.Format(_T("SELECT DD.*					\n")
+	strSql.Format(_T("SELECT CD.*					\n")
 		           _T(" FROM DISPLAY_DATA CD 		\n")
 		           _T("WHERE CD.WH_TYP = '%02s'		\n")
 		           _T("  AND CD.PLC_NO IN ('%s')	\n")
-		           _T("ORDER BY DISPLAY_NO			\n"), m_WH_TYP, m_strThreadNo);
+		           _T("ORDER BY DISP_NO   			\n"), m_WH_TYP, m_strThreadNo);
 
 	return strSql;
 }

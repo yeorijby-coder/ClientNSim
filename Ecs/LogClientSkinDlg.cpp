@@ -247,7 +247,9 @@ void CLogClientSkinDlg::RenameResource( EN_LANG enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_clientlog\\"), _T("dlg_clientlog"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)enLang);
-	SetWindowText(strValue);
+	if (strValue.IsEmpty())
+		strValue = _T("유저사용 로그");	// 리소스 ini 부재 시 기본 제목
+	SetWindowText(strValue + _T(" [WCS_CLIENT_LOG]"));
 
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_clientlog\\"), _T("dlg_clientlog"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("whtyp"), (int)enLang);
@@ -528,7 +530,7 @@ CString CLogClientSkinDlg::GetQrySelect_Main(int nRowCheck,BOOL bSearch)
 	strSql += CRLF + _T("		IP AS IP, ");
 	strSql += CRLF + _T("		") + m_pDoc->NVL + _T("(MESSAGE, '') AS MESSAGE, ");
 	strSql += CRLF + _T("		USER_ID AS USER_ID, ");
-	strSql += CRLF + _T("		") + m_pDoc->NVL + _T("(CD_PGR_NM.CCD_NM_KOR, WCL.WIN_ID) AS WIN_ID, ");
+	strSql += CRLF + _T("		CASE WHEN CD_PGR_NM.CCD_NM_KOR IS NULL THEN WCL.WIN_ID ELSE CD_PGR_NM.CCD_NM_KOR || '(' || WCL.WIN_ID || ')' END AS WIN_ID, ");
 	strSql += CRLF + _T("		") + m_pDoc->NVL + _T("(LUGG_NO, '0000') AS LUGG_NO, ");
 	strSql += CRLF + _T("		BOTTOM_TRAY AS BOTTOM_TRAY");
 	strSql += CRLF + _T("  FROM WCS_CLIENT_LOG WCL LEFT OUTER JOIN COMMON_CODE CD_WH_TYP ");
