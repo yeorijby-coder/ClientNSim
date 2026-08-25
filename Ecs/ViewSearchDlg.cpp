@@ -168,6 +168,8 @@ void CViewSearchDlg::RenameResource( EN_LANG m_enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_search\\"), _T("dlg_search"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
+	if (strValue.IsEmpty())
+		strValue = _T("찾기");	// 리소스 ini 부재 시 기본 제목
 	SetWindowText(strValue);		//	읽어 놓고 쓰지 않아 제목이 늘 한글이었다
 
 	//

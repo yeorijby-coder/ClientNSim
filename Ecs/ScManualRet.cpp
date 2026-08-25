@@ -106,6 +106,8 @@ void CScManualRet::RenameResource(EN_LANG m_enLang)
 
 	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_scmanualret\\"), _T("dlg_scmanualret"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
+	if (strValue.IsEmpty())
+		strValue = _T("SC 수동 출고");	// 리소스 ini 부재 시 기본 제목
 	SetWindowText(strValue);
 
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_scmanualret\\"), _T("dlg_scmanualret"), strExtension);

@@ -174,6 +174,8 @@ void CManualSc::RenameResource( EN_LANG m_enLang)
 	CString strFullPath = _T("");
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_scmanual\\"), _T("dlg_scmanual"), strExtension);
 	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
+	if (strValue.IsEmpty())
+		strValue = _T("수동 크레인");	// 리소스 ini 부재 시 기본 제목
 	SetWindowText(strValue);
 
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_scmanual\\"), _T("dlg_scmanual"), strExtension);

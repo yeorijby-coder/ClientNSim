@@ -223,6 +223,8 @@ void CSystemLoginDlg::RenameResource( EN_LANG m_enLang)
  
  	CString strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_login\\"), _T("dlg_login"), strExtension);
  	CString strValue = CLib::GetIniStringFromPath(strFullPath, _T("dlgname"), (int)m_enLang);
+	if (strValue.IsEmpty())
+		strValue = _T("로그인");	// 리소스 ini 부재 시 기본 제목
 	SetWindowText(strValue);
 
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("sign"), (int)m_enLang);
