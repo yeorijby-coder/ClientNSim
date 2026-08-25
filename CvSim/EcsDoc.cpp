@@ -1367,6 +1367,25 @@ void CEcsDoc::LoadDeviceMap(int nCount)
 		m_pDeviceMaps.Add(pDeviceMap);
 	}
 
+	// 시뮬레이터에는 실제 운전반(OpBox)이 없어서 Auto 비트가 0(수동)으로 남는다.
+	// 그대로 두면 전 트랙 자동운전 OFF 가 되어 화물이 이동하지 않으므로 기본 ON 으로 초기화한다.
+	// (수동 모드 시뮬레이션이 필요하면 해당 OpBox 워드의 비트를 끄면 된다)
+	for (i = 0; i < nCount; i++)
+	{
+		for (int j = 0; j < m_pTrackProperties[i].GetSize(); j++)
+		{
+			CTrackProperty* pProp = m_pTrackProperties[i][j];
+			if (pProp == NULL || pProp->m_bSeparatelyETC != TRUE)
+				continue;
+			if (pProp->m_strName != _T("Auto") || pProp->m_strType != _T("b") || pProp->m_nTrackNo == 0)
+				continue;
+
+			int nAddr = _ttoi(pProp->m_strAddr);
+			WORD wBit = (WORD)(1 << (pProp->m_nInOrder - 1));
+			m_arrRegData[i].SetWord(nAddr, m_arrRegData[i].GetWord(nAddr) | wBit);
+		}
+	}
+
 	m_bReLoading = FALSE;
 }
 

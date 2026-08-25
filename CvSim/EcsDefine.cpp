@@ -102,24 +102,23 @@ BOOL CEcsDefine::ParseXml()
 				CScInfo* pInfo = NULL;// pSc->m_pInfo;
 				MoveXPath(_T("./Scs"), FALSE);
 
+				// CSc 그룹이 여러 개(CSc + CScPair 등) 있어도 배열이 겹치지 않도록 누적 오프셋(nScCnt)을 사용한다.
+				// (기존 코드는 CSc 그룹이 마지막 하나라는 가정이라 두번째 그룹이 앞 그룹 슬롯을 덮어써 죽었음)
 				int nEquipmentCnt = m_pDoc->m_pEquipments.GetSize();
-				nScCnt = GetChildElmtCount();
+				int nGroupScCnt = GetChildElmtCount();
 
-				m_pDoc->m_pEquipments.SetSize(nEquipmentCnt + nScCnt - 1); // 기존에 가상으로 1개를 만들었으니까 없애야함!
+				m_pDoc->m_pEquipments.SetSize(nEquipmentCnt + nGroupScCnt - 1);
 
-				nEquipmentCnt = m_pDoc->m_pEquipments.GetSize();
-
-				for (int nIdxSc = 0; nIdxSc < nScCnt; nIdxSc++)
+				for (int nIdxSc = 0; nIdxSc < nGroupScCnt; nIdxSc++)
 				{
 					MoveChild(nIdxSc);
 					GetAttrValue(_T("plcno"), strPLC_NO);
 					GetAttrValue(_T("number"), strEQP_NO);
 
-					m_pDoc->m_pEquipments[i + nIdxSc] = pEquipment = CreateEquipment(strClassName, nIdxSc, CConvert::ToInt(strPLC_NO), strDevice);
+					m_pDoc->m_pEquipments[i + nScCnt + nIdxSc] = pEquipment = CreateEquipment(strClassName, nScCnt + nIdxSc, CConvert::ToInt(strPLC_NO), strDevice);
 
 					pSc = (CScPair*)pEquipment;
 					DEBUGER_ASSERT_VALID(pSc != NULL);
-					//pSc->m_nNumber = CConvert::ToInt(strPLC_NO);//m_nNumber 사용되지 않음
 					pInfo = pSc->m_pInfo;
 					DEBUGER_ASSERT_VALID(pInfo != NULL);
 
@@ -129,7 +128,8 @@ BOOL CEcsDefine::ParseXml()
 					MoveParent();
 				}
 
-				--nScCnt;// 기존에 가상으로 1개를 만들었으니까(define.xml에서 Sc를 1개로 묶어버렸으니까) 없애야함!
+				// 이후 장비들의 배열 인덱스 보정용 누적 오프셋
+				nScCnt += nGroupScCnt - 1;
 
 				continue;
 			}

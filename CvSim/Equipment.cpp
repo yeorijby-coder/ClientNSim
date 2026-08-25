@@ -456,8 +456,24 @@ void CEquipment::OnCloseSocket(int nErrorCode, int nIndex)
 	m_pSocket[nIndex] = NULL;
 
 	DEBUGER_ASSERT_VALID(GetInfo() != NULL);
-	GetInfo()->Initialize();
-	GetInfo()->StatusReport();
+
+	// 다른 포트가 하나라도 살아 있으면 트랙 표시를 통신끊김(흰색)으로 리셋하지 않는다.
+	// (보조 포트에 붙었던 클라이언트가 끊기기만 해도 화면 전체가 흰색으로 깜빡이던 문제)
+	BOOL bAnyConnect = FALSE;
+	for (int i = 0; i < PLC_CONN_PORT_CNT; i++)
+	{
+		if (IsConnect(i) == TRUE)
+		{
+			bAnyConnect = TRUE;
+			break;
+		}
+	}
+
+	if (bAnyConnect == FALSE)
+	{
+		GetInfo()->Initialize();
+		GetInfo()->StatusReport();
+	}
 	GetInfo()->InvokeControl();
 }
 
