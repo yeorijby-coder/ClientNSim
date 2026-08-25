@@ -5,6 +5,9 @@
 CSC_DATA::CSC_DATA(void)
 {
 	m_pControl = NULL;
+	m_pControl2 = NULL;
+	m_pControl3 = NULL;
+	m_pControl4 = NULL;
 	m_bModified = TRUE;
 }
 
@@ -12,6 +15,9 @@ CSC_DATA::CSC_DATA(void)
 CSC_DATA::CSC_DATA(CString pstrWH_TYP, CString pstrPLC_NO, CString pstrSC_NO)
 {
 	m_pControl = NULL;
+	m_pControl2 = NULL;
+	m_pControl3 = NULL;
+	m_pControl4 = NULL;
 	m_bModified = TRUE;
 
 	K_WH_TYP = pstrWH_TYP;

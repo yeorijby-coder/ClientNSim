@@ -254,34 +254,31 @@ void CScInfo::InvokeControl(CSC_DATA* pSC_DATA)
 		return;
 
 	//DEBUGER_ASSERT_VALID(m_pControl != NULL);
-	BOOL bErase = FALSE;	// (m_pControl->m_nForkPos != m_wHorizontalPos);
-
-	if (pSC_DATA->m_pControl)
-	{
-		pSC_DATA->m_pControl->m_clrFork = GetForkColor1(pSC_DATA);
-		pSC_DATA->m_pControl->m_clrFork2 = GetForkColor1(pSC_DATA);
-	}
+	BOOL bErase = FALSE;
 
 	// 크레인 수평위치(POS_H_RD)로 화면 위치 표현
 	int nForkPos = (CConvert::ToInt(pSC_DATA->V_POS_H_RD) < 1) ? 0 : CConvert::ToInt(pSC_DATA->V_POS_H_RD);
-	if (pSC_DATA->m_pControl)
-	{
-		pSC_DATA->m_pControl->m_nForkPos = nForkPos;
-		bErase = TRUE;
-	}
 
 	CString strSENSOR_FK_RD = pSC_DATA->V_SENSOR_FK_RD;
 	int nProd = 0;
 	if (strSENSOR_FK_RD != _T("0") && !strSENSOR_FK_RD.IsEmpty())
 		nProd = 1;
-		nProd = 1;
 
-	if (pSC_DATA->m_pControl)
+	// 층(레이아웃)별 컨트롤 전부 갱신 - 1F/2F/3F 크레인 상태 동기화
+	CDciRvCtrl* pCtrlArr[4] = { pSC_DATA->m_pControl, pSC_DATA->m_pControl2, pSC_DATA->m_pControl3, pSC_DATA->m_pControl4 };
+	for (int nIdxCtrl = 0; nIdxCtrl < 4; nIdxCtrl++)
 	{
-		pSC_DATA->m_pControl->m_nProd = nProd;
+		CDciRvCtrl* pCtrl = pCtrlArr[nIdxCtrl];
+		if (pCtrl == NULL)
+			continue;
 
-		pSC_DATA->m_pControl->m_clrRail = GetRailColor(pSC_DATA);
-		pSC_DATA->m_pControl->InvalidateControl(m_pEquipment->m_pDoc->m_hWndView, bErase);
+		pCtrl->m_clrFork = GetForkColor1(pSC_DATA);
+		pCtrl->m_clrFork2 = GetForkColor1(pSC_DATA);
+		pCtrl->m_nForkPos = nForkPos;
+		bErase = TRUE;
+		pCtrl->m_nProd = nProd;
+		pCtrl->m_clrRail = GetRailColor(pSC_DATA);
+		pCtrl->InvalidateControl(m_pEquipment->m_pDoc->m_hWndView, bErase);
 	}
 
 	pSC_DATA->m_bModified = FALSE;

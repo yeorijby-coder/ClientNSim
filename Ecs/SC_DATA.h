@@ -84,9 +84,9 @@ public:
 
 public:
 	CDciRvCtrl* m_pControl;
-	//CDciRvCtrl* m_pControl2;
-	//CDciRvCtrl* m_pControl3;
-	//CDciRvCtrl* m_pControl4;
+	CDciRvCtrl* m_pControl2;	// 2F 레이아웃 컨트롤
+	CDciRvCtrl* m_pControl3;	// 3F 레이아웃 컨트롤
+	CDciRvCtrl* m_pControl4;	// 예비(4번째 레이아웃)
 	//CDciRvCtrl* m_pControl5;
 
 public:

@@ -460,11 +460,11 @@ BOOL CEcsDefine::ParseScSingle(CEquipment* pEquipment)
 		pSc->m_nNumber = CConvert::ToInt(strPLC_NO);//m_nNumber 사용되지 않음
 		CSC_DATA* pSC_DATA = pInfo->CreateSC_DATA(strEQP_NO);
 		pSc->m_pInfo->m_MapSC_DATA.SetAt(pSC_DATA->K_SC_NO, pSC_DATA);
-		pSC_DATA->m_pControl = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid());
-		//pSC_DATA->m_pControl2 = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid(_T("1")));
-		//pSC_DATA->m_pControl3 = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid(_T("2")));
-		//pSC_DATA->m_pControl4 = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid(_T("3")));
-		//pSC_DATA->m_pControl5 = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid(_T("4")));
+		// 층(레이아웃)별 SC 컨트롤을 전부 바인딩 - 첫 레이아웃만 잡으면 2F/3F 크레인이 갱신되지 않음
+		pSC_DATA->m_pControl  = (m_pDoc->GetLayoutAt(0) != NULL) ? (CDciRvCtrl*)m_pDoc->GetLayoutAt(0)->GetDciControl(pSC_DATA->GetCid()) : NULL;
+		pSC_DATA->m_pControl2 = (m_pDoc->GetLayoutAt(1) != NULL) ? (CDciRvCtrl*)m_pDoc->GetLayoutAt(1)->GetDciControl(pSC_DATA->GetCid()) : NULL;
+		pSC_DATA->m_pControl3 = (m_pDoc->GetLayoutAt(2) != NULL) ? (CDciRvCtrl*)m_pDoc->GetLayoutAt(2)->GetDciControl(pSC_DATA->GetCid()) : NULL;
+		pSC_DATA->m_pControl4 = (m_pDoc->GetLayoutAt(3) != NULL) ? (CDciRvCtrl*)m_pDoc->GetLayoutAt(3)->GetDciControl(pSC_DATA->GetCid()) : NULL;
 		MoveParent();
 	}
 	//*/
@@ -500,11 +500,11 @@ BOOL CEcsDefine::ParseScPair(CEquipment* pEquipment)
 		pSc->m_nNumber = CConvert::ToInt(strPLC_NO);//m_nNumber 사용되지 않음
 		CSC_DATA* pSC_DATA = pInfo->CreateSC_DATA(strEQP_NO);
 		pSc->m_pInfo->m_MapSC_DATA.SetAt(pSC_DATA->K_SC_NO, pSC_DATA);
-		pSC_DATA->m_pControl = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid());
-		//pSC_DATA->m_pControl2 = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid(_T("1")));
-		//pSC_DATA->m_pControl3 = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid(_T("2")));
-		//pSC_DATA->m_pControl4 = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid(_T("3")));
-		//pSC_DATA->m_pControl5 = (CDciRvCtrl*)m_pDoc->GetDciControl_FindAllLayout(pSC_DATA->GetCid(_T("4")));
+		// 층(레이아웃)별 SC 컨트롤을 전부 바인딩 - 첫 레이아웃만 잡으면 2F/3F 크레인이 갱신되지 않음
+		pSC_DATA->m_pControl  = (m_pDoc->GetLayoutAt(0) != NULL) ? (CDciRvCtrl*)m_pDoc->GetLayoutAt(0)->GetDciControl(pSC_DATA->GetCid()) : NULL;
+		pSC_DATA->m_pControl2 = (m_pDoc->GetLayoutAt(1) != NULL) ? (CDciRvCtrl*)m_pDoc->GetLayoutAt(1)->GetDciControl(pSC_DATA->GetCid()) : NULL;
+		pSC_DATA->m_pControl3 = (m_pDoc->GetLayoutAt(2) != NULL) ? (CDciRvCtrl*)m_pDoc->GetLayoutAt(2)->GetDciControl(pSC_DATA->GetCid()) : NULL;
+		pSC_DATA->m_pControl4 = (m_pDoc->GetLayoutAt(3) != NULL) ? (CDciRvCtrl*)m_pDoc->GetLayoutAt(3)->GetDciControl(pSC_DATA->GetCid()) : NULL;
 		MoveParent();
 	}
 	return TRUE;
