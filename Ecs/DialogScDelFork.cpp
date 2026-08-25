@@ -1,4 +1,4 @@
-ï»¿// DialogScDelFork.cpp: êµ¬í˜„ íŒŒì¼
+// DialogScDelFork.cpp: ±¸Çö ÆÄÀÏ
 //
 
 #//include "pch.h"
@@ -8,7 +8,7 @@
 #include "afxdialogex.h"
 
 
-// CDialogScDelFork ëŒ€í™” ìƒìž
+// CDialogScDelFork ´ëÈ­ »óÀÚ
 
 //IMPLEMENT_DYNAMIC(CDialogScDelFork, CDialog)
 
@@ -35,4 +35,4 @@ BEGIN_MESSAGE_MAP(CDialogScDelFork, CDialog)
 END_MESSAGE_MAP()
 
 
-// CDialogScDelFork ë©”ì‹œì§€ ì²˜ë¦¬ê¸°
+// CDialogScDelFork ¸Þ½ÃÁö Ã³¸®±â

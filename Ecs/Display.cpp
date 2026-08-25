@@ -21,6 +21,16 @@ CDisplay::~CDisplay()
 	delete m_pInfo;
 }
 
+void CDisplay::SetVar(CRecordSetWrap* pRsw) //kdh20190521
+{
+	if (pRsw == NULL)
+	{
+		return;
+	}
+	this->m_pRsw = pRsw;
+	::SetEvent(m_hEventArray[enEventSend]);
+}
+
 CString CDisplay::GetSelectQry() //kdh20190521
 {
 	CString strSql = _T("");
@@ -30,11 +40,11 @@ CString CDisplay::GetSelectQry() //kdh20190521
 	//	strPlcNo = m_strThreadNo;
 
 
-	strSql.Format(_T("SELECT CD.*					\n")
-		           _T(" FROM DISPLAY_DATA CD 		\n")
-		           _T("WHERE CD.WH_TYP = '%02s'		\n")
-		           _T("  AND CD.PLC_NO IN ('%s')	\n")
-		           _T("ORDER BY DISP_NO   			\n"), m_WH_TYP, m_strThreadNo);
+	strSql.Format(_T("SELECT DD.*					\n")
+		           _T(" FROM DISPLAY_DATA DD 		\n")
+		           _T("WHERE DD.WH_TYP = '%s'		\n")
+		           _T("  AND DD.PLC_NO IN ('%s')	\n")
+		           _T("ORDER BY DD.DISP_NO			\n"), m_WH_TYP, m_strPlcNo);
 
 	return strSql;
 }
@@ -93,7 +103,7 @@ void CDisplay::AutoRunProc()
 		if (bManualModify == TRUE)
 			pDisplayData->m_bModified = TRUE;
 
-		//pDisplayData->InvokeControl(pTrackInfo->m_pTrackCtrl);
+		m_pInfo->InvokeControl(pDisplayData);
 		m_pRsw->MoveNext();
 
 	}

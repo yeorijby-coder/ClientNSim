@@ -1,4 +1,4 @@
-ï»¿// MainFrm.cpp : CMainFrame í´ë˜ìŠ¤ì˜ êµ¬í˜„
+// MainFrm.cpp : CMainFrame Å¬·¡½ºÀÇ ±¸Çö
 //
 
 #include "stdafx.h"
@@ -67,17 +67,17 @@ END_MESSAGE_MAP()
 
 static UINT indicators[] =
 {
-	ID_SEPARATOR,           // ìƒíƒœ ì¤„ í‘œì‹œê¸°
+	ID_SEPARATOR,           // »óÅÂ ÁÙ Ç¥½Ã±â
 	ID_INDICATOR_CAPS,
 	ID_INDICATOR_NUM,
 	ID_INDICATOR_SCRL,
 };
 
-// CMainFrame ìƒì„±/ì†Œë©¸
+// CMainFrame »ı¼º/¼Ò¸ê
 
 CMainFrame::CMainFrame()
 {
-	// TODO: ì—¬ê¸°ì— ë©¤ë²„ ì´ˆê¸°í™” ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+	// TODO: ¿©±â¿¡ ¸â¹ö ÃÊ±âÈ­ ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
 	m_bNotDockingJob = false;
 	m_bNotDockingInfo = false;
@@ -133,7 +133,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	return TRUE;
 }
 
-// CMainFrame ì§„ë‹¨
+// CMainFrame Áø´Ü
 //
 #ifdef _DEBUG
 void CMainFrame::AssertValid() const
@@ -148,11 +148,11 @@ void CMainFrame::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CMainFrame ë©”ì‹œì§€ ì²˜ë¦¬ê¸°
+// CMainFrame ¸Ş½ÃÁö Ã³¸®±â
 //
 void CMainFrame::OnViewCustomize()
 {
-	CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* ë©”ë‰´ë¥¼ ê²€ìƒ‰í•©ë‹ˆë‹¤. */);
+	CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* ¸Ş´º¸¦ °Ë»öÇÕ´Ï´Ù. */);
 	pDlgCust->EnableUserDefinedToolbars();
 	pDlgCust->Create();
 }
@@ -203,10 +203,10 @@ void CMainFrame :: OnStyleRibboninterface ()
 		m_wndRibbonBar.LoadFromResource (IDR_MAINFRAME_RIBBON);
 	}
 
-	// ë¦¬ë³¸ì„ í‘œì‹œí•˜ê³  ë©”ë‰´ / íˆ´ë°”ë¥¼ ìˆ¨ ê¹ë‹ˆë‹¤.
+	// ¸®º»À» Ç¥½ÃÇÏ°í ¸Ş´º / Åø¹Ù¸¦ ¼û ±é´Ï´Ù.
 	m_wndRibbonBar.ShowPane ( TRUE , TRUE , TRUE );
 
-	// í¬ê¸°ì™€ ìœ„ì¹˜ë¥¼ ë³€ê²½í•˜ì§€ ì•Šê³  í”„ë ˆì„ ìœˆë„ìš°ë¥¼ ê°•ì œë¡œ ë‹¤ì‹œ ê·¸ë¦½ë‹ˆë‹¤.
+	// Å©±â¿Í À§Ä¡¸¦ º¯°æÇÏÁö ¾Ê°í ÇÁ·¹ÀÓ À©µµ¿ì¸¦ °­Á¦·Î ´Ù½Ã ±×¸³´Ï´Ù.
 	CRect rectThis;
 	GetWindowRect (& rectThis);
 	SetWindowPos (
@@ -221,10 +221,10 @@ void CMainFrame :: OnStyleRibboninterface ()
 
 void CMainFrame :: OnRbnBtnToolbarInterface ()
 {
-	// ë©”ë‰´ / ë„êµ¬ ëª¨ìŒì„ í‘œì‹œí•˜ê³  ë¦¬ë³¸ì„ ìˆ¨ê¹ë‹ˆë‹¤.
+	// ¸Ş´º / µµ±¸ ¸ğÀ½À» Ç¥½ÃÇÏ°í ¸®º»À» ¼û±é´Ï´Ù.
 	m_wndRibbonBar.ShowPane ( FALSE , FALSE , FALSE );
 
-	// í¬ê¸°ì™€ ìœ„ì¹˜ë¥¼ ë³€ê²½í•˜ì§€ ì•Šê³  í”„ë ˆì„ ìœˆë„ìš°ë¥¼ ê°•ì œë¡œ ë‹¤ì‹œ ê·¸ë¦½ë‹ˆë‹¤.
+	// Å©±â¿Í À§Ä¡¸¦ º¯°æÇÏÁö ¾Ê°í ÇÁ·¹ÀÓ À©µµ¿ì¸¦ °­Á¦·Î ´Ù½Ã ±×¸³´Ï´Ù.
 	CRect rectThis;
 	GetWindowRect (& rectThis);
 	SetWindowPos (
@@ -242,9 +242,9 @@ HICON CMainFrame::HICONFromPATH(CString pstrPath)
 	CImage image;
 
 	/*
-	 * ê·¸ë¦¼ íŒŒì¼ì´ ì—†ìœ¼ë©´ CImage::Load ê°€ ì‹¤íŒ¨í•˜ê³  m_hBitmap ì´ 0 ìœ¼ë¡œ ë‚¨ëŠ”ë‹¤.
-	 * ê·¸ ìƒíƒœë¡œ Detach() ë¥¼ ë¶€ë¥´ë©´ atlimage.h ì—ì„œ ì–´ì„œì…˜ì´ ë‚œë‹¤.
-	 * ê·¸ë¦¼ í•˜ë‚˜ ì—†ë‹¤ê³  ì°½ì´ ì£½ì„ ì´ìœ ëŠ” ì—†ë‹¤. ì—†ìœ¼ë©´ ì•„ì´ì½˜ ì—†ì´ ì—°ë‹¤.
+	 * ±×¸² ÆÄÀÏÀÌ ¾øÀ¸¸é CImage::Load °¡ ½ÇÆĞÇÏ°í m_hBitmap ÀÌ 0 À¸·Î ³²´Â´Ù.
+	 * ±× »óÅÂ·Î Detach() ¸¦ ºÎ¸£¸é atlimage.h ¿¡¼­ ¾î¼­¼ÇÀÌ ³­´Ù.
+	 * ±×¸² ÇÏ³ª ¾ø´Ù°í Ã¢ÀÌ Á×À» ÀÌÀ¯´Â ¾ø´Ù. ¾øÀ¸¸é ¾ÆÀÌÄÜ ¾øÀÌ ¿¬´Ù.
 	 */
 	if (FAILED(image.Load(pstrPath)) || image.IsNull())
 		return NULL;
@@ -410,15 +410,15 @@ void CMainFrame::AddCategoryWCS()
 
 	if(strWH_TYP == _T("10"))
 	{
-		CMFCRibbonButton* pBtnCv = new CMFCRibbonButton(ID_MONITORING_CV, _T("íŠ¸ë™ë²ˆí˜¸ í‘œì‹œ"), HICONFromPATH(GetConcatPath(strAppPath, _T("Cv"), strExtension)), TRUE);
+		CMFCRibbonButton* pBtnCv = new CMFCRibbonButton(ID_MONITORING_CV, _T("Æ®·¢¹øÈ£ Ç¥½Ã"), HICONFromPATH(GetConcatPath(strAppPath, _T("Cv"), strExtension)), TRUE);
 		pBtnCv->SetAlwaysLargeImage();
 		pPanelMonitor->Add(pBtnCv);
 
-		CMFCRibbonButton* pBtnLg = new CMFCRibbonButton(ID_MONITORING_LG, _T("ì‘ì—…ë²ˆí˜¸ í‘œì‹œ"), HICONFromPATH(GetConcatPath(strAppPath, _T("Lg"), strExtension)), TRUE);
+		CMFCRibbonButton* pBtnLg = new CMFCRibbonButton(ID_MONITORING_LG, _T("ÀÛ¾÷¹øÈ£ Ç¥½Ã"), HICONFromPATH(GetConcatPath(strAppPath, _T("Lg"), strExtension)), TRUE);
 		pBtnLg->SetAlwaysLargeImage();
 		pPanelMonitor->Add(pBtnLg);
 
-		CMFCRibbonButton* pBtnPl = new CMFCRibbonButton(ID_MONITORING_PL, _T("íŒ”ë ›íŠ¸ë²ˆí˜¸ í‘œì‹œ"), HICONFromPATH(GetConcatPath(strAppPath, _T("Pl"), strExtension)), TRUE);
+		CMFCRibbonButton* pBtnPl = new CMFCRibbonButton(ID_MONITORING_PL, _T("ÆÈ·¿Æ®¹øÈ£ Ç¥½Ã"), HICONFromPATH(GetConcatPath(strAppPath, _T("Pl"), strExtension)), TRUE);
 		pBtnPl->SetAlwaysLargeImage();
 		pPanelMonitor->Add(pBtnPl);
 	}
@@ -426,11 +426,11 @@ void CMainFrame::AddCategoryWCS()
 	AddPanelLAYOUT(pCategory);
 }
 
-//	ì¸µì„ ì˜¤ê°€ëŠ” ë²„íŠ¼.
-//	EcsLayout1.xml = 1F, EcsLayout2.xml = 2F, EcsLayout3.xml = 3F ì´ê³ 
-//	Ecs.ini ì˜ [COMMON] TabCount ë§Œí¼ ì½ì–´ ë“¤ì¸ë‹¤.
-//	ëˆ„ë¥´ë©´ CEcsDoc::OnCommandRangeMainFrameLAYOUT ì´ ë°›ëŠ”ë‹¤.
-//	ì½ì§€ ëª»í•œ ì¸µì˜ ë²„íŠ¼ì€ OnUpdateMainFrameLAYOUT ì´ íšŒìƒ‰ìœ¼ë¡œ ë§Œë“ ë‹¤.
+//	ÃşÀ» ¿À°¡´Â ¹öÆ°.
+//	EcsLayout1.xml = 1F, EcsLayout2.xml = 2F, EcsLayout3.xml = 3F ÀÌ°í
+//	Ecs.ini ÀÇ [COMMON] TabCount ¸¸Å­ ÀĞ¾î µéÀÎ´Ù.
+//	´©¸£¸é CEcsDoc::OnCommandRangeMainFrameLAYOUT ÀÌ ¹Ş´Â´Ù.
+//	ÀĞÁö ¸øÇÑ ÃşÀÇ ¹öÆ°Àº OnUpdateMainFrameLAYOUT ÀÌ È¸»öÀ¸·Î ¸¸µç´Ù.
 void CMainFrame::AddPanelLAYOUT(CMFCRibbonCategory* pCategory)
 {
 	if (pCategory == NULL)
@@ -444,7 +444,7 @@ void CMainFrame::AddPanelLAYOUT(CMFCRibbonCategory* pCategory)
 	strAppPath = strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\mainframe_layout\\");
 	CString strExtension = _T(".png");
 
-	CMFCRibbonPanel* pPanelLayout = pCategory->AddPanel(_T("ë ˆì´ì•„ì›ƒ"));
+	CMFCRibbonPanel* pPanelLayout = pCategory->AddPanel(_T("·¹ÀÌ¾Æ¿ô"));
 
 	const UINT nIDs[3]      = { ID_LAYOUT_1F, ID_LAYOUT_2F, ID_LAYOUT_3F };
 	LPCTSTR     szTexts[3]  = { _T("1F"), _T("2F"), _T("3F") };
@@ -563,7 +563,7 @@ void CMainFrame::RenameRibbonText(EN_LANG penLang)
 	CMFCRibbonButton* pButton_Job = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(0);
 	pButton_Job->SetText(CLib::GetIniStringFromPath(strFullPath, _T("job-info"), (int)penLang));
 	//CMFCRibbonButton* pButton_emptyplt = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(1);
-	//pButton_emptyplt->SetText(_T("ê³µPLTì‘ì—…"));
+	//pButton_emptyplt->SetText(_T("°øPLTÀÛ¾÷"));
 	CMFCRibbonButton* pButton_Ifstatus = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(1);
 	pButton_Ifstatus->SetText(CLib::GetIniStringFromPath(strFullPath, _T("ifstatus-info"), (int)penLang));
 	CMFCRibbonButton* pButton_Search = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(2);
@@ -648,28 +648,28 @@ void CMainFrame::AddStatusBarPane()
 	int i=0;
 	++i;
 
-	InsertButtonPainToStatusBar(_T("CV_1ê·¸ë£¹"), ID_STATUS_CV_1, i + 1, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_2ê·¸ë£¹"), ID_STATUS_CV_2, i + 2, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_3ê·¸ë£¹"), ID_STATUS_CV_3, i + 3, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_4ê·¸ë£¹"), ID_STATUS_CV_4, i + 4, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_5ê·¸ë£¹"), ID_STATUS_CV_5, i + 5, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_6ê·¸ë£¹"), ID_STATUS_CV_6, i + 6, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_7ê·¸ë£¹"), ID_STATUS_CV_7, i + 7, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_8ê·¸ë£¹"), ID_STATUS_CV_8, i + 8, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_1í˜¸ê¸°"), ID_STATUS_SC_1, i + 9, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_2í˜¸ê¸°"), ID_STATUS_SC_2, i + 10, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_3í˜¸ê¸°"), ID_STATUS_SC_3, i + 11, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_4í˜¸ê¸°"), ID_STATUS_SC_4, i + 12, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_5í˜¸ê¸°"), ID_STATUS_SC_5, i + 13, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_6í˜¸ê¸°"), ID_STATUS_SC_6, i + 14, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_7í˜¸ê¸°"), ID_STATUS_SC_7, i + 15, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_8í˜¸ê¸°"), ID_STATUS_SC_8, i + 16, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_9í˜¸ê¸°"), ID_STATUS_SC_9, i + 17, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_10í˜¸ê¸°"), ID_STATUS_SC_10, i + 18, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_11í˜¸ê¸°"), ID_STATUS_SC_11, i + 19, iwitdh);
-	//InsertButtonPainToStatusBar(_T("RTV_1í˜¸ê¸°"), ID_STATUS_RTV_1, i + 4, 80);
-	//InsertButtonPainToStatusBar(_T("BCR_1í˜¸ê¸°"), ID_STATUS_BCR_1, i + 5, 80);
-	//InsertButtonPainToStatusBar(_T("BCR_2í˜¸ê¸°"), ID_STATUS_BCR_2, i + 6, 80);
+	InsertButtonPainToStatusBar(_T("CV_1±×·ì"), ID_STATUS_CV_1, i + 1, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_2±×·ì"), ID_STATUS_CV_2, i + 2, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_3±×·ì"), ID_STATUS_CV_3, i + 3, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_4±×·ì"), ID_STATUS_CV_4, i + 4, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_5±×·ì"), ID_STATUS_CV_5, i + 5, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_6±×·ì"), ID_STATUS_CV_6, i + 6, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_7±×·ì"), ID_STATUS_CV_7, i + 7, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_8±×·ì"), ID_STATUS_CV_8, i + 8, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_1È£±â"), ID_STATUS_SC_1, i + 9, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_2È£±â"), ID_STATUS_SC_2, i + 10, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_3È£±â"), ID_STATUS_SC_3, i + 11, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_4È£±â"), ID_STATUS_SC_4, i + 12, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_5È£±â"), ID_STATUS_SC_5, i + 13, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_6È£±â"), ID_STATUS_SC_6, i + 14, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_7È£±â"), ID_STATUS_SC_7, i + 15, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_8È£±â"), ID_STATUS_SC_8, i + 16, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_9È£±â"), ID_STATUS_SC_9, i + 17, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_10È£±â"), ID_STATUS_SC_10, i + 18, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_11È£±â"), ID_STATUS_SC_11, i + 19, iwitdh);
+	//InsertButtonPainToStatusBar(_T("RTV_1È£±â"), ID_STATUS_RTV_1, i + 4, 80);
+	//InsertButtonPainToStatusBar(_T("BCR_1È£±â"), ID_STATUS_BCR_1, i + 5, 80);
+	//InsertButtonPainToStatusBar(_T("BCR_2È£±â"), ID_STATUS_BCR_2, i + 6, 80);
 		
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_2, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
@@ -723,14 +723,14 @@ void CMainFrame::OnButtonComm(UINT nID)
 	int nEQP_TIME = 0;
 	CString strTemp1, strTemp2;
 	int nEQP_NUM = 0;
-	int nCheckTime = 0;				// Checkí•˜ëŠ” ì‹œê°„ì´ ë‹¤ë¦„!
+	int nCheckTime = 0;				// CheckÇÏ´Â ½Ã°£ÀÌ ´Ù¸§!
 
 	CTrackInfo* pTrackInfo = NULL;
 	CSC_DATA* pSC_DATA = NULL;
 	CRTV_DATA* pRTV_DATA = NULL;
 	CBCR_MST* pBCR_DATA = NULL;
 
-    #pragma region Control ë²ˆí˜¸ë¥¼ í†µí•´ì„œ í•„ìš”í•œ ì •ë³´ë“¤ì„ ì„¤ì •í•˜ëŠ” ë¶€ë¶„
+    #pragma region Control ¹øÈ£¸¦ ÅëÇØ¼­ ÇÊ¿äÇÑ Á¤º¸µéÀ» ¼³Á¤ÇÏ´Â ºÎºĞ
 
 	switch(nID)
 	{
@@ -741,7 +741,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pTrackInfo == NULL)
 			return;
 
-		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
@@ -758,7 +758,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pTrackInfo == NULL)
 			return;
 
-		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
@@ -775,7 +775,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pTrackInfo == NULL)
 			return;
 
-		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
@@ -792,7 +792,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pTrackInfo == NULL)
 			return;
 
-		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
@@ -809,7 +809,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pTrackInfo == NULL)
 			return;
 
-		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
@@ -826,7 +826,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pTrackInfo == NULL)
 			return;
 
-		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
@@ -843,7 +843,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pTrackInfo == NULL)
 			return;
 
-		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
@@ -860,7 +860,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pTrackInfo == NULL)
 			return;
 
-		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("CV_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.236"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pTrackInfo->m_pCV_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
@@ -878,7 +878,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -896,7 +896,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -914,7 +914,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -932,7 +932,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -950,7 +950,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -968,7 +968,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -986,7 +986,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -1004,7 +1004,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -1022,7 +1022,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.242"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -1040,7 +1040,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -1058,7 +1058,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		if (pSC_DATA == NULL)
 			return;
 
-		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switchë¬¸ ë°‘ì—ì„œ ë§Œë“¤ê¸°
+		//strTemp1.Format(_T("SC_01 (IP:%s) (PORT:%04d)"),_T("10.99.43.243"),8192);		// switch¹® ¹Ø¿¡¼­ ¸¸µé±â
 
 		strEQP_CONNECTED_YN = pSC_DATA->V_EQP_CONNECTED_YN;
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
@@ -1124,11 +1124,11 @@ void CMainFrame::OnButtonComm(UINT nID)
 
 	if (pDoc->m_blConnectStatus == TRUE)
 	{
-		//HOST_IF_LOGì— ë“¤ì–´ì˜¨ ë©”ì‹œì§€ê°€ 30ì´ˆ ì´ìƒ ê²½ê³¼ ë˜ì—ˆì„ ë–„ ì—ëŸ¬ë¡œ í‘œì‹œ
+		//HOST_IF_LOG¿¡ µé¾î¿Â ¸Ş½ÃÁö°¡ 30ÃÊ ÀÌ»ó °æ°ú µÇ¾úÀ» ‹š ¿¡·¯·Î Ç¥½Ã
 		if (nEQP_TIME > nCheckTime)
 		{
-			// ì¿¼ë¦¬ë¬¸ì„ ë‚ ë ¤ë¼
-			// ê°€ì ¸ì˜¨ê°’ìœ¼ë¡œ í™•ì¸í•˜ë¼.
+			// Äõ¸®¹®À» ³¯·Á¶ó
+			// °¡Á®¿Â°ªÀ¸·Î È®ÀÎÇÏ¶ó.
 			CString strSql, strTemp, strMessage;
 			strSql.Format(_T("SELECT * FROM EQP_MST WHERE WH_TYP = '%s' AND EQP_TYP = '%s' AND PLC_NO = '%02d'"), pDoc->m_WH_TYP, strTYPE, nEQP_NUM);
 
@@ -1137,17 +1137,17 @@ void CMainFrame::OnButtonComm(UINT nID)
 
  			if (nRowCount < 1)
  			{
-				strTemp.Format(_T("ì„¤ë¹„ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. [ì„¤ë¹„ì¢…ë¥˜ : %s][ì„¤ë¹„ë²ˆí˜¸ : %02d]"), strTYPE, nEQP_NUM);
- 				//AfxMessageBox(m_pDoc->GetMsgLangDef(strTemp));		// ë²ˆì—­í• ë•Œ 
- 				AfxMessageBox(strTemp);									// ë²ˆì—­ì•ˆí• ë•Œ
+				strTemp.Format(_T("¼³ºñ°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. [¼³ºñÁ¾·ù : %s][¼³ºñ¹øÈ£ : %02d]"), strTYPE, nEQP_NUM);
+ 				//AfxMessageBox(m_pDoc->GetMsgLangDef(strTemp));		// ¹ø¿ªÇÒ¶§ 
+ 				AfxMessageBox(strTemp);									// ¹ø¿ª¾ÈÇÒ¶§
  				return;
  			}
 
  			if (nRowCount > 1)
  			{
-				strTemp.Format(_T("ì„¤ë¹„ê°€ í•œê°œê°€ ì•„ë‹ˆë¼ ì—¬ëŸ¬ê°œ ì¡´ì¬í•©ë‹ˆë‹¤. - ê²€ìƒ‰ ì¡°ê±´ í™•ì¸ìš”ë§ => [ì„¤ë¹„ì¢…ë¥˜ : %s][ì„¤ë¹„ë²ˆí˜¸ : %02d]"), strTYPE, nEQP_NUM);
- 				//AfxMessageBox(m_pDoc->GetMsgLangDef(strTemp));		// ë²ˆì—­í• ë•Œ 
- 				AfxMessageBox(strTemp);									// ë²ˆì—­ì•ˆí• ë•Œ
+				strTemp.Format(_T("¼³ºñ°¡ ÇÑ°³°¡ ¾Æ´Ï¶ó ¿©·¯°³ Á¸ÀçÇÕ´Ï´Ù. - °Ë»ö Á¶°Ç È®ÀÎ¿ä¸Á => [¼³ºñÁ¾·ù : %s][¼³ºñ¹øÈ£ : %02d]"), strTYPE, nEQP_NUM);
+ 				//AfxMessageBox(m_pDoc->GetMsgLangDef(strTemp));		// ¹ø¿ªÇÒ¶§ 
+ 				AfxMessageBox(strTemp);									// ¹ø¿ª¾ÈÇÒ¶§
 				
  				return;
  			}
@@ -1171,17 +1171,17 @@ void CMainFrame::OnButtonComm(UINT nID)
 
 			strTemp1.Format(_T("%s (IP:%s) (PORT:%s)"), strREMARKS, strIP, strPORT);		
 
-			strTemp2.Format(_T("PingTestë¥¼ í•˜ê² ìŠµë‹ˆê¹Œ? [ì ‘ì†ì •ë³´ -> %s]"), strTemp1);
+			strTemp2.Format(_T("PingTest¸¦ ÇÏ°Ú½À´Ï±î? [Á¢¼ÓÁ¤º¸ -> %s]"), strTemp1);
 			
 			if (AfxMessageBox(strTemp2, MB_YESNO) != IDYES)
 			{
-				AfxMessageBox(_T("í†µì‹  ì—°ê²° ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!"));
+				AfxMessageBox(_T("Åë½Å ¿¬°á µÇÁö ¾Ê¾Ò½À´Ï´Ù!"));
 				return;
 			}
 
-			AfxMessageBox(_T("PingTest í•˜ê² ìŠµë‹ˆë‹¤.\n\nPing ë¹„ì •ìƒì‹œ ë„¤íŠ¸ì›Œí¬ ë‹´ë‹¹ìì—ê²Œ í™•ì¸ë°”ëë‹ˆë‹¤!\nPing ì •ìƒì‹œ PORTê°€ ì •ìƒì ìœ¼ë¡œ OPEN ë˜ì–´ìˆëŠ”ì§€ í™•ì¸í•˜ì„¸ìš”"));
+			AfxMessageBox(_T("PingTest ÇÏ°Ú½À´Ï´Ù.\n\nPing ºñÁ¤»ó½Ã ³×Æ®¿öÅ© ´ã´çÀÚ¿¡°Ô È®ÀÎ¹Ù¶ø´Ï´Ù!\nPing Á¤»ó½Ã PORT°¡ Á¤»óÀûÀ¸·Î OPEN µÇ¾îÀÖ´ÂÁö È®ÀÎÇÏ¼¼¿ä"));
 			//::ShellExecute(NULL, _T("open"), _T(".\\PING_WC01.BAT"), NULL, NULL, SW_SHOW);
-			::ShellExecute(NULL, _T("open"), _T("cmd"), _T("/C ping " + strIP + " -t"), NULL, SW_SHOW);		// ì •ìƒ
+			::ShellExecute(NULL, _T("open"), _T("cmd"), _T("/C ping " + strIP + " -t"), NULL, SW_SHOW);		// Á¤»ó
 		}
 		else
 		{
@@ -1193,17 +1193,17 @@ void CMainFrame::OnButtonComm(UINT nID)
 
 			if (nRowCount < 1)
 			{
-				strTemp.Format(_T("ì„¤ë¹„ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. [ì„¤ë¹„ì¢…ë¥˜ : %s][ì„¤ë¹„ë²ˆí˜¸ : %02d]"), strTYPE, nEQP_NUM);
-				//AfxMessageBox(m_pDoc->GetMsgLangDef(strTemp));		// ë²ˆì—­í• ë•Œ 
-				AfxMessageBox(strTemp);									// ë²ˆì—­ì•ˆí• ë•Œ
+				strTemp.Format(_T("¼³ºñ°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. [¼³ºñÁ¾·ù : %s][¼³ºñ¹øÈ£ : %02d]"), strTYPE, nEQP_NUM);
+				//AfxMessageBox(m_pDoc->GetMsgLangDef(strTemp));		// ¹ø¿ªÇÒ¶§ 
+				AfxMessageBox(strTemp);									// ¹ø¿ª¾ÈÇÒ¶§
 				return;
 			}
 
 			if (nRowCount > 1)
 			{
-				strTemp.Format(_T("ì„¤ë¹„ê°€ í•œê°œê°€ ì•„ë‹ˆë¼ ì—¬ëŸ¬ê°œ ì¡´ì¬í•©ë‹ˆë‹¤. - ê²€ìƒ‰ ì¡°ê±´ í™•ì¸ìš”ë§ => [ì„¤ë¹„ì¢…ë¥˜ : %s][ì„¤ë¹„ë²ˆí˜¸ : %02d]"), strTYPE, nEQP_NUM);
-				//AfxMessageBox(m_pDoc->GetMsgLangDef(strTemp));		// ë²ˆì—­í• ë•Œ 
-				AfxMessageBox(strTemp);									// ë²ˆì—­ì•ˆí• ë•Œ
+				strTemp.Format(_T("¼³ºñ°¡ ÇÑ°³°¡ ¾Æ´Ï¶ó ¿©·¯°³ Á¸ÀçÇÕ´Ï´Ù. - °Ë»ö Á¶°Ç È®ÀÎ¿ä¸Á => [¼³ºñÁ¾·ù : %s][¼³ºñ¹øÈ£ : %02d]"), strTYPE, nEQP_NUM);
+				//AfxMessageBox(m_pDoc->GetMsgLangDef(strTemp));		// ¹ø¿ªÇÒ¶§ 
+				AfxMessageBox(strTemp);									// ¹ø¿ª¾ÈÇÒ¶§
 
 				return;
 			}
@@ -1214,7 +1214,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 
 			CString	strIP = pRsw->GetItem(_T("PLC_IP"));
 			CString	strPORT = pRsw->GetItem(_T("PLC_PORT"));
-			strTemp1.Format(_T("%s %02dì˜ ì—°ê²°ìƒíƒœê°€ ì–‘í˜¸í•©ë‹ˆë‹¤. (IP:%s) (PORT:%s)"), strTYPE, nEQP_NUM, strIP, strPORT);
+			strTemp1.Format(_T("%s %02dÀÇ ¿¬°á»óÅÂ°¡ ¾çÈ£ÇÕ´Ï´Ù. (IP:%s) (PORT:%s)"), strTYPE, nEQP_NUM, strIP, strPORT);
 			AfxMessageBox(strTemp1);
 		}
 	}
@@ -1538,7 +1538,7 @@ void CMainFrame::OnUpdateStatusSc1(CCmdUI *pCmdUI)
 	{
 		if(strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_1, _T("SC_1í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_1, _T("SC_1È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1546,7 +1546,7 @@ void CMainFrame::OnUpdateStatusSc1(CCmdUI *pCmdUI)
 	{
 		if(strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_1, _T("SC_1í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_1, _T("SC_1È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1574,7 +1574,7 @@ void CMainFrame::OnUpdateStatusSc2(CCmdUI *pCmdUI)
 	{
 		if(strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_2, _T("SC_2í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_2, _T("SC_2È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1582,7 +1582,7 @@ void CMainFrame::OnUpdateStatusSc2(CCmdUI *pCmdUI)
 	{
 		if(strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_2, _T("SC_2í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_2, _T("SC_2È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1610,7 +1610,7 @@ void CMainFrame::OnUpdateStatusSc3(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_3í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_3È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1618,7 +1618,7 @@ void CMainFrame::OnUpdateStatusSc3(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_3í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, _T("SC_3È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1646,7 +1646,7 @@ void CMainFrame::OnUpdateStatusSc4(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_4, _T("SC_4í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_4, _T("SC_4È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1654,7 +1654,7 @@ void CMainFrame::OnUpdateStatusSc4(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_4, _T("SC_4í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_4, _T("SC_4È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1682,7 +1682,7 @@ void CMainFrame::OnUpdateStatusSc5(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_5, _T("SC_5í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_5, _T("SC_5È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1690,7 +1690,7 @@ void CMainFrame::OnUpdateStatusSc5(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_5, _T("SC_5í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_5, _T("SC_5È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1718,7 +1718,7 @@ void CMainFrame::OnUpdateStatusSc6(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_6, _T("SC_6í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_6, _T("SC_6È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1726,7 +1726,7 @@ void CMainFrame::OnUpdateStatusSc6(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_6, _T("SC_6í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_6, _T("SC_6È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1754,7 +1754,7 @@ void CMainFrame::OnUpdateStatusSc7(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_7, _T("SC_7í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_7, _T("SC_7È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1762,7 +1762,7 @@ void CMainFrame::OnUpdateStatusSc7(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_7, _T("SC_7í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_7, _T("SC_7È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1790,7 +1790,7 @@ void CMainFrame::OnUpdateStatusSc8(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, _T("SC_8í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, _T("SC_8È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1798,7 +1798,7 @@ void CMainFrame::OnUpdateStatusSc8(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, _T("SC_8í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, _T("SC_8È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1826,7 +1826,7 @@ void CMainFrame::OnUpdateStatusSc9(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, _T("SC_9í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, _T("SC_9È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1834,7 +1834,7 @@ void CMainFrame::OnUpdateStatusSc9(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, _T("SC_9í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, _T("SC_9È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1862,7 +1862,7 @@ void CMainFrame::OnUpdateStatusSc10(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, _T("SC_10í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, _T("SC_10È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1870,7 +1870,7 @@ void CMainFrame::OnUpdateStatusSc10(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, _T("SC_10í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, _T("SC_10È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1898,7 +1898,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("RED"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, _T("SC_11í˜¸ê¸°"), RED, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, _T("SC_11È£±â"), RED, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("RED"));
 		}
 	}
@@ -1906,7 +1906,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 	{
 		if (strEQP_COLOR != _T("GREEN"))
 		{
-			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, _T("SC_11í˜¸ê¸°"), GREEN, BLACK);
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, _T("SC_11È£±â"), GREEN, BLACK);
 			pSC_DATA->SetEQP_COLOR(_T("GREEN"));
 		}
 	}
@@ -1936,7 +1936,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 //	{
 //		if (strEQP_COLOR != _T("RED"))
 //		{
-//			m_wndStatusBar.SetPaneInfo(ID_STATUS_RTV_1, _T("RTV_1í˜¸ê¸°"), RED, BLACK);
+//			m_wndStatusBar.SetPaneInfo(ID_STATUS_RTV_1, _T("RTV_1È£±â"), RED, BLACK);
 //			pRTV_DATA->SetEQP_COLOR(_T("RED"));
 //		}
 //	}
@@ -1944,7 +1944,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 //	{
 //		if (strEQP_COLOR != _T("GREEN"))
 //		{
-//			m_wndStatusBar.SetPaneInfo(ID_STATUS_RTV_1, _T("RTV_1í˜¸ê¸°"), GREEN, BLACK);
+//			m_wndStatusBar.SetPaneInfo(ID_STATUS_RTV_1, _T("RTV_1È£±â"), GREEN, BLACK);
 //			pRTV_DATA->SetEQP_COLOR(_T("GREEN"));
 //		}
 //	}
@@ -1972,7 +1972,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 //	{
 //		if (strEQP_COLOR != _T("RED"))
 //		{
-//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, _T("BCR_1í˜¸ê¸°"), RED, BLACK);
+//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, _T("BCR_1È£±â"), RED, BLACK);
 //			pBCR_DATA->SetEQP_COLOR(_T("RED"));
 //		}
 //	}
@@ -1980,7 +1980,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 //	{
 //		if (strEQP_COLOR != _T("GREEN"))
 //		{
-//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, _T("BCR_1í˜¸ê¸°"), GREEN, BLACK);
+//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, _T("BCR_1È£±â"), GREEN, BLACK);
 //			pBCR_DATA->SetEQP_COLOR(_T("GREEN"));
 //		}
 //	}
@@ -2008,7 +2008,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 //	{
 //		if (strEQP_COLOR != _T("RED"))
 //		{
-//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_2, _T("BCR_2í˜¸ê¸°"), RED, BLACK);
+//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_2, _T("BCR_2È£±â"), RED, BLACK);
 //			pBCR_DATA->SetEQP_COLOR(_T("RED"));
 //		}
 //	}
@@ -2016,7 +2016,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 //	{
 //		if (strEQP_COLOR != _T("GREEN"))
 //		{
-//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_2, _T("BCR_2í˜¸ê¸°"), GREEN, BLACK);
+//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_2, _T("BCR_2È£±â"), GREEN, BLACK);
 //			pBCR_DATA->SetEQP_COLOR(_T("GREEN"));
 //		}
 //	}

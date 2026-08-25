@@ -124,6 +124,14 @@ BOOL CEcsDefine::ParseXml()
 					return FALSE;
 				}
 				break;
+			case CEquipment::enDISPLAY:
+				if (!ParseDisplay(pEquipment))
+				{
+					DEBUGER_TRACE(_T("Fail to ParseDisplay!"), __WFUNCTION__);
+					return FALSE;
+				}
+				break;
+
 			//case CEquipment::enWC:
 			//	if (!ParseWc(pEquipment))
 			//	{
@@ -648,39 +656,39 @@ BOOL CEcsDefine::ParseBcr(CEquipment* pEquipment)
 
 }
 
-//BOOL CEcsDefine::ParseDisplay(CEquipment* pEquipment)
-//{
-//	DEBUGER_ASSERT_VALID(pEquipment != NULL);
-//	DEBUGER_ASSERT_VALID(pEquipment->IsKindOf(RUNTIME_CLASS(CDisplay)));
-//
-//	CString strValue;
-//	CString strPLC_NO, strDISP_NO;
-//	CString strTRACK_NO;
-//	int nBcrCnt;
-//
-//	CDisplay* pDisplay= (CDisplay*)pEquipment;
-//	pDisplay->m_WH_TYP = m_pDoc->m_WH_TYP;
-//	CDisplayInfo* pInfo = pDisplay->m_pInfo;
-//	DEBUGER_ASSERT_VALID(pDisplay != NULL);
-//	DEBUGER_ASSERT_VALID(pInfo != NULL);
-//	MoveXPath(_T("./Bcrs"), FALSE);
-//	nDisplayCnt = GetChildElmtCount();
-//	pInfo->m_MapBCR_MST.InitHashTable(nDisplayCnt);
-//	for (int nIdxDisplay = 0; nIdxDisplay < nDisplayCnt; nIdxDisplay++)
-//	{
-//		MoveChild(nIdxDisplay);
-//		GetAttrValue(_T("plcno"), strPLC_NO);
-//		GetAttrValue(_T("disp_no"), strDISP_NO);
-//		pDisplay->m_nNumber = CConvert::ToInt(strPLC_NO);
-//		CBCR_MST* pBCR_MST = pInfo->CreateBCR_MST(strPLC_NO, strTRACK_NO);
-//		pDisplay->m_pInfo->m_MapBCR_MST.SetAt(pBCR_MST->K_BCR_NO, pBCR_MST);
-//		pBCR_MST->m_strBCR_MC_NO = strTRACK_NO;
-//		pBCR_MST->m_pControl = (CDciButtonCtrl*)m_pDoc->GetDciControl_FindAllLayout(pBCR_MST->GetCid());
-//		MoveParent();
-//	}
-//	return TRUE;
-//
-//}
+BOOL CEcsDefine::ParseDisplay(CEquipment* pEquipment)
+{
+	DEBUGER_ASSERT_VALID(pEquipment != NULL);
+	DEBUGER_ASSERT_VALID(pEquipment->IsKindOf(RUNTIME_CLASS(CDisplay)));
+
+	CString strValue;
+	CString strPLC_NO, strEQP_NO;
+	int nDisplayCnt;
+
+	CDisplay* pDisplay = (CDisplay*)pEquipment;
+	pDisplay->m_WH_TYP = m_pDoc->m_WH_TYP;
+	CDisplayInfo* pInfo = pDisplay->m_pInfo;
+
+	DEBUGER_ASSERT_VALID(pDisplay != NULL);
+	DEBUGER_ASSERT_VALID(pInfo != NULL);
+	MoveXPath(_T("./Displays"), FALSE);
+	nDisplayCnt = GetChildElmtCount();
+	pInfo->m_MapDisplayData.InitHashTable(nDisplayCnt);
+	for (int nIdxDisplay = 0; nIdxDisplay < nDisplayCnt; nIdxDisplay++)
+	{
+		MoveChild(nIdxDisplay);
+		GetAttrValue(_T("plcno"), strPLC_NO);
+		GetAttrValue(_T("dispno"), strEQP_NO);
+		pDisplay->m_strPlcNo = strPLC_NO;
+		CDisplayData* pDisplayData = pInfo->CreateDisPlayData(strEQP_NO);
+		pDisplay->m_pInfo->m_MapDisplayData.SetAt(pDisplayData->K_DISP_NO, pDisplayData);
+		//pDisplayData->m_strDISPLAY_NO = strTRACK_NO;
+		pDisplayData->m_pControl = (CDciStaticCtrl*)m_pDoc->GetDciControl_FindAllLayout(pDisplayData->GetCid());
+		MoveParent();
+	}
+	return TRUE;
+
+}
 
 //BOOL CEcsDefine::ParseWc(CEquipment* pEquipment)
 //{

@@ -40,6 +40,6 @@ public:
 
 public:
 	CString GetCid();
-
+	CString GetCid(CString pnChar4);
 };
 

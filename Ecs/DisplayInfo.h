@@ -3,7 +3,7 @@
 #include "info.h"
 #include "DciStaticCtrl.h"
 #include "DisplayData.h"
-
+#include "TrackInfo.h"
 
 class CDisplayInfo : public CInfo
 {
@@ -57,5 +57,33 @@ public:
 	CString GetStringPLC_NO(int pnPLC_NO);
 	CString GetStringDISP_NO(CString pstrDISP_NO);
 
+
+public:
+	//int GetDisplayBoardID(int nTrackNum);
+	//CDisplayBoard* GetDisplayBoard(int nID);
+	void SetDisplayInfo(int nID, CString& strDisplay);
+	void SetErrorCode(int nErrorCode);
+	CString GetErrorString();
+	CString GetXmlString();
+	COLORREF GetColor();
+};
+
+class CDisplayBoard : public CObject
+{
+public:
+	CDisplayBoard(int nID) :m_nID(nID) {}
+	virtual ~CDisplayBoard() {}
+
+public:
+	int	m_nID;
+	CString m_strDisplay;
+	CTrackInfoArray m_pTracks;
+};
+
+class CDisplayBoardArray : public CArray<CDisplayBoard*, CDisplayBoard*>
+{
+public:
+	CDisplayBoardArray() {}
+	virtual ~CDisplayBoardArray() {}
 };
 

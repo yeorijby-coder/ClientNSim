@@ -31,7 +31,7 @@ protected:
 public:
 	CString m_strInPlc;
 	CString GetSelectQry();
-	//void SetVar(CRecordSetWrap* pRsw);
+	void SetVar(CRecordSetWrap* pRsw);
 	//BOOL GetModified();
 
 };

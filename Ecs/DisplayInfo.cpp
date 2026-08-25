@@ -54,18 +54,23 @@ CDisplayData* CDisplayInfo::CreateDisPlayData(CString pstrEQP_NO)
 
 void CDisplayInfo::InvokeControl(CDisplayData* pDisPlayData)
 {
+	if (pDisPlayData == NULL)
+		return;
+
 	if (pDisPlayData->m_bModified == FALSE)
 		return;
 
-	DEBUGER_ASSERT_VALID(pDisPlayData != NULL);
-	//if (pBCR_MST->K_BCR_NO == _T("22"))
-	//{
-	//	int a = 0;
-	//}
-	//pBCR_MST->m_pControl->m_clrBgColor = GetColor(pBCR_MST, pCV_DATA);
-	//pBCR_MST->m_pControl->InvalidateControl(m_pEquipment->m_pDoc->m_hWndView, FALSE);
-	//pBCR_MST->m_bModified = TRUE;
-	//m_bModified = FALSE;
+	// 레이아웃(EcsLayout*.xml)에 해당 전광판 컨트롤(CID 171802nn)이 없으면 NULL이다
+	if (pDisPlayData->m_pControl == NULL)
+	{
+		pDisPlayData->m_bModified = FALSE;
+		return;
+	}
+
+	pDisPlayData->m_pControl->m_strText = pDisPlayData->V_DISP_DATA;
+	pDisPlayData->m_pControl->InvalidateControl(m_pEquipment->m_pDoc->m_hWndView, FALSE);
+	pDisPlayData->m_bModified = FALSE;	// TRUE면 매 주기마다 다시 갱신되어 깜빡임
+	m_bModified = FALSE;
 }
 
 
@@ -86,6 +91,6 @@ CString CDisplayInfo::GetStringPLC_NO(int pnPLC_NO)
 CString CDisplayInfo::GetStringDISP_NO(CString pstrEQP_NO)
 {
 	CString strEQP_NO;
-	strEQP_NO.Format(_T("%05s"), pstrEQP_NO);
+	strEQP_NO.Format(_T("%01s"), pstrEQP_NO);
 	return strEQP_NO;
 }

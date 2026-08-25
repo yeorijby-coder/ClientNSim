@@ -1,26 +1,26 @@
-ï»¿#pragma once
+#pragma once
 
 
-// CDisplayDlg ëŒ€í™” ìƒì
+// CDisplayDlg ´ëÈ­ »óÀÚ
 
 class CDisplayDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CDisplayDlg)
 
 public:
-	CDisplayDlg(CWnd* pParent = nullptr);   // í‘œì¤€ ìƒì„±ìì…ë‹ˆë‹¤.
-	CDisplayDlg(CEcsDoc* pDoc, CWnd* pParent = NULL);   // í‘œì¤€ ìƒì„±ìì…ë‹ˆë‹¤.
+	CDisplayDlg(CWnd* pParent = nullptr);   // Ç¥ÁØ »ı¼ºÀÚÀÔ´Ï´Ù.
+	CDisplayDlg(CEcsDoc* pDoc, CWnd* pParent = NULL);   // Ç¥ÁØ »ı¼ºÀÚÀÔ´Ï´Ù.
 	virtual ~CDisplayDlg();
 
 	enum { IDD = IDD_DISPLAY_CTRL };
 
-// ëŒ€í™” ìƒì ë°ì´í„°ì…ë‹ˆë‹¤.
+// ´ëÈ­ »óÀÚ µ¥ÀÌÅÍÀÔ´Ï´Ù.
 #ifdef AFX_DESIGN_TIME
 
 #endif
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV ì§€ì›ì…ë‹ˆë‹¤.
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Áö¿øÀÔ´Ï´Ù.
 
 	DECLARE_MESSAGE_MAP()
 };

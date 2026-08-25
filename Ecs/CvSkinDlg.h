@@ -111,6 +111,7 @@ public:
 	CTGroupBox m_grpCvStatus;
 	CTGroupBox m_grpCvStatusSensor;
 	CTGroupBox m_grpCvStatusStatus;
+	CTGroupBox m_grpCvSuspend;	// 일시정지 그룹박스
 	//--STATUS
 
 	//TRACK_NO
@@ -183,6 +184,7 @@ public:
 	CSkinButton m_btnCvTrPause;
 	CSkinButton m_btnCvStoReady;
 	CSkinButton m_btnCvRetReady;
+	CSkinButton m_btnCvPickComp;
 	CSkinButton m_btnCvStoHsReady;
 	CSkinButton m_btnCvRetHsReady;
 	CSkinButton m_btnCvDiverterHsDown;

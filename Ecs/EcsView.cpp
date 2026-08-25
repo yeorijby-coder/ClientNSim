@@ -1,10 +1,10 @@
-ï»¿
-// EcsView.cpp : CEcsView í´ëž˜ìŠ¤ì˜ êµ¬í˜„
+
+// EcsView.cpp : CEcsView Å¬·¡½ºÀÇ ±¸Çö
 //
 
 #include "stdafx.h"
-// SHARED_HANDLERSëŠ” ë¯¸ë¦¬ ë³´ê¸°, ì¶•ì†ŒíŒ ê·¸ë¦¼ ë° ê²€ìƒ‰ í•„í„° ì²˜ë¦¬ê¸°ë¥¼ êµ¬í˜„í•˜ëŠ” ATL í”„ë¡œì íŠ¸ì—ì„œ ì •ì˜í•  ìˆ˜ ìžˆìœ¼ë©°
-// í•´ë‹¹ í”„ë¡œì íŠ¸ì™€ ë¬¸ì„œ ì½”ë“œë¥¼ ê³µìœ í•˜ë„ë¡ í•´ ì¤ë‹ˆë‹¤.
+// SHARED_HANDLERS´Â ¹Ì¸® º¸±â, Ãà¼ÒÆÇ ±×¸² ¹× °Ë»ö ÇÊÅÍ Ã³¸®±â¸¦ ±¸ÇöÇÏ´Â ATL ÇÁ·ÎÁ§Æ®¿¡¼­ Á¤ÀÇÇÒ ¼ö ÀÖÀ¸¸ç
+// ÇØ´ç ÇÁ·ÎÁ§Æ®¿Í ¹®¼­ ÄÚµå¸¦ °øÀ¯ÇÏµµ·Ï ÇØ ÁÝ´Ï´Ù.
 #ifndef SHARED_HANDLERS
 #include "Ecs.h"
 #endif
@@ -69,8 +69,8 @@ void CEcsView::DoDataExchange(CDataExchange* pDX)
 
 BOOL CEcsView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: CREATESTRUCT csë¥¼ ìˆ˜ì •í•˜ì—¬ ì—¬ê¸°ì—ì„œ
-	//  Window í´ëž˜ìŠ¤ ë˜ëŠ” ìŠ¤íƒ€ì¼ì„ ìˆ˜ì •í•©ë‹ˆë‹¤.
+	// TODO: CREATESTRUCT cs¸¦ ¼öÁ¤ÇÏ¿© ¿©±â¿¡¼­
+	//  Window Å¬·¡½º ¶Ç´Â ½ºÅ¸ÀÏÀ» ¼öÁ¤ÇÕ´Ï´Ù.
 
 	return CFormView::PreCreateWindow(cs);
 }
@@ -121,7 +121,7 @@ void CEcsView::OnInitialUpdate()
 		}    
 	}
 
-	// ë ˆì´ì•„ì›ƒë‹¹ 1ê°œì˜ íƒ­ì„ êµ¬ì„±í•  ìˆ˜ ìžˆë‹¤.  - ë ˆì´ì•„ì›ƒì— ì—¬ëŸ¬ëŒ€ì˜ SCë¥¼ ë„£ì„ ìˆ˜ ìžˆë‹¤. 
+	// ·¹ÀÌ¾Æ¿ô´ç 1°³ÀÇ ÅÇÀ» ±¸¼ºÇÒ ¼ö ÀÖ´Ù.  - ·¹ÀÌ¾Æ¿ô¿¡ ¿©·¯´ëÀÇ SC¸¦ ³ÖÀ» ¼ö ÀÖ´Ù. 
 	int i = 0;
 	int nPlcCount = 0;
 	int nLayoutCnt = pDoc->m_pEcsLayOuts.GetSize();
@@ -140,15 +140,15 @@ void CEcsView::OnInitialUpdate()
 		m_tabLayout.HighlightItem(nPlcCount++, FALSE);
 		m_tabLayout.SetItemSize(CSize(200, 20));				// ?
 
-		// íƒ­ì´ 1ê°œì¼ë•ŒëŠ” í‘œì‹œí•˜ì§€ ì•ŠëŠ”ë‹¤. 
+		// ÅÇÀÌ 1°³ÀÏ¶§´Â Ç¥½ÃÇÏÁö ¾Ê´Â´Ù. 
 	//	if (i==0)
 	//		m_tabLayout.ShowWindow(SW_HIDE);
 	}
 
 
 
-	//	íƒ­ì„ í•˜ë‚˜ë¼ë„ ë„£ì—ˆìœ¼ë©´ ì²« ì¸µì„ ê³¨ë¼ ë‘”ë‹¤. ì•ˆ ê·¸ëŸ¬ë©´ GetCurSel() ì´ -1 ì´ë¼
-	//	OnDraw ê°€ ì•„ë¬´ê²ƒë„ ê·¸ë¦¬ì§€ ì•ŠëŠ”ë‹¤.
+	//	ÅÇÀ» ÇÏ³ª¶óµµ ³Ö¾úÀ¸¸é Ã¹ ÃþÀ» °ñ¶ó µÐ´Ù. ¾È ±×·¯¸é GetCurSel() ÀÌ -1 ÀÌ¶ó
+	//	OnDraw °¡ ¾Æ¹«°Íµµ ±×¸®Áö ¾Ê´Â´Ù.
 	if (m_tabLayout.GetSafeHwnd() && m_tabLayout.GetItemCount() > 0)
 		SelectLayout(pDoc->GetLayoutIndex());
 
@@ -157,9 +157,9 @@ void CEcsView::OnInitialUpdate()
 	Invalidate(TRUE);
 }
 
-//	ë¦¬ë³¸ì˜ 1F/2F/3F ë²„íŠ¼ì´ ë¶€ë¥¸ë‹¤.
-//	ê·¸ë¦¬ê¸°/ë§ˆìš°ìŠ¤/íœ  ì²˜ë¦¬ê°€ ëª¨ë‘ m_tabLayout.GetCurSel() ì„ ë³´ê³  ìžˆìœ¼ë¯€ë¡œ
-//	íƒ­ ì„ íƒë§Œ ì˜®ê²¨ ì£¼ë©´ ë‚˜ë¨¸ì§€ëŠ” ê·¸ëŒ€ë¡œ ë”°ë¼ì˜¨ë‹¤.
+//	¸®º»ÀÇ 1F/2F/3F ¹öÆ°ÀÌ ºÎ¸¥´Ù.
+//	±×¸®±â/¸¶¿ì½º/ÈÙ Ã³¸®°¡ ¸ðµÎ m_tabLayout.GetCurSel() À» º¸°í ÀÖÀ¸¹Ç·Î
+//	ÅÇ ¼±ÅÃ¸¸ ¿Å°Ü ÁÖ¸é ³ª¸ÓÁö´Â ±×´ë·Î µû¶ó¿Â´Ù.
 void CEcsView::SelectLayout(int nIndex)
 {
 	if (!m_tabLayout.GetSafeHwnd())
@@ -172,9 +172,9 @@ void CEcsView::SelectLayout(int nIndex)
 		m_tabLayout.SetCurSel(nIndex);
 
 
-	//	ê³ ë¥¸ ì¸µì— ì§€ê¸ˆ í™”ë©´ í¬ê¸°ë¥¼ ë„˜ê²¨ ì¤€ë‹¤.
-	//	CEcsView::OnSize ëŠ” ê·¸ë•Œ ì„ íƒë¼ ìžˆë˜ ì¸µ í•˜ë‚˜ì—ë§Œ í¬ê¸°ë¥¼ ì•Œë ¤ ì£¼ê¸° ë•Œë¬¸ì—,
-	//	í•œ ë²ˆë„ ì„ íƒëœ ì  ì—†ëŠ” ì¸µì€ ê·¸ë¦¬ê¸° ì‚¬ê°í˜•ì´ 0 ì´ë¼ ì•„ë¬´ê²ƒë„ ê·¸ë ¤ì§€ì§€ ì•ŠëŠ”ë‹¤.
+	//	°í¸¥ Ãþ¿¡ Áö±Ý È­¸é Å©±â¸¦ ³Ñ°Ü ÁØ´Ù.
+	//	CEcsView::OnSize ´Â ±×¶§ ¼±ÅÃµÅ ÀÖ´ø Ãþ ÇÏ³ª¿¡¸¸ Å©±â¸¦ ¾Ë·Á ÁÖ±â ¶§¹®¿¡,
+	//	ÇÑ ¹øµµ ¼±ÅÃµÈ Àû ¾ø´Â ÃþÀº ±×¸®±â »ç°¢ÇüÀÌ 0 ÀÌ¶ó ¾Æ¹«°Íµµ ±×·ÁÁöÁö ¾Ê´Â´Ù.
 	CEcsDoc* pDoc = GetDocument();
 	if (pDoc != NULL)
 	{
@@ -197,7 +197,7 @@ void CEcsView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 }
 
 
-// CEcsView ì§„ë‹¨
+// CEcsView Áø´Ü
 //
 #ifdef _DEBUG
 void CEcsView::AssertValid() const
@@ -210,14 +210,14 @@ void CEcsView::Dump(CDumpContext& dc) const
 	CFormView::Dump(dc);
 }
 
-CEcsDoc* CEcsView::GetDocument() const // ë””ë²„ê·¸ë˜ì§€ ì•Šì€ ë²„ì „ì€ ì¸ë¼ì¸ìœ¼ë¡œ ì§€ì •ë©ë‹ˆë‹¤.
+CEcsDoc* CEcsView::GetDocument() const // µð¹ö±×µÇÁö ¾ÊÀº ¹öÀüÀº ÀÎ¶óÀÎÀ¸·Î ÁöÁ¤µË´Ï´Ù.
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CEcsDoc)));
 	return (CEcsDoc*)m_pDocument;
 }
 #endif //_DEBUG
 
-// CEcsView ë©”ì‹œì§€ ì²˜ë¦¬ê¸°
+// CEcsView ¸Þ½ÃÁö Ã³¸®±â
 //
 void CEcsView::OnTimer(UINT_PTR nIDEvent) 
 {
@@ -233,11 +233,11 @@ void CEcsView::OnTimer(UINT_PTR nIDEvent)
  	{
 		if(pDoc->IsAlliveCollectDB() == FALSE)
 		{
-			pDoc->AlliveCollectDB(); //ì£½ìœ¼ë‚˜ ë§ˆë‚˜ íƒ€ì´ë¨¸ì—ì„œ ê³„ì† ìƒì„±ì‹œí‚¬ê±°ìž„
+			pDoc->AlliveCollectDB(); //Á×À¸³ª ¸¶³ª Å¸ÀÌ¸Ó¿¡¼­ °è¼Ó »ý¼º½ÃÅ³°ÅÀÓ
 		}
  	}
 
-	//HOST ìƒíƒœí™•ì¸ì„ ìœ„í•´ ìµœì´ˆ 1íšŒë§Œ íƒ
+	//HOST »óÅÂÈ®ÀÎÀ» À§ÇØ ÃÖÃÊ 1È¸¸¸ Å½
 	if(pDoc->m_blConnectStatus == FALSE)
 		pDoc->EquipStatusCheck();
 	
@@ -348,7 +348,7 @@ void CEcsView::OnSize(UINT nType, int cx, int cy)
 	ASSERT(pDoc != NULL);
 	
 //	MoveSearchWnd(cx, cy, pDoc->m_bOnSizeReady); 
-//	OnSizeSelectedLayout(pDoc, nType, cx, cy);		// ì›ë³¸
+//	OnSizeSelectedLayout(pDoc, nType, cx, cy);		// ¿øº»
 
 	int width = cx;
 	int height = cy;
@@ -368,7 +368,7 @@ void CEcsView::OnSize(UINT nType, int cx, int cy)
 		{
 			if (nTemp == i)
 			{
-				// Tab ì„ íƒì— ë§žê²Œ PLC ë²ˆí˜¸ê°€ ì¡°ì •ì´ ë˜ì–´ì•¼ í•œë‹¤. 
+				// Tab ¼±ÅÃ¿¡ ¸Â°Ô PLC ¹øÈ£°¡ Á¶Á¤ÀÌ µÇ¾î¾ß ÇÑ´Ù. 
 				m_tabLayout.HighlightItem(nTemp, TRUE);	
 				//SET_INT(IDC_COMBO_PLC, pEcsLayout->m_nRepresentPlc + 1);		// @@@
 				//OnButton5();
@@ -392,7 +392,7 @@ void CEcsView::OnLButtonDown(UINT nFlags, CPoint point)
 // 	pDoc->m_bMoveFlag = TRUE;
 // 	pDoc->m_PrevPoint = point;
 // 	pDoc->m_tChecktime = CTime::GetCurrentTime();
-	//OnLButtonDownSelectedLayout(pDoc, nFlags, point);		// ì›ë³¸
+	//OnLButtonDownSelectedLayout(pDoc, nFlags, point);		// ¿øº»
 	pDoc->m_bMoveFlag = TRUE; //1
 	pDoc->m_PrevPoint = point;
 	pDoc->m_tChecktime = CTime::GetCurrentTime();
@@ -497,7 +497,7 @@ LRESULT CEcsView::OnRefreshDialog(WPARAM wParam, LPARAM lParam)
 			::SetWindowPos(pDoc->m_pCvSkinDlg->m_hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::SetWindowPos(pDoc->m_pCvSkinDlg->m_hWnd, HWND_NOTOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::ShowWindow(pDoc->m_pCvSkinDlg->m_hWnd, SW_SHOW);
-			::SendMessage(pDoc->m_pCvSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, NULL, (LPARAM)pDoc->m_enLang); //ìž„ì‹œì €ìž¥ì†Œ LPARM ì¶”ê°€íŒŒëžŒ
+			::SendMessage(pDoc->m_pCvSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, NULL, (LPARAM)pDoc->m_enLang); //ÀÓ½ÃÀúÀå¼Ò LPARM Ãß°¡ÆÄ¶÷
 			break;
 		}
 	case CEquipment::enSC:
@@ -525,7 +525,7 @@ LRESULT CEcsView::OnRefreshDialog(WPARAM wParam, LPARAM lParam)
 			::SetWindowPos(pDoc->m_pScSkinDlg->m_hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::SetWindowPos(pDoc->m_pScSkinDlg->m_hWnd, HWND_NOTOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::ShowWindow(pDoc->m_pScSkinDlg->m_hWnd, SW_SHOW);
-			::SendMessage(pDoc->m_pScSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //ìž„ì‹œì €ìž¥ì†Œ LPARM ì¶”ê°€íŒŒëžŒ
+			::SendMessage(pDoc->m_pScSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //ÀÓ½ÃÀúÀå¼Ò LPARM Ãß°¡ÆÄ¶÷
 		}
 	case CEquipment::enRTV:
 		{
@@ -552,7 +552,7 @@ LRESULT CEcsView::OnRefreshDialog(WPARAM wParam, LPARAM lParam)
 			::SetWindowPos(pDoc->m_pRtvSkinDlg->m_hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::SetWindowPos(pDoc->m_pRtvSkinDlg->m_hWnd, HWND_NOTOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::ShowWindow(pDoc->m_pRtvSkinDlg->m_hWnd, SW_SHOW);
-			::SendMessage(pDoc->m_pRtvSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //ìž„ì‹œì €ìž¥ì†Œ LPARM ì¶”ê°€íŒŒëžŒ
+			::SendMessage(pDoc->m_pRtvSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //ÀÓ½ÃÀúÀå¼Ò LPARM Ãß°¡ÆÄ¶÷
 		}
 	case CEquipment::enBCR:
 		{
@@ -579,7 +579,7 @@ LRESULT CEcsView::OnRefreshDialog(WPARAM wParam, LPARAM lParam)
 			::SetWindowPos(pDoc->m_pBcrSkinDlg->m_hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::SetWindowPos(pDoc->m_pBcrSkinDlg->m_hWnd, HWND_NOTOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::ShowWindow(pDoc->m_pBcrSkinDlg->m_hWnd, SW_SHOW);
-			::SendMessage(pDoc->m_pBcrSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //ìž„ì‹œì €ìž¥ì†Œ LPARM ì¶”ê°€íŒŒëžŒ
+			::SendMessage(pDoc->m_pBcrSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //ÀÓ½ÃÀúÀå¼Ò LPARM Ãß°¡ÆÄ¶÷
 		}
 	case CEquipment::enDISPLAY:
 		{
@@ -618,7 +618,7 @@ LRESULT CEcsView::OnControlClick(WPARAM wParam, LPARAM lParam)
 	{
 		case CEquipment::enCV:
 		{			
-			if (pDoc->m_strSeachTrack == strEqpKey) //LJM ì°¾ê¸°ë¶€ë¶„
+			if (pDoc->m_strSeachTrack == strEqpKey) //LJM Ã£±âºÎºÐ
 			{
 				CString strTrack;
 				strTrack = pDoc->m_strSeachTrack;
@@ -651,7 +651,7 @@ LRESULT CEcsView::OnControlClick(WPARAM wParam, LPARAM lParam)
 			::SetWindowPos(pDoc->m_pCvSkinDlg->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 			::SetWindowPos(pDoc->m_pCvSkinDlg->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 			::ShowWindow(pDoc->m_pCvSkinDlg->m_hWnd, SW_SHOWNORMAL);
-			::SendMessage(pDoc->m_pCvSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pTrackInfo, (LPARAM)pDoc->m_enLang); //ìž„ì‹œì €ìž¥ì†Œ LPARM ì¶”ê°€íŒŒëžŒ
+			::SendMessage(pDoc->m_pCvSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pTrackInfo, (LPARAM)pDoc->m_enLang); //ÀÓ½ÃÀúÀå¼Ò LPARM Ãß°¡ÆÄ¶÷
 			break;
 		}
 		case CEquipment::enSC:
@@ -678,7 +678,7 @@ LRESULT CEcsView::OnControlClick(WPARAM wParam, LPARAM lParam)
 			::SetWindowPos(pDoc->m_pScSkinDlg->m_hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::SetWindowPos(pDoc->m_pScSkinDlg->m_hWnd, HWND_NOTOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 			::ShowWindow(pDoc->m_pScSkinDlg->m_hWnd, SW_SHOWNORMAL); 
-			::SendMessage(pDoc->m_pScSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pSC_DATA, (LPARAM)pDoc->m_enLang); //ìž„ì‹œì €ìž¥ì†Œ LPARM ì¶”ê°€íŒŒëžŒ
+			::SendMessage(pDoc->m_pScSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pSC_DATA, (LPARAM)pDoc->m_enLang); //ÀÓ½ÃÀúÀå¼Ò LPARM Ãß°¡ÆÄ¶÷
 			break;
 		}
  	//	case CEquipment::enRTV:
@@ -705,7 +705,7 @@ LRESULT CEcsView::OnControlClick(WPARAM wParam, LPARAM lParam)
 		//	::SetWindowPos(pDoc->m_pRtvSkinDlg->m_hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 		//	::SetWindowPos(pDoc->m_pRtvSkinDlg->m_hWnd, HWND_NOTOPMOST, 0,0,0,0, SWP_NOMOVE | SWP_NOSIZE);
 		//	::ShowWindow(pDoc->m_pRtvSkinDlg->m_hWnd, SW_SHOWNORMAL); 
-		//	::SendMessage(pDoc->m_pRtvSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pRTV_DATA, (LPARAM)pDoc->m_enLang); //ìž„ì‹œì €ìž¥ì†Œ LPARM ì¶”ê°€íŒŒëžŒ
+		//	::SendMessage(pDoc->m_pRtvSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pRTV_DATA, (LPARAM)pDoc->m_enLang); //ÀÓ½ÃÀúÀå¼Ò LPARM Ãß°¡ÆÄ¶÷
 		//	break;
 		//}
 		//case CEquipment::enBCR:
@@ -732,7 +732,7 @@ LRESULT CEcsView::OnControlClick(WPARAM wParam, LPARAM lParam)
 		//	::SetWindowPos(pDoc->m_pBcrSkinDlg->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		//	::SetWindowPos(pDoc->m_pBcrSkinDlg->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		//	::ShowWindow(pDoc->m_pBcrSkinDlg->m_hWnd, SW_SHOWNORMAL);
-		//	::SendMessage(pDoc->m_pBcrSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pBCR_MST, (LPARAM)pDoc->m_enLang); //ìž„ì‹œì €ìž¥ì†Œ LPARM ì¶”ê°€íŒŒëžŒ
+		//	::SendMessage(pDoc->m_pBcrSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pBCR_MST, (LPARAM)pDoc->m_enLang); //ÀÓ½ÃÀúÀå¼Ò LPARM Ãß°¡ÆÄ¶÷
 
 		//	break;
 		//}
@@ -741,11 +741,11 @@ LRESULT CEcsView::OnControlClick(WPARAM wParam, LPARAM lParam)
 			if (strCID.Mid(7, 1) == "1") nCmTrack = 102;
 			else if (strCID.Mid(7, 1) == "2") nCmTrack = 105;
 
-			if (pDoc->m_nLayoutCm[nCmTrack] == "1") strCm = " ìž…ê³ ê°€ëŠ¥ ";
-			else if (pDoc->m_nLayoutCm[nCmTrack] == "0") strCm = " ìž…ê³ ë¶ˆê°€ ";
+			if (pDoc->m_nLayoutCm[nCmTrack] == "1") strCm = " ÀÔ°í°¡´É ";
+			else if (pDoc->m_nLayoutCm[nCmTrack] == "0") strCm = " ÀÔ°íºÒ°¡ ";
 
-			if (AfxMessageBox(pDoc->GetMsgLangDef(CConvert::ToString(nCmTrack) + _T("ë²ˆ ìž…ì¶œê³ ëŒ€ë¥¼") + strCm +
-				_T("ìƒíƒœë¡œ ë³€ê²½í•˜ì‹œê² ìŠµë‹ˆê¹Œ?\në³€ê²½í›„ì—ë„ ìƒíƒœì— ë”°ë¼ ìž…/ì¶œê³  ìƒíƒœê°€ ìžë™ìœ¼ë¡œ ë³€ê²½ë  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.")), MB_YESNO) != IDYES)
+			if (AfxMessageBox(pDoc->GetMsgLangDef(CConvert::ToString(nCmTrack) + _T("¹ø ÀÔÃâ°í´ë¸¦") + strCm +
+				_T("»óÅÂ·Î º¯°æÇÏ½Ã°Ú½À´Ï±î?\nº¯°æÈÄ¿¡µµ »óÅÂ¿¡ µû¶ó ÀÔ/Ãâ°í »óÅÂ°¡ ÀÚµ¿À¸·Î º¯°æµÉ ¼ö ÀÖ½À´Ï´Ù.")), MB_YESNO) != IDYES)
 			return 0;
 
 			CString strSql = _T("");
@@ -768,10 +768,10 @@ LRESULT CEcsView::OnControlClick(WPARAM wParam, LPARAM lParam)
 
 			if (isSuccess == TRUE)
 			{
-				AfxMessageBox(pDoc->GetMsgLangDef(_T("ìž…ê³ ìƒíƒœ ë³€ê²½ì„±ê³µ")));
+				AfxMessageBox(pDoc->GetMsgLangDef(_T("ÀÔ°í»óÅÂ º¯°æ¼º°ø")));
 				return 0;
 			}
-			AfxMessageBox(pDoc->GetMsgLangDef(_T("ìž…ê³ ìƒíƒœ ë³€ê²½ì‹¤íŒ¨")));
+			AfxMessageBox(pDoc->GetMsgLangDef(_T("ÀÔ°í»óÅÂ º¯°æ½ÇÆÐ")));
 			return 0;
 
 			break;
@@ -814,14 +814,14 @@ LRESULT CEcsView::OnViewLayoutInfo(WPARAM wParam, LPARAM lParam)
 }
 
 //=============================================================================
-//	Desc	: 'ê²€ìƒ‰ê¸°ëŠ¥' ì°½ì„ í™”ë©´ ì¡°ì •ì— ë”°ë¼ ìš°ì¸¡ í•˜ë‹¨ì— ë°°ì¹˜
+//	Desc	: '°Ë»ö±â´É' Ã¢À» È­¸é Á¶Á¤¿¡ µû¶ó ¿ìÃø ÇÏ´Ü¿¡ ¹èÄ¡
 //	Author	: YJY
 //	Date	:
 //	Update	: 
 //=============================================================================
 void CEcsView::MoveSearchWnd(int cx, int cy, BOOL bStatus)
 {
-	// í˜¸ì¶œ ì‹œì  : í”„ë¡œê·¸ëž¨ ì‹œìž‘ ì‹œ, ìœˆë„ìš° í¬ê¸° ë³€ê²½ ì‹œ, LayOut 1-3ë‹¨ í´ë¦­ ì‹œ
+	// È£Ãâ ½ÃÁ¡ : ÇÁ·Î±×·¥ ½ÃÀÛ ½Ã, À©µµ¿ì Å©±â º¯°æ ½Ã, LayOut 1-3´Ü Å¬¸¯ ½Ã
 // 	CRect rcRect;
 // 	CEcsDoc *pDoc = GetDocument();
 // 	CEcsLayout* pLayout = pDoc->GetSelectedLayout();
@@ -831,9 +831,9 @@ void CEcsView::MoveSearchWnd(int cx, int cy, BOOL bStatus)
 // 	if (FALSE == bStatus || NULL == pDoc) 
 // 		return; 
 // 
-// 	// ## ìœ„ì¹˜ ì¡°ì • ì‹œ ## ì´ ë³€ìˆ˜ 2ê°œë§Œ ë³€ê²½í•˜ì„¸ìš”.
-// 	int nWOffset = 185;		// ê°’ì´ í¬ë©´ ì™¼ìª½ìœ¼ë¡œ~
-// 	int nHOffset = 100;		// ê°’ì´ í¬ë©´ ìœ„ìª½ìœ¼ë¡œ~
+// 	// ## À§Ä¡ Á¶Á¤ ½Ã ## ÀÌ º¯¼ö 2°³¸¸ º¯°æÇÏ¼¼¿ä.
+// 	int nWOffset = 185;		// °ªÀÌ Å©¸é ¿ÞÂÊÀ¸·Î~
+// 	int nHOffset = 100;		// °ªÀÌ Å©¸é À§ÂÊÀ¸·Î~
 // 
 // 	// SET SCALE FACTOR
 // 	int nScale;
@@ -849,11 +849,11 @@ void CEcsView::MoveSearchWnd(int cx, int cy, BOOL bStatus)
 // 
 // 	nScale = (nScale > 0) ? nScale : 1;
 // 
-// 	// LayOutì— ë§žì¶˜ ì˜¤í”„ì…‹ êµ¬í•˜ê¸°
+// 	// LayOut¿¡ ¸ÂÃá ¿ÀÇÁ¼Â ±¸ÇÏ±â
 // 	int nLayOutWOffset = abs(cx - nScale * rc.right) / 2;
 // 	int nLayOutHOffset = cy - abs(cy - nScale * rc.top) / 2;
 // 
-// 	// ì»¨íŠ¸ë¡¤ ë°°ì¹˜ ìœ„ì¹˜
+// 	// ÄÁÆ®·Ñ ¹èÄ¡ À§Ä¡
 // 	int nPosX =  cx - nWOffset - nLayOutWOffset; 
 // 	int nPosY =  nLayOutHOffset - nHOffset;
 // 
@@ -865,7 +865,7 @@ void CEcsView::MoveSearchWnd(int cx, int cy, BOOL bStatus)
 }
 
 //=============================================================================
-//	Desc	: 'ê²€ìƒ‰ê¸°ëŠ¥' ì»¨íŠ¸ë¡¤ ID ì™€ ìœ„ì¹˜ ì €ìž¥
+//	Desc	: '°Ë»ö±â´É' ÄÁÆ®·Ñ ID ¿Í À§Ä¡ ÀúÀå
 //	Author	: YJY
 //	Date	:
 //	Update	: 
@@ -878,7 +878,7 @@ void CEcsView::CalcSerachControlPos()
 	int nTop = 0;
 	int nLeft = 0;
 
-	// ì»¨íŠ¸ë¡¤ ì•„ì´ë”” ë°°ì—´ ì €ìž¥
+	// ÄÁÆ®·Ñ ¾ÆÀÌµð ¹è¿­ ÀúÀå
 // 	pDoc->m_rgCtrlID[0] = IDC_STC_SEARCH;
 // 	pDoc->m_rgCtrlID[1] = IDC_CHECK_LUGGNUM_SEARCH;
 // 	pDoc->m_rgCtrlID[2] = IDC_CHECK_TRAYID_SEARCH;
@@ -887,7 +887,7 @@ void CEcsView::CalcSerachControlPos()
 // 	pDoc->m_rgCtrlID[5] = IDC_EDIT_LUGGNUM_SEARCH;
 // 	pDoc->m_rgCtrlID[6] = IDC_BUTTON_TRACK_SEARCH;
 // 
-// 	// ìž¬ì‹¤í–‰ í• ë•Œë§ˆë‹¤ Control Position ê°’ì´ ë°”ë€ŒëŠ”ë° ì´ìœ ë¥¼ ëª¨ë¥´ê² ìŒ. í”„ë ˆìž„->Recalclayout()ê³¼ ê´€ê³„ ë˜ëŠ”ì§€?
+// 	// Àç½ÇÇà ÇÒ¶§¸¶´Ù Control Position °ªÀÌ ¹Ù²î´Âµ¥ ÀÌÀ¯¸¦ ¸ð¸£°ÚÀ½. ÇÁ·¹ÀÓ->Recalclayout()°ú °ü°è µÇ´ÂÁö?
 // 	int i = 0;
 // 	for (i = 0; i < 7; i++)
 // 	{
@@ -900,7 +900,7 @@ void CEcsView::CalcSerachControlPos()
 // 			nTop = pDoc->m_rcSerachCtrl[i].top;
 // 	}
 // 
-// 	// ìœ„ì¹˜ê°’ì´ ì‹¤í–‰ì‹œ ë§ˆë‹¤ ë°”ë€Œë¯€ë¡œ, ê°€ìž¥ ìž‘ì€ê°’ ê¸°ì¤€ìœ¼ë¡œ ê³„ì‚°.
+// 	// À§Ä¡°ªÀÌ ½ÇÇà½Ã ¸¶´Ù ¹Ù²î¹Ç·Î, °¡Àå ÀÛÀº°ª ±âÁØÀ¸·Î °è»ê.
 // 	for (i = 0; i < 7; i++)
 // 	{
 // 		pDoc->m_rcSerachCtrl[i].left = pDoc->m_rcSerachCtrl[i].left - nLeft;
@@ -931,7 +931,7 @@ void CEcsView::OnSearch()
 
 void CEcsView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// TODO: ì—¬ê¸°ì— ë©”ì‹œì§€ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€ ë°/ë˜ëŠ” ê¸°ë³¸ê°’ì„ í˜¸ì¶œí•©ë‹ˆë‹¤.
+	// TODO: ¿©±â¿¡ ¸Þ½ÃÁö Ã³¸®±â ÄÚµå¸¦ Ãß°¡ ¹×/¶Ç´Â ±âº»°ªÀ» È£ÃâÇÕ´Ï´Ù.
 	CEcsDoc* pDoc = GetDocument();
 	ASSERT(pDoc != NULL);
 
@@ -942,8 +942,8 @@ void CEcsView::OnMouseMove(UINT nFlags, CPoint point)
 
 BOOL CEcsView::OnEraseBkgnd(CDC* pDC)
 {
-	// TODO: ì—¬ê¸°ì— ë©”ì‹œì§€ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€ ë°/ë˜ëŠ” ê¸°ë³¸ê°’ì„ í˜¸ì¶œí•©ë‹ˆë‹¤.
-	CBrush backBrush(RGB(255, 255, 255));               // íŒŒëž‘ìƒ‰. ì›í•˜ëŠ” ì»¬ëŸ¬ë¥¼ ë„ˆì£¼ë©´ ëœë‹¤...
+	// TODO: ¿©±â¿¡ ¸Þ½ÃÁö Ã³¸®±â ÄÚµå¸¦ Ãß°¡ ¹×/¶Ç´Â ±âº»°ªÀ» È£ÃâÇÕ´Ï´Ù.
+	CBrush backBrush(RGB(255, 255, 255));               // ÆÄ¶û»ö. ¿øÇÏ´Â ÄÃ·¯¸¦ ³ÊÁÖ¸é µÈ´Ù...
 
 	if(pDC == NULL)
 		return TRUE;

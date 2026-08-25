@@ -1045,7 +1045,7 @@ CBCR_MST* CEcsDoc::GetBCR_MST(int nBCR_NO)
 CDisplayData* CEcsDoc::GetDisplayData(int nDISP_NO)
 {
 	CString strDISP_NO;
-	strDISP_NO.Format(_T("%05s"), nDISP_NO);
+	strDISP_NO.Format(_T("%s"), nDISP_NO);
 	CString strDispKey;
 	CString strValue;
 	CEquipment* pEqp = NULL;
@@ -1056,7 +1056,7 @@ CDisplayData* CEcsDoc::GetDisplayData(int nDISP_NO)
 		if (pEqp == NULL)
 			continue;
 
-		if (pEqp->m_enKind != CEquipment::enSC)
+		if (pEqp->m_enKind != CEquipment::enDISPLAY)
 			continue;
 
 		pDisplay = (CDisplay*)pEqp;
@@ -1082,7 +1082,7 @@ CDisplayData* CEcsDoc::GetDisplayData(CString pstrDISP_NO)
 		if (pEqp == NULL)
 			continue;
 
-		if (pEqp->m_enKind != CEquipment::enSC)
+		if (pEqp->m_enKind != CEquipment::enDISPLAY)
 			continue;
 
 		pDisplay = (CDisplay*)pEqp;

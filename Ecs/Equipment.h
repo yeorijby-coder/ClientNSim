@@ -45,6 +45,7 @@ public:
 
 public:
 	CString m_strThreadNo;
+	CString m_strPlcNo;
 
 
 public:

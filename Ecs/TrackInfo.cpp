@@ -198,7 +198,7 @@ void CTrackInfo::InvokeControl(CDciTrackCtrl*	pTrackCtrl)
 	SYSTEMTIME cur_time;
 	GetLocalTime(&cur_time);
 
-	static CString strTemp = _T("");
+	CString strTemp;	// static 금지 : CV 장비별 워커 스레드가 동시에 접근해 힙이 손상됨
 	CString strTime;
 	strTime.Format(_T("읽기 - Control 표시전[%02d:%02d:%02d.%03d]\n"),cur_time.wHour, cur_time.wMinute, cur_time.wSecond, cur_time.wMilliseconds);
 	strTemp = _T("");

@@ -1,4 +1,4 @@
-ï»¿// DisplayDlg.cpp: êµ¬í˜„ íŒŒì¼
+// DisplayDlg.cpp: ±¸Çö ÆÄÀÏ
 //
 
 //#include "pch.h"
@@ -8,7 +8,7 @@
 #include "afxdialogex.h"
 
 
-// CDisplayDlg ëŒ€í™” ìƒì
+// CDisplayDlg ´ëÈ­ »óÀÚ
 
 IMPLEMENT_DYNAMIC(CDisplayDlg, CDialogEx)
 
@@ -38,4 +38,4 @@ BEGIN_MESSAGE_MAP(CDisplayDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CDisplayDlg ë©”ì‹œì§€ ì²˜ë¦¬ê¸°
+// CDisplayDlg ¸Ş½ÃÁö Ã³¸®±â

@@ -826,8 +826,11 @@
 			</Sc>
 		</Scs>
 	</Equipment>
-	<Equipment class="CDisplay" thread="01" number="1">
-		<display	plcno="1" disp_no="1"/>
-		<display	plcno="1" disp_no="2"/>
-	</Equipment>		
+	<Equipment class="CDisplay" thread="09" number="9">
+		<Displays>
+			<Display plcno="01" dispno="1"/>
+			<Display plcno="01" dispno="2"/>
+		</Displays>
+	</Equipment>
+
 </ECS>

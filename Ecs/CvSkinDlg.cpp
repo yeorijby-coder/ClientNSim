@@ -72,8 +72,8 @@ void CCvSkinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_GRP_CV_CV_STATUS_COMMAND,     m_grpCvCvStatusCommand);	// 명령 그룹박스도 다른 그룹박스와 동일 스타일로
 	DDX_Control(pDX, IDC_GRP_CV_CV_STATUS_ITEM,        m_grpCvCvStatusItem);
 	DDX_Control(pDX, IDC_GRP_CV_CV_STATUS_VALUE,       m_grpCvCvStatusValue);
-	DDX_Control(pDX, IDC_GRP_CV_JOB_STATUS_VALUE5,	   m_grpCvJobStatusValue5);
-	DDX_Control(pDX, IDC_GRP_CV_JOB_STATUS_ITEM3,	   m_grpCvJobStatusItem3);
+	//DDX_Control(pDX, IDC_GRP_CV_JOB_STATUS_VALUE5,	   m_grpCvJobStatusValue5);	// rc(IDD_SKIN_CV_CTRL)에서 삭제된 컨트롤 - DDX 하면 ASSERT
+	//DDX_Control(pDX, IDC_GRP_CV_JOB_STATUS_ITEM3,	   m_grpCvJobStatusItem3);	// rc(IDD_SKIN_CV_CTRL)에서 삭제된 컨트롤 - DDX 하면 ASSERT
 
 	DDX_Control(pDX, IDC_GRP_CV_SENSOR_INFO, m_grpCvSensorInfo);
 	DDX_Control(pDX, IDC_GRP_CV_JOB_READY_STA_INFO, m_grpCvJobReadyStaInfo);
@@ -89,7 +89,7 @@ void CCvSkinDlg::DoDataExchange(CDataExchange* pDX)
 	//STATUS
 	//	DDX_Control(pDX, IDC_GRP_CV_STATUS_SENSOR,     	   m_grpCvStatusSensor);
 	DDX_Control(pDX, IDC_GRP_CV_STATUS_STATUS,	       m_grpCvStatusStatus);
-	//--STATUS
+	DDX_Control(pDX, IDC_GRP_CV_SUSPEND,		   m_grpCvSuspend);	// 다른 그룹박스와 동일 스타일
 	//GRP
 
 
@@ -130,6 +130,7 @@ void CCvSkinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_TR_PAUSE,						m_btnCvTrPause);
 	DDX_Control(pDX, IDC_BTN_STATUS_STO_READY,				m_btnCvStoReady);
 	DDX_Control(pDX, IDC_BTN_STATUS_RET_READY,				m_btnCvRetReady);
+	DDX_Control(pDX, IDC_BTN_STATUS_PICK_COMP,				m_btnCvPickComp);
 	DDX_Control(pDX, IDC_BTN_STATUS_STOHS_READY,			m_btnCvStoHsReady);
 	DDX_Control(pDX, IDC_BTN_STATUS_RETHS_READY,			m_btnCvRetHsReady);
 	DDX_Control(pDX, IDC_BTN_STATUS_DEVERTER_HS_DOWN,		m_btnCvDiverterHsDown);
@@ -157,7 +158,7 @@ void CCvSkinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_CV_PASTE,	               m_btnCvPaste);
 	DDX_Control(pDX, IDC_BTN_CV_DISCHARGE,			   m_btnCvDischarge);
 	DDX_Control(pDX, IDC_BTN_CV_SUSPEND,			   m_btnCvSuspend);
-	DDX_Control(pDX, IDC_BTN_CV_ACTIVE,				   m_btnCvActive);
+	//DDX_Control(pDX, IDC_BTN_CV_ACTIVE,				   m_btnCvActive);	// 중복 DDX - 같은 컨트롤을 두 번 서브클래싱하면 ASSERT
 	DDX_Control(pDX, IDC_BTN_CV_WAITE_TIME,			   m_btnCvWaitTime);
 	DDX_Control(pDX, IDC_BTN_CV_ERR_RESET,			   m_btnCvErr_Reset);
 	DDX_Control(pDX, IDC_BTN_DP_INSERT_JOB,			   m_btnDpInsertJob);
@@ -466,6 +467,12 @@ void CCvSkinDlg::RenameResource( EN_LANG m_enLang)
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("retready"), (int)m_enLang);
 	SetDlgItemText(IDC_BTN_STATUS_RET_READY, strValue);
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("pickcomp"), (int)m_enLang);
+	SetDlgItemText(IDC_BTN_STATUS_PICK_COMP, strValue);
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("grpcvsuspend"), (int)m_enLang);
+	if (!strValue.IsEmpty())	SetDlgItemText(IDC_GRP_CV_SUSPEND, strValue);	// rc 캡션 오타(supsend) 대체
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("stohsready"), (int)m_enLang);
 	SetDlgItemText(IDC_BTN_STATUS_STOHS_READY, strValue);
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
@@ -583,6 +590,7 @@ void CCvSkinDlg::RedrawImage()
 	m_btnCvTrPause.SetIcon(Global.GetIcon(Global.ICO_CV_ON));
 	m_btnCvStoReady.SetIcon(Global.GetIcon(Global.ICO_CV_ON));
 	m_btnCvRetReady.SetIcon(Global.GetIcon(Global.ICO_CV_ON));
+	m_btnCvPickComp.SetIcon(Global.GetIcon(Global.ICO_CV_ON));
 	m_btnCvStoHsReady.SetIcon(Global.GetIcon(Global.ICO_CV_ON));
 	m_btnCvRetHsReady.SetIcon(Global.GetIcon(Global.ICO_CV_ON));
 	m_btnCvDiverterHsDown.SetIcon(Global.GetIcon(Global.ICO_CV_ON));
@@ -752,12 +760,14 @@ void CCvSkinDlg::InvalidateTrackData(EN_LANG pLang)
 	if (m_pTrackInfo->m_pCV_DATA->V_TR_PAUSE_RD == "1")
 	{
 		m_chkTrPause.SetCheck(1);
-		m_edtCvSuspend.SetWindowText(_T("작업중지"));
-	}
+		m_edtCvSuspend.SetWindowText(_T("일시정지"));
+		m_btnCvSuspend.SetWindowText(_T("작업재개"));
+	} 
 	else
 	{
 		m_chkTrPause.SetCheck(0);
-		m_edtCvSuspend.SetWindowText(_T("작업중"));
+		m_edtCvSuspend.SetWindowText(_T("정상"));
+		m_btnCvSuspend.SetWindowText(_T("일시정지"));
 	}
 	
 	m_edtCvBarCode.SetWindowText(m_pTrackInfo->m_pCV_DATA->V_BARCODE);
@@ -773,14 +783,17 @@ void CCvSkinDlg::InvalidateTrackData(EN_LANG pLang)
 	m_btnCvAutoMode.SetIcon((m_pTrackInfo->m_pCV_DATA->V_AUTO_MODE_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
 	if (m_pTrackInfo->m_pCV_DATA->V_AUTO_MODE_RD == _T("0"))
 	{
-		m_btnCvAutoMode.SetWindowText(GetResString(_T("modemanual")));
+		//m_btnCvAutoMode.SetWindowText(GetResString(_T("modemanual")));
+		m_btnCvAutoMode.SetIcon(Global.GetIcon(Global.ICO_CV_OFF));
 	}
 	else
 	{
-		m_btnCvAutoMode.SetWindowText(GetResString(_T("modeauto")));
+		m_btnCvAutoMode.SetIcon(Global.GetIcon(Global.ICO_CV_ON));
+		//m_btnCvAutoMode.SetWindowText(GetResString(_T("modeauto")));
 	}
 	m_btnCvStoReady.SetIcon((m_pTrackInfo->m_pCV_DATA->V_STO_READY_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
 	m_btnCvRetReady.SetIcon((m_pTrackInfo->m_pCV_DATA->V_RET_READY_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
+	m_btnCvPickComp.SetIcon((m_pTrackInfo->m_pCV_DATA->V_STO_READY_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
 	m_btnCvStoHsReady.SetIcon((m_pTrackInfo->m_pCV_DATA->V_STOHS_READY_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
 	m_btnCvRetHsReady.SetIcon((m_pTrackInfo->m_pCV_DATA->V_RETHS_READY_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));
 	m_btnCvTrPause.SetIcon((m_pTrackInfo->m_pCV_DATA->V_TR_PAUSE_RD == _T("1")) ? Global.GetIcon(Global.ICO_CV_ON) : Global.GetIcon(Global.ICO_CV_OFF));

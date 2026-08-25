@@ -33,6 +33,13 @@ void CDisplayData::SetDISP_DATA(CString pDISP_DATA)
 CString CDisplayData::GetCid()
 {
 	CString strCID;
-	strCID.Format(_T("17180%03s"), K_DISP_NO);
+	strCID.Format(_T("171802%02d"), _ttoi(K_DISP_NO));	// %02s는 공백 패딩("171802 1")이라 레이아웃 id와 매칭되지 않음
+	return strCID;
+}
+
+CString CDisplayData::GetCid(CString nChar4)
+{
+	CString strCID;
+	strCID.Format(_T("171802%02s"), nChar4, K_DISP_NO);
 	return strCID;
 }

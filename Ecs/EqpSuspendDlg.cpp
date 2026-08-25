@@ -1,4 +1,4 @@
-ï»¿// ScSuspendDlg.cpp : êµ¬í˜„ íŒŒì¼ìž…ë‹ˆë‹¤.
+// ScSuspendDlg.cpp : ±¸Çö ÆÄÀÏÀÔ´Ï´Ù.
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "afxdialogex.h"
 #include "RecordSetWrap.h"
 
-// CScSuspendDlg ëŒ€í™” ìƒìžìž…ë‹ˆë‹¤.
+// CScSuspendDlg ´ëÈ­ »óÀÚÀÔ´Ï´Ù.
 
 IMPLEMENT_DYNAMIC(CEqpSuspendDlg, CSkinDialog)
 
@@ -95,12 +95,12 @@ BEGIN_MESSAGE_MAP(CEqpSuspendDlg, CSkinDialog)
 END_MESSAGE_MAP()
 
 
-// CScSuspendDlg ë©”ì‹œì§€ ì²˜ë¦¬ê¸°ìž…ë‹ˆë‹¤.
+// CScSuspendDlg ¸Þ½ÃÁö Ã³¸®±âÀÔ´Ï´Ù.
 
 BOOL CEqpSuspendDlg::OnInitDialog()
 {
 	CSkinDialog::OnInitDialog();
-	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	ê¸°ë³¸ì€ í•œêµ­ì–´
+	EN_LANG pEn = (m_pDoc == NULL) ? EN_KOR : m_pDoc->m_enLang;	//	±âº»Àº ÇÑ±¹¾î
 	InitializeFontManager(this);
 	SetFontNation((int)pEn);
 	CSkinDialog::SetFont(this->GetFont());
@@ -116,13 +116,13 @@ BOOL CEqpSuspendDlg::OnInitDialog()
 	CLib::BindCombo(m_cbxEqpSuspendEqpTyp, _T("EQP_TYP"), m_pDoc, (int)pEn, TRUE);
 	CLib::BindCombo(m_cbxEqpSusepndConnectedYn, _T("CONNECTED_YN"), m_pDoc, (int)pEn, TRUE);
 	
-	#pragma region ìŠ¤í”„ë ˆë“œ ì´ˆê¸°í™” 
-	//IDC_CUSTOM1 ë¼ëŠ” ì»¨íŠ¸ë¡¤ì—ì„œ Rect ê°’ì„ ê°€ì ¸ì™€ì„œ ìŠ¤í”„ë ˆë“œì— ì ìš© 
-	// ìƒëŒ€ ì¢Œí‘œ êµ¬í•˜ê¸°
-	CRect rect;							// ìœˆë„ìš° ê¸°ì¤€ ì ˆëŒ€ ì¢Œí‘œ 
+	#pragma region ½ºÇÁ·¹µå ÃÊ±âÈ­ 
+	//IDC_CUSTOM1 ¶ó´Â ÄÁÆ®·Ñ¿¡¼­ Rect °ªÀ» °¡Á®¿Í¼­ ½ºÇÁ·¹µå¿¡ Àû¿ë 
+	// »ó´ë ÁÂÇ¥ ±¸ÇÏ±â
+	CRect rect;							// À©µµ¿ì ±âÁØ Àý´ë ÁÂÇ¥ 
 	GetDlgItem(IDC_STATIC_SPREAD)->GetWindowRect(&rect);
 
-	CRect rectTemp = rect;				// ë‹¤ì´ì–¼ ë¡œê·¸ ì˜ì—­ì•ˆì˜ ì»¨íŠ¸ë¡¤(rect)ì˜ ìƒëŒ€ì¢Œí‘œ 
+	CRect rectTemp = rect;				// ´ÙÀÌ¾ó ·Î±× ¿µ¿ª¾ÈÀÇ ÄÁÆ®·Ñ(rect)ÀÇ »ó´ëÁÂÇ¥ 
 	ScreenToClient(&rectTemp);
 	 
 	CRect rtTemp;
@@ -142,17 +142,17 @@ BOOL CEqpSuspendDlg::OnInitDialog()
 	HFONT hFontB = CreateFont(15,0,0,0,FW_BOLD,0,0,0,0,0,0,0,0,_T("System"));
 
 	m_SpreadSheet.AddSheet(_T(""), this, hFontH, hFontB);
-	m_SpreadSheet.AddColHead(_T("ì°½ê³ íƒ€ìž…"), 9);
-	m_SpreadSheet.AddColHead(_T("ì„¤ë¹„ì¢…ë¥˜"), 9);
-	m_SpreadSheet.AddColHead(_T("í”„ë¡œì„¸ìŠ¤"), 13);
-	m_SpreadSheet.AddColHead(_T("ì„¤ë¹„ëª…"), 14);
-	m_SpreadSheet.AddColHead(_T("ì„¤ë¹„ IP"), 13);
-	m_SpreadSheet.AddColHead(_T("ì‚¬ìš© í¬íŠ¸"), 10);
+	m_SpreadSheet.AddColHead(_T("Ã¢°íÅ¸ÀÔ"), 9);
+	m_SpreadSheet.AddColHead(_T("¼³ºñÁ¾·ù"), 9);
+	m_SpreadSheet.AddColHead(_T("ÇÁ·Î¼¼½º"), 13);
+	m_SpreadSheet.AddColHead(_T("¼³ºñ¸í"), 14);
+	m_SpreadSheet.AddColHead(_T("¼³ºñ IP"), 13);
+	m_SpreadSheet.AddColHead(_T("»ç¿ë Æ÷Æ®"), 10);
 
 	BOOL bResult = m_SpreadSheet.Create();
 
 	if (bResult == FALSE)
-		AfxMessageBox(_T("ìƒì„±ëª»í•¨!"));
+		AfxMessageBox(_T("»ý¼º¸øÇÔ!"));
 
 #pragma endregion
 
@@ -163,13 +163,13 @@ BOOL CEqpSuspendDlg::OnInitDialog()
 
 void CEqpSuspendDlg::InitializeControlLanguage()
 {
-	//m_lblScWhTyp.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("ì°½ê³ êµ¬ë¶„"), m_pDoc->m_enLang));
-	//m_lblScSuspend.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("S/Cìƒíƒœ"), m_pDoc->m_enLang));
+	//m_lblScWhTyp.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("Ã¢°í±¸ºÐ"), m_pDoc->m_enLang));
+	//m_lblScSuspend.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("S/C»óÅÂ"), m_pDoc->m_enLang));
 	//
-	//m_btnSearch.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("ì¡°íšŒ"), m_pDoc->m_enLang));
+	//m_btnSearch.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("Á¶È¸"), m_pDoc->m_enLang));
 	//
-	//m_btnOk.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("í™•ì¸"), m_pDoc->m_enLang));
-	//m_btnCancel.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("ì·¨ì†Œ"), m_pDoc->m_enLang));
+	//m_btnOk.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("È®ÀÎ"), m_pDoc->m_enLang));
+	//m_btnCancel.SetWindowText(m_pDoc->m_pLang->GetLangValue(_T("Ãë¼Ò"), m_pDoc->m_enLang));
 }
 
 
@@ -216,7 +216,7 @@ void CEqpSuspendDlg::RelocationControls()
 
 BOOL CEqpSuspendDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: ì—¬ê¸°ì— íŠ¹ìˆ˜í™”ëœ ì½”ë“œë¥¼ ì¶”ê°€ ë°/ë˜ëŠ” ê¸°ë³¸ í´ëž˜ìŠ¤ë¥¼ í˜¸ì¶œí•©ë‹ˆë‹¤.
+	// TODO: ¿©±â¿¡ Æ¯¼öÈ­µÈ ÄÚµå¸¦ Ãß°¡ ¹×/¶Ç´Â ±âº» Å¬·¡½º¸¦ È£ÃâÇÕ´Ï´Ù.
 	if(pMsg->message == WM_KEYDOWN)  
 	{
 		switch(pMsg->wParam)
@@ -358,7 +358,7 @@ void CEqpSuspendDlg::RenameResource( EN_LANG m_enLang)
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_eqpsuspend\\"), _T("dlg_eqpsuspend"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("update"), (int)m_enLang);
 	SetDlgItemText(IDC_GRP_EQP_EQP_STATE, strValue);
-	//	ì˜ˆì „ì—ëŠ” Ecs.rc ìº¡ì…˜ ê·¸ëŒ€ë¡œë¼ ì–¸ì–´ë¥¼ ë°”ê¿”ë„ ì•ˆ ë°”ë€Œë˜ ê²ƒë“¤
+	//	¿¹Àü¿¡´Â Ecs.rc Ä¸¼Ç ±×´ë·Î¶ó ¾ð¾î¸¦ ¹Ù²ãµµ ¾È ¹Ù²î´ø °Íµé
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_eqpsuspend\\"), _T("dlg_eqpsuspend"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("search"), (int)m_enLang);
 	SetDlgItemText(ID_BTN_EQP_SUSPEND_SEARCH, strValue);
@@ -394,7 +394,7 @@ void CEqpSuspendDlg::InitializeResource(EN_LANG nEN_LANG)
 
 void CEqpSuspendDlg::OnClose()
 {
-	// TODO: ì—¬ê¸°ì— ë©”ì‹œì§€ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€ ë°/ë˜ëŠ” ê¸°ë³¸ê°’ì„ í˜¸ì¶œí•©ë‹ˆë‹¤.
+	// TODO: ¿©±â¿¡ ¸Þ½ÃÁö Ã³¸®±â ÄÚµå¸¦ Ãß°¡ ¹×/¶Ç´Â ±âº»°ªÀ» È£ÃâÇÕ´Ï´Ù.
 	m_pDoc->m_pEqpSuspendDlg =  NULL;
 	CSkinDialog::OnClose();
 }
@@ -428,7 +428,7 @@ void CEqpSuspendDlg::OnBnClickedBtnEqpSuspendSearch()
 	}
 	else
 	{	
-		// arrColNameê³¼ arrColSizeì˜ ê°¯ìˆ˜ê°€ ë‹¤ë¦„!! Hideë˜ì–´ìžˆëŠ” Columnì„ ê°€ì ¸ì˜¤ëŠë¼ ì–´ì©”ìˆ˜ ì—†ìŒ~
+		// arrColName°ú arrColSizeÀÇ °¹¼ö°¡ ´Ù¸§!! HideµÇ¾îÀÖ´Â ColumnÀ» °¡Á®¿À´À¶ó ¾îÂ¿¼ö ¾øÀ½~
 		int nIdxStart = SetHeadColumn(arrColName, arrColSize, nColSize, strSql);
 
 		//SetMaxRows(nRowCnt);
@@ -449,10 +449,10 @@ void CEqpSuspendDlg::OnBnClickedBtnEqpSuspendSearch()
 					int nSize = strColValue.GetLength()*2;
 					arrColSize[nIdxCol]= CConvert::ToString(nSize);
 				}
-				SetColumnText(nIdxCol, nIdxRow, strColValue);				// ë²ˆì—­ë¨
-				//m_SpreadSheet.SetData(nIdxCol, nIdxRow, strColValue);		// ë²ˆì—­ì•ˆë¨
+				SetColumnText(nIdxCol, nIdxRow, strColValue);				// ¹ø¿ªµÊ
+				//m_SpreadSheet.SetData(nIdxCol, nIdxRow, strColValue);		// ¹ø¿ª¾ÈµÊ
 
-				// ì§ìˆ˜ë§ˆë‹¤ ìƒ‰ê¹”ì„ ë‹¤ë¥´ê²Œ ì¹ í• ê²ƒ!
+				// Â¦¼ö¸¶´Ù »ö±òÀ» ´Ù¸£°Ô Ä¥ÇÒ°Í!
 				if (nIdxRow % 2 == 0)
 				{
 					m_SpreadSheet.SetColor(nIdxCol+1, nIdxRow, m_pDoc->m_pConfig->m_clrSPREAD_COLOR, BLACK);
