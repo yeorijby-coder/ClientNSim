@@ -193,10 +193,13 @@ void CEquipmentArray::InvokeControl(BOOL bManual)
 	for (int i=0; i<m_nSize; ++i)
 	{
 		pEquipment = m_pData[i];
-		DEBUGER_ASSERT_VALID(pEquipment != NULL);
+		if (pEquipment == NULL)
+			continue;
 
 		pInfo = pEquipment->GetInfo();
-		DEBUGER_ASSERT_VALID(pInfo != NULL);
+		// 상태 정보를 쓰지 않는 설비 종류는 그냥 넘어간다
+		if (pInfo == NULL)
+			continue;
 
 		if (bManual)
 			pInfo->m_bModified = TRUE;
