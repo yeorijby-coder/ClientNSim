@@ -154,7 +154,7 @@ void CEcsView::OnInitialUpdate()
 
 	pDoc->UpdateRibbonLang();
 	::SetTimer(this->m_hWnd, 1000, NULL, NULL);
-	Invalidate(TRUE);
+	Invalidate(FALSE);	// TRUE 면 배경지우기가 일어나 깜빡인다
 }
 
 //	리본의 1F/2F/3F 버튼이 부른다.
@@ -186,7 +186,7 @@ void CEcsView::SelectLayout(int nIndex)
 			pEcsLayout->OnSize(this, SIZE_RESTORED, rcClient.Width(), rcClient.Height());
 		}
 	}
-	Invalidate(TRUE);
+	Invalidate(FALSE);	// TRUE 면 배경지우기가 일어나 깜빡인다
 }
 
 void CEcsView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
@@ -293,27 +293,25 @@ void CEcsView::OnDraw(CDC* pDC)
 
 	DrawSelectedLayout(&memDC, pDoc);
 
-	pDC->BitBlt(0,0, rect.Width(), rect.Height(), &memDC, 0,0,SRCCOPY);
-
-	memDC.SelectObject(pOldBitmap);
-	memDC.DeleteDC();
-	bitmap.DeleteObject();
-
-	CEcsLayout layout;
+	// 레이아웃 추가 그리기까지 메모리DC에 그린 뒤 한 번에 옮겨야 깜빡이지 않는다
 	int nTemp = -1;
 	if (m_tabLayout.GetSafeHwnd())
 	{
 		nTemp = m_tabLayout.GetCurSel();
 	}
 
-	if (nTemp < 0)
-		return;
+	if (nTemp >= 0)
+	{
+		CEcsLayout* pEcsLayout = pDoc->m_pEcsLayOuts[nTemp];
+		if (pEcsLayout != NULL)
+			pEcsLayout->OnDraw(this, &memDC, nTemp + 1);
+	}
 
-	CEcsLayout* pEcsLayout = pDoc->m_pEcsLayOuts[nTemp];
-	if (pEcsLayout == NULL)
-		return;
+	pDC->BitBlt(0,0, rect.Width(), rect.Height(), &memDC, 0,0,SRCCOPY);
 
-	pEcsLayout->OnDraw(this, pDC, nTemp + 1);
+	memDC.SelectObject(pOldBitmap);
+	memDC.DeleteDC();
+	bitmap.DeleteObject();
 
 }
 
@@ -949,10 +947,8 @@ BOOL CEcsView::OnEraseBkgnd(CDC* pDC)
 	if(pDC == NULL)
 		return TRUE;
 
-	CBrush* pOldBrush = pDC->SelectObject(&backBrush); 
-	CRect rect; pDC->GetClipBox(&rect); 
-	pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
-	pDC->SelectObject(pOldBrush); 
+	// 배경을 흰색으로 지우면 OnDraw 가 그리기 전까지 흰 화면이 보여 깜빡인다.
+	// OnDraw 에서 메모리DC로 전체를 BitBlt 하므로 배경 지우기는 하지 않는다.
 
 	return TRUE;      
 
