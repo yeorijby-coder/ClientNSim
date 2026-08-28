@@ -26,10 +26,23 @@ BEGIN_MESSAGE_MAP(CTGroupBox, CButton)
 	//{{AFX_MSG_MAP(CTGroupBox)
 	ON_WM_PAINT()
 	//}}AFX_MSG_MAP
+	ON_WM_NCHITTEST()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CTGroupBox message handlers
+
+// 그룹박스는 클릭을 안쪽 컨트롤로 흘려보내야 한다.
+// 위 PreSubclassWindow 에서 BS_OWNERDRAW 를 넣는 순간 버튼 종류가
+// BS_GROUPBOX 가 아니게 되어, 그룹박스가 원래 하던 '클릭 통과' 동작이 사라진다.
+// 대화상자에서 그룹박스가 안쪽 컨트롤보다 먼저 선언돼 z-order 상 위에 있으면
+// (예: SC 대화상자의 일시정지 그룹박스와 입고/출고 정지 체크박스)
+// 안쪽 컨트롤이 아예 눌리지 않는다.
+LRESULT CTGroupBox::OnNcHitTest(CPoint point)
+{
+	UNREFERENCED_PARAMETER(point);
+	return HTTRANSPARENT;
+}
 
 void CTGroupBox::PreSubclassWindow() 
 {

@@ -43,6 +43,7 @@ protected:
 	//{{AFX_MSG(CTGroupBox)
 	afx_msg void OnPaint();
 	//}}AFX_MSG
+	afx_msg LRESULT OnNcHitTest(CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };
