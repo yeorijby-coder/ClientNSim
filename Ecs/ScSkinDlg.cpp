@@ -1219,14 +1219,30 @@ void CScSkinDlg::OnCheckStore()
 	CString strMessage;
 	int nRowCnt = -1;
 	_RecordsetPtr ptr = m_pDoc->GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
-	if (nRowCnt <= 0) { return; }
-	CRecordSetWrap* pRsw = new CRecordSetWrap(ptr);
-	pRsw->MoveFirst();
-	for (int i = 0; i < nRowCnt; i++)
+	if (nRowCnt <= 0)
 	{
-		nSUSPEND = _ttoi(pRsw->GetItem(_T("SUSPEND")));
+		// 조회가 실패하면 예전에는 아무 반응 없이 리턴해서 버튼이 죽은 것처럼 보였다.
+		// 폴링이 이미 받아 둔 값으로 대신 진행하고, 그것도 없으면 이유를 알려 준다.
+		if (m_pSC_DATA->V_SUSPEND.IsEmpty())
+		{
+			if (strMessage.IsEmpty())
+				strMessage = _T("SC 정보를 조회하지 못했습니다.");
+			AfxMessageBox(m_pDoc->GetMsgLangDef(strMessage));
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
+		nSUSPEND = _ttoi(m_pSC_DATA->V_SUSPEND);
 	}
-	delete pRsw;
+	else
+	{
+		CRecordSetWrap* pRsw = new CRecordSetWrap(ptr);
+		pRsw->MoveFirst();
+		for (int i = 0; i < nRowCnt; i++)
+		{
+			nSUSPEND = _ttoi(pRsw->GetItem(_T("SUSPEND")));
+		}
+		delete pRsw;
+	}
 
 
 	//nSUSPEND = CConvert::ToInt(m_pSC_DATA->V_SUSPEND);
@@ -1315,14 +1331,30 @@ void CScSkinDlg::OnCheckRetrieve()
 	CString strMessage;
 	int nRowCnt = -1;
 	_RecordsetPtr ptr = m_pDoc->GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
-	if (nRowCnt <= 0) { return; }
-	CRecordSetWrap* pRsw = new CRecordSetWrap(ptr);
-	pRsw->MoveFirst();
-	for (int i = 0; i < nRowCnt; i++)
+	if (nRowCnt <= 0)
 	{
-		nSUSPEND = _ttoi(pRsw->GetItem(_T("SUSPEND")));
+		// 조회가 실패하면 예전에는 아무 반응 없이 리턴해서 버튼이 죽은 것처럼 보였다.
+		// 폴링이 이미 받아 둔 값으로 대신 진행하고, 그것도 없으면 이유를 알려 준다.
+		if (m_pSC_DATA->V_SUSPEND.IsEmpty())
+		{
+			if (strMessage.IsEmpty())
+				strMessage = _T("SC 정보를 조회하지 못했습니다.");
+			AfxMessageBox(m_pDoc->GetMsgLangDef(strMessage));
+			InvalidateScDataSuspend(EN_KOR);
+			return;
+		}
+		nSUSPEND = _ttoi(m_pSC_DATA->V_SUSPEND);
 	}
-	delete pRsw;
+	else
+	{
+		CRecordSetWrap* pRsw = new CRecordSetWrap(ptr);
+		pRsw->MoveFirst();
+		for (int i = 0; i < nRowCnt; i++)
+		{
+			nSUSPEND = _ttoi(pRsw->GetItem(_T("SUSPEND")));
+		}
+		delete pRsw;
+	}
 
 
 	//nSUSPEND = CConvert::ToInt(m_pSC_DATA->V_SUSPEND);

@@ -1049,6 +1049,7 @@ CDisplayData* CEcsDoc::GetDisplayData(int nDISP_NO)
 	CString strDispKey;
 	CString strValue;
 	CEquipment* pEqp = NULL;
+
 	for (POSITION pPosDisplay = m_MapEqps.GetStartPosition(); pPosDisplay != NULL; )
 	{
 		CDisplay* pDisplay = NULL;
@@ -1168,7 +1169,7 @@ void CEcsDoc::AddWindowFontRegistry()  //보류4 font path 지정할것
 
 BOOL CEcsDoc::FreeUserInfo()
 {
-	if (IsLogin() == TRUE && m_strId != _T("HUONS"))//ONLY_VIEW
+	if (IsLogin() == TRUE && m_strId != _T("KET_WCS"))//ONLY_VIEW
 	{
 		CString strValue = _T("");
 		strValue.Format(_T("ID : %s LOGIN ALREADY. GOING TO LOGOUT?"), m_strId);
@@ -1266,7 +1267,14 @@ _RecordsetPtr CEcsDoc::GetSelectQryRecordsetPtr(CString pStrSql, int& pnRowCnt, 
 
 _RecordsetPtr CEcsDoc::GetSelectQryRecordsetPtr_DLG(CString pStrSql, int& pnRowCnt, CString& pStrMessage)
 {
-	if (IsConnectDB(m_pDlgUrmDBAccess) == FALSE) { return FALSE; };
+	if (IsConnectDB(m_pDlgUrmDBAccess) == FALSE)
+	{
+		// 예전에는 pnRowCnt 를 건드리지 않고 빠져서 호출부가 '0건 조회'와
+		// 구분하지 못하고 조용히 리턴했다. 원인을 알 수 있게 채워 준다.
+		pnRowCnt = -1;
+		pStrMessage = _T("DB 연결이 끊어져 있습니다.");
+		return FALSE;
+	};
 	return m_pDlgUrmDBAccess->m_pAdoDB->SelectSqlForThread_RecordSet(pStrSql, pnRowCnt, pStrMessage);
 }
 
@@ -1765,7 +1773,7 @@ BOOL CEcsDoc::GetQueryInsertClientLog(CString pWIN_ID, CString pLUGG_NO, CString
 	strSql += CRLF + _T("				( '") + m_WH_TYP + _T("' 		");
 	strSql += CRLF + _T("				, ") + SYSDATE + _T("			");
 	strSql += CRLF + _T("				, '") + m_PC_IP + _T("'			");
-	strSql += CRLF + _T("				, 'KET_WCS_CLIENT'			");	// USER_ID : 프로그램 식별자 고정
+	strSql += CRLF + _T("				, '") + m_strId + _T("'			");
 	strSql += CRLF + _T("				, '") + pWIN_ID + _T("'			");
 	strSql += CRLF + _T("				, '") + pLUGG_NO + _T("'		");
 	strSql += CRLF + _T("				, '") + pBARCODE + _T("'	");
