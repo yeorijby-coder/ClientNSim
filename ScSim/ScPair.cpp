@@ -162,7 +162,9 @@ void CScPair::UpdateScInfo()
 {
 	CString strTemp="", strDepartInfo="", strArriveInfo="", strDepartInfo2="", strArriveInfo2="";
 
-	m_pInfo->SetRcMode(CLib::GetByteL(m_pDoc->m_arrRegData[m_nNumber-1][99]));			// D 99
+	//	지상반 모드는 D95 다. D99 는 사용하지 않는 자리라 늘 0 으로 읽혔다.
+	//	(ECS CSc::ReadStatus 도, WCS_TASK_SC 의 ScThread 도 D95 를 본다)
+	m_pInfo->SetRcMode(CLib::GetByteL(m_pDoc->m_arrRegData[m_nNumber-1][95]));			// D 95
 	m_pInfo->SetScMode(CLib::GetByteL(m_pDoc->m_arrRegData[m_nNumber-1][100]));		// D100 - L
 	m_pInfo->SetProdLoad(CLib::GetByteH(m_pDoc->m_arrRegData[m_nNumber-1][100]));		// D100 - H
 	m_pInfo->SetScStatus(CLib::GetByteL(m_pDoc->m_arrRegData[m_nNumber-1][101]));		// D101
