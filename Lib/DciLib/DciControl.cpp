@@ -136,7 +136,6 @@ void CDciControl::UpdateControl(CDC* pDC)
 
 		//==================================================================================================
 		//==================================================================================================
-		LOGFONT m_logfont;
 		CFont m_font;
 
 		int nSize = 0;
@@ -239,7 +238,6 @@ void CDciControl::DrawFontText(CDC* pDC, CString strText, CRect* pRect, int nOld
 		strRealText = strText;
 
 
-	LOGFONT m_logfont;
 	CFont m_font;
 	CFont* pOldFont;
 

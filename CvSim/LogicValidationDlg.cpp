@@ -232,7 +232,6 @@ void CLogicValidationDlg::OnNMDblclkListLogicGroup(NMHDR* pNMHDR, LRESULT* pResu
 
 void CLogicValidationDlg::OnNMDblclkListLogicDesc(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	int nId[100];
 	CString LogicDesc[100];
 	int nLogicGroupCnt = m_pDoc->m_arrLogicGroups.GetSize();
 
@@ -272,7 +271,6 @@ void CLogicValidationDlg::OnNMDblclkListLogicDesc(NMHDR* pNMHDR, LRESULT* pResul
 	CString sActionContent[20];
 	CString sActionKeyArray[20];
 	int		nActionValue[20];
-	int		nActionActualValue[20];
 
 	CLogicArray* pLogicArray = NULL;
 	for (int n = 0; n < nLogicGroupCnt; n++)
@@ -567,7 +565,7 @@ int CLogicValidationDlg::GetTrackLogicData(CString strKeyWord, int nGetData, int
 	COleDateTimeSpan tElapseTime = COleDateTime::GetCurrentTime() - pTrack->m_tTime;
 
 	int nSec = _ttoi(strKeyWord);
-	int nTotalSec = tElapseTime.GetTotalSeconds();
+	int nTotalSec = (int)tElapseTime.GetTotalSeconds();
 	BOOL bIsDestSelf = m_pDoc->IsDestination(strKeyWord, nGetData, pTrack->m_nNumber, 1);
 	BOOL bIsScDest = m_pDoc->IsDestination(strKeyWord, nGetData, 0, 2);
 	BOOL bIsStation = m_pDoc->IsStationKind(pTrack, strKeyWord);

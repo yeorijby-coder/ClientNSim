@@ -326,23 +326,23 @@ void CLogDlg::OnLogSaveas()
 
 	char Buff[1024];
 
-	sprintf(Buff, "Logging file dated %s........\r\n\r\n", Context.m_strFileName);
+	sprintf_s(Buff, "Logging file dated %s........\r\n\r\n", (LPCSTR)CT2A(Context.m_strFileName));
 	pFile->Write(Buff, strlen(Buff));
-	sprintf(Buff, "Time     Lugg Pos      BARCODE       Content\r\n");
+	sprintf_s(Buff, "Time     Lugg Pos      BARCODE       Content\r\n");
 	pFile->Write(Buff, strlen(Buff));
-	sprintf(Buff, "======== ==== ======== ============= ====================================================================================>>>\r\n");
+	sprintf_s(Buff, "======== ==== ======== ============= ====================================================================================>>>\r\n");
 	pFile->Write(Buff, strlen(Buff));
 
 	CListCtrl* pListCtrl = (CListCtrl *)GetDlgItem(IDC_LIST_LOG);
 
 	for (int i = 0; i < pListCtrl->GetItemCount(); i++)
 	{
-		sprintf(Buff, "%s %-4s %-8s %-13s %s\r\n", 
-			pListCtrl->GetItemText(i, 1), 
-			pListCtrl->GetItemText(i, 2), 
-			pListCtrl->GetItemText(i, 3), 
-			pListCtrl->GetItemText(i, 4),
-			pListCtrl->GetItemText(i, 5));
+		sprintf_s(Buff, "%s %-4s %-8s %-13s %s\r\n", 
+			(LPCSTR)CT2A(pListCtrl->GetItemText(i, 1)), 
+			(LPCSTR)CT2A(pListCtrl->GetItemText(i, 2)), 
+			(LPCSTR)CT2A(pListCtrl->GetItemText(i, 3)), 
+			(LPCSTR)CT2A(pListCtrl->GetItemText(i, 4)),
+			(LPCSTR)CT2A(pListCtrl->GetItemText(i, 5)));
 		pFile->Write(Buff, strlen(Buff));
 	}
 	delete pFile;
@@ -350,14 +350,13 @@ void CLogDlg::OnLogSaveas()
 
 void CLogDlg::PrintTitle(CDC* pDC, int nPageNum)
 {
-	char Buff[1024];
-	//LPCTSTR Buff;
+	TCHAR Buff[1024];
 
-	sprintf(Buff, "Time     Lugg Pos   Content........................................< Page %d >", nPageNum);
-	pDC->TextOut(10, 300, (LPCTSTR)Buff, strlen(Buff));
-	sprintf(Buff, "======== ==== ===== =======================================================>>>");
+	_stprintf_s(Buff, _T("Time     Lugg Pos   Content........................................< Page %d >"), nPageNum);
+	pDC->TextOut(10, 300, Buff, (int)_tcslen(Buff));
+	_stprintf_s(Buff, _T("======== ==== ===== =======================================================>>>"));
 
-	pDC->TextOut(10, 400, (LPCTSTR)Buff, strlen(Buff));
+	pDC->TextOut(10, 400, Buff, (int)_tcslen(Buff));
 }
 
 // void CLogDlg::OnLogPrint() 

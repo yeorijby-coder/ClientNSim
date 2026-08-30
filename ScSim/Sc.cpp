@@ -140,7 +140,6 @@ BOOL CSc::CheckRequestSerial(int nConnNum)
 	else //if (nCommand == 'W')
 	{
 		// 쓰기 요청일때 
-		BYTE bBuffer[100];
 		//arrBuffer.SetSize(nLen * 4);
 		for (int i = 0, j = 0; i < nLen; ++i, j+=4)
 		{

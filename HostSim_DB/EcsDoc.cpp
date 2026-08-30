@@ -2120,7 +2120,7 @@ long CEcsDoc::RollbackTrans_DLG()
 {
 	if(IsConnectDB(m_pDlgUrmDBAccess) == FALSE){ return FALSE; };
 	
-	if (m_bTrans == true)
+	if (m_bTrans == TRUE)
 	{
 		m_pDlgUrmDBAccess->m_pAdoDB->RollbackTrans();
 	}
@@ -2134,7 +2134,7 @@ long CEcsDoc::CommitTrans_DLG()
 {	
 	if(IsConnectDB(m_pDlgUrmDBAccess) == FALSE){ return FALSE; };
 
-	if (m_bTrans == true)
+	if (m_bTrans == TRUE)
 	{
 		m_pDlgUrmDBAccess->m_pAdoDB->CommitTrans();
 	}

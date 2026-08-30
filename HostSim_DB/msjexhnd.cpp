@@ -261,20 +261,20 @@ LONG WINAPI MSJExceptionHandler::MSJUnhandledExceptionFilter(
 					   BOOL bOK = pDump( GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &ExInfo, NULL, NULL );
 						if (bOK)
 						{
-							_stprintf( szScratch, _T("Saved dump file to '%s'"), strDumpPath );
+							_stprintf( szScratch, _T("Saved dump file to '%s'"), (LPCTSTR)strDumpPath );
 							szResult = szScratch;
 							//retval = EXCEPTION_EXECUTE_HANDLER;
 						}
 						else
 						{
-							_stprintf( szScratch, _T("Failed to save dump file to '%s' (error %d)"), strDumpPath, GetLastError() );
+							_stprintf( szScratch, _T("Failed to save dump file to '%s' (error %d)"), (LPCTSTR)strDumpPath, GetLastError() );
 							szResult = szScratch;
 						}
 						::CloseHandle(hFile);
 					}
 					else
 					{
-						_stprintf( szScratch, _T("Failed to create dump file '%s' (error %d)"), strDumpPath, GetLastError() );
+						_stprintf( szScratch, _T("Failed to create dump file '%s' (error %d)"), (LPCTSTR)strDumpPath, GetLastError() );
 						szResult = szScratch;
 					}
 //				}

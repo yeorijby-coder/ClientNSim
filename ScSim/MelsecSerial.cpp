@@ -543,11 +543,11 @@ BOOL CMelsecSerial::Write(const BYTE* pTxBuff, int BaseAddr, int nWordCnt, int T
     memset(TxBuff, 0x0, sizeof(TxBuff));
 
     if(Type == 'D')
-        sprintf(szStartAddr, "D%.4d", BaseAddr);
+        sprintf_s(szStartAddr, "D%.4d", BaseAddr);
     else
-        sprintf(szStartAddr, "M%.4d", BaseAddr);
+        sprintf_s(szStartAddr, "M%.4d", BaseAddr);
 
-    sprintf(szRange, "%.2X", nWordCnt);
+    sprintf_s(szRange, "%.2X", nWordCnt);
 
     TxBuff[0]  = enENQ;
     if (Type == 'D')

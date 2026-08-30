@@ -1064,7 +1064,7 @@ BOOL CEcsView::InvokeLogic(CCv* pCv, CTrackInfo* pTrack, CLogicArray* pLogicArra
 				int a = 0;
 
 			int nSec = _ttoi(strKeyWord);
-			int nTotalSec = tElapseTime.GetTotalSeconds();
+			int nTotalSec = (int)tElapseTime.GetTotalSeconds();
 			BOOL bIsDestSelf = pDoc->IsDestination(strKeyWord, nGetData, pTrack->m_nNumber, 1);
 			BOOL bIsScDest = pDoc->IsDestination(strKeyWord, nGetData, 0, 2);
 			BOOL bIsStation = pDoc->IsStationKind(pTrack, strKeyWord);
@@ -3683,7 +3683,7 @@ void CEcsView::MoveNextTrackForKindNormal_1(CCv* pCv, CTrackInfo* pTrack, CStati
 		
 		//CTimeSpan tElapseTime = COleDateTime::GetCurrentTime() - pTrack->m_tTime;
 		COleDateTimeSpan tElapseTime = COleDateTime::GetCurrentTime() - pTrack->m_tTime;
-		int nElapse = tElapseTime.GetTotalSeconds();
+		int nElapse = (int)tElapseTime.GetTotalSeconds();
 		if (nElapse > 2)
 		{
 			pTrack->m_bStartFlag = FALSE;

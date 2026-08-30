@@ -773,9 +773,9 @@ void CHostSv::Answer(BYTE ucMsgType, int nLuggNum, int nReasonCode)
 	ucMsgType += (ucMsgType == CMD_UNPREDICT) ? 0 : 32; // make lower case character
 	
 	memset(TxBuff, 0x20, sizeof(TxBuff));
-	sprintf(TxBuff, "ECS_MBX   %04d ", MSG_LENGTH_RESPONSE_DATA);  //MSG_LENGTH_RESPONSE_DATA - 10
+	sprintf_s(TxBuff, "ECS_MBX   %04d ", MSG_LENGTH_RESPONSE_DATA);  //MSG_LENGTH_RESPONSE_DATA - 10
 	// 문서 III.A : 작업번호 뒤에 장비번호 3자리가 온다. (해당 없으면 000)
-	sprintf(TxBuff + MSG_LENGTH_HEADER, "%c%c%c%02d%04d%03d%c",
+	sprintf_s(TxBuff + MSG_LENGTH_HEADER, sizeof(TxBuff) - MSG_LENGTH_HEADER, "%c%c%c%02d%04d%03d%c",
 		STX, ucMsgType, AckNak, nReasonCode, nLuggNum, 0, ETX);
 	
 	UpdateCommSv(NOTIFY_SEND);

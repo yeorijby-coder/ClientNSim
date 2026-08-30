@@ -304,7 +304,7 @@ void CRollSkinDlg::OnBnClickedChkAutoSel()
 {
 	int nChk = m_chkAutoSel.GetCheck();
 
-	if(nChk == true)
+	if(nChk == TRUE)
 	{
 		if (m_blAutoSel == false)
 		{
@@ -327,7 +327,7 @@ void CRollSkinDlg::OnBnClickedChkAutoSel()
 
 void CRollSkinDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	if (m_blAutoSel == true)
+	if (m_blAutoSel == TRUE)
 	{
 		//Á¶È¸
 		InvalidateTrackData(EN_KOR);

@@ -91,7 +91,7 @@ UINT CEquipment::ThreadProc(LPVOID pParam)
 						pThis->m_pRsw = NULL;
 					}
 				}
-				catch(CException* e)
+				catch(CException*)
 				{
 					CString strTemp = _T("");
 					

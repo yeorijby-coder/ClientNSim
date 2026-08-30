@@ -10,8 +10,8 @@
 
 static AFX_EXTENSION_MODULE XmlLIbDLL = { NULL, NULL };
 
-// Make DllMain internal to avoid duplicate external symbol when merging modules into one output
-static int APIENTRY DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
+// DllMain 은 DLL 진입점이라 static 이 무시된다(C4008). 그녑 외부 연결로 둔다.
+int APIENTRY DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 {
     UNREFERENCED_PARAMETER(lpReserved);
 

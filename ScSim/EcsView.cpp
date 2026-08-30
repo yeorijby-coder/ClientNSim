@@ -1371,8 +1371,8 @@ void CEcsView::CheckRequest(int nPlcNum)
 	CEcsDoc* pDoc = GetDocument();
 	ASSERT(pDoc != NULL);
 
-	BYTE bTemp2 = pDoc->m_arrRegData[nPlcNum][191];
-	BYTE bTemp3 = pDoc->m_arrRegData[nPlcNum][199];
+	BYTE bTemp2 = (BYTE)pDoc->m_arrRegData[nPlcNum][191];
+	BYTE bTemp3 = (BYTE)pDoc->m_arrRegData[nPlcNum][199];
 
 	// ECS에서 요청 온 작업이 있는지 체크  
 	if (pDoc->m_arrRegData[nPlcNum][191] == 0x01 ) //191 : 작업 DATA FLAG (1:WRITE 완료, 0:RESET)

@@ -2995,7 +2995,7 @@ void CCvSkinDlg::OnBnClickedChkAutoSel()
 {
 	int nChk = m_chkAutoSel.GetCheck();
 
-	if(nChk == true)
+	if(nChk == TRUE)
 	{
 		if (m_blAutoSel == false)
 		{
@@ -3019,7 +3019,7 @@ void CCvSkinDlg::OnBnClickedChkAutoSel()
 
 void CCvSkinDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	if (m_blAutoSel == true)
+	if (m_blAutoSel == TRUE)
 	{
 		//조회
 		InvalidateTrackData(EN_KOR);
@@ -3226,7 +3226,7 @@ void CCvSkinDlg::OnBnClickedChkAutoSel2()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	int nChk = m_chkDebugMode.GetCheck();
 
-	if(nChk == true)
+	if(nChk == TRUE)
 	{
 		m_pDoc->m_bDebugMode = TRUE;
 	}

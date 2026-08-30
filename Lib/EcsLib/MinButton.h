@@ -8,8 +8,8 @@ class AFX_EXT_CLASS CMinButton : public CButton
 {
 
 public:
-	static enum BackFillMode { Normal, Gradient };
-	static enum GradationType {LEFTTORIGHT, RIGHTTOLEFT, UPTODOWN, DOWNTOUP, SpreadToLeftAndRightFromCenter, SpreadToUpAndDownFromCenter};
+	enum BackFillMode { Normal, Gradient };
+	enum GradationType {LEFTTORIGHT, RIGHTTOLEFT, UPTODOWN, DOWNTOUP, SpreadToLeftAndRightFromCenter, SpreadToUpAndDownFromCenter};
 
 // Construction
 public:

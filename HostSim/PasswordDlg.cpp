@@ -63,9 +63,7 @@ void CPasswordDlg::OnButtonChange()
 		return;
 	}
 
-	char	szBuff[128];
-	sprintf(szBuff, "%s", (LPCTSTR) ChangePasswordDlg.m_strPasswordChanged);
-	WritePrivateProfileString(_T("LOGIN"), _T("LoginPW"), (LPCWSTR)szBuff, ECS_INI_FILE);
+	WritePrivateProfileString(_T("LOGIN"), _T("LoginPW"), ChangePasswordDlg.m_strPasswordChanged, ECS_INI_FILE);
 	m_pDoc->m_pConfig->m_strPassword = ChangePasswordDlg.m_strPasswordChanged;
 	AfxMessageBox(_T("패스워드가 변경되었습니다.."));
 

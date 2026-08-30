@@ -297,8 +297,8 @@ void CStartupTip::SetTipText(LPCTSTR lpText)
 		u = u+k+1;
 		if (u < m_nTipLen)
 		{
-			wcscat(&Tips[p].Text[0], &szWord[0]);
-			wcscat(&Tips[p].Text[0], _T(" "));
+			wcscat_s(Tips[p].Text, &szWord[0]);
+			wcscat_s(Tips[p].Text, _T(" "));
 		}
 		else
 		{
@@ -306,8 +306,8 @@ void CStartupTip::SetTipText(LPCTSTR lpText)
 			{
 				p++;
 				u=k+1;
-				wcscat(&Tips[p].Text[0], &szWord[0]);
-				wcscat(&Tips[p].Text[0], _T(" "));
+				wcscat_s(Tips[p].Text, &szWord[0]);
+				wcscat_s(Tips[p].Text, _T(" "));
 			};
 		};
 

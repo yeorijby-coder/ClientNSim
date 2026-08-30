@@ -491,7 +491,7 @@ BOOL CDeviceMap::ParseXml(CString strFilePath, int nId)
 		GetAttrValue(_T("Count"), strValue);
 		int nCount = _ttoi(strValue);			// 트랙갯수만큼 Loop 해야 할것인지??
 
-		int i, j, nIndex, nElmtCount = GetChildElmtCount();		// 여기서 하위에 엘리먼트가 없으면 안됨!
+		int j, nIndex, nElmtCount = GetChildElmtCount();		// 여기서 하위에 엔리먼트가 없으면 안됨!
 		CString strType, strAddr, strName, strElName, strTempTemp;
 		int nKeywordCount = 0;
 
@@ -838,7 +838,7 @@ BOOL CDeviceMap::ParseXml(CString strFilePath, int nId)
 		}
 
 		m_bUseSeparatelyETC = TRUE;
-		int i, j, nIndex, nElmtCount = GetChildElmtCount();		// 여기서 하위에 엘리먼트가 없으면 안됨!
+		int nElmtCount = GetChildElmtCount();		// 여기서 하위에 엔리먼트가 없으면 안됨!
 
 		for (int i = 0; i < nElmtCount; i++)
 		{
@@ -948,7 +948,7 @@ BOOL CDeviceMap::ParseXml(CString strFilePath, int nId)
 	strTagItem = _T("./TrackingArea");
 	if (MoveXPath(strTagItem, FALSE))		//DeviceMap/TrackingArea
 	{
-		int nIndex, nIndex2, nElmtCount = GetChildElmtCount();
+		int nElmtCount = GetChildElmtCount();
 		CString strLength, strCount, strName, strElName, strElchild, strTempTemp;
 		CStringArray* strTrackingAreas = new CStringArray();
 
@@ -1007,7 +1007,7 @@ BOOL CDeviceMap::ParseXml(CString strFilePath, int nId)
 
 		if (strValue == _T("1"))
 		{
-			int i, j, k, l, nIndex, nIndex2, nSubFlant, nRobotCount = GetChildElmtCount();
+			int nSubFlant, nRobotCount = GetChildElmtCount();
 			CString strLength, strCount, strName, strElName, strElchild, strTempTemp;
 
 			for (int i = 0; i < nRobotCount; i++)

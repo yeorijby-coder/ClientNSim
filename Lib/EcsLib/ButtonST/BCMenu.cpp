@@ -66,6 +66,10 @@ enum Win32Type{
 };
 
 
+// GetVersion/GetVersionEx 는 deprecated 지만 여기서는 Win95~XP 판별용이라
+// VersionHelpers 로 바꾸면 열거값 매핑이 달라진다. 범위를 정해 경고만 끈다.
+#pragma warning(push)
+#pragma warning(disable : 4996)
 Win32Type IsShellType()
 {
 	Win32Type  ShellType;
@@ -102,6 +106,7 @@ Win32Type IsShellType()
 	}
 	return ShellType;
 }
+#pragma warning(pop)
 
 static Win32Type g_Shell=IsShellType();
 

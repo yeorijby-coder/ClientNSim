@@ -250,7 +250,7 @@ void CExtLabel::SetFont(const CString& strFont, BYTE byCharSet /* = ANSI_CHARSET
 {
 	m_logfont.lfCharSet = byCharSet;
 
-	_tcscpy(m_logfont.lfFaceName,strFont);
+	_tcscpy_s(m_logfont.lfFaceName, strFont);
 	
 	ReconstructFont();	
 	UpdateSurface();	
