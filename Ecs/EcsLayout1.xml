@@ -354,8 +354,8 @@
 			<Control id="" l="54" b="13" r="61" t="14" text="← [103] 1F 출고대 #1" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="808000" enable="1" visible="1" fontsize="12" border="0" pstyle="0" pwidth="1" pcolor="000000" gl="10" gt="40" gr="10" gb="10"/>
 			<Control id="" l="52" b="14" r="60" t="15" text="↙ [171] 1F 출고 위치 결정대" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="ff00ff" enable="1" visible="1" fontsize="12" border="0" pstyle="0" pwidth="1" pcolor="000000" gl="0" gt="40" gr="10" gb="0"/>
 			<Control id="" l="53" b="11" r="59" t="12" text="[105] 1F 그룹 출고대" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="808000" enable="1" visible="1" fontsize="12" border="0" pstyle="0" pwidth="1" pcolor="000000" gl="10" gt="40" gr="10" gb="10"/>
-			<Control id="" l="62" b="5" r="73" t="7" text="" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="808000" enable="1" visible="1" fontsize="12" border="2" pstyle="0" pwidth="1" pcolor="000000" gl="10" gt="0" gr="10" gb="0"/>
-			<Control id="" l="62" b="2" r="73" t="4" text="" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="808000" enable="1" visible="1" fontsize="12" border="2" pstyle="0" pwidth="1" pcolor="000000" gl="10" gt="0" gr="10" gb="0"/>
+			<Control id="17180201" l="62" b="5" r="73" t="7" text="201" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="808000" enable="1" visible="1" fontsize="12" border="2" pstyle="0" pwidth="1" pcolor="000000" gl="10" gt="0" gr="10" gb="0"/>
+			<Control id="17180202" l="62" b="2" r="73" t="4" text="202" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="808000" enable="1" visible="1" fontsize="12" border="2" pstyle="0" pwidth="1" pcolor="000000" gl="10" gt="0" gr="10" gb="0"/>
 			<Control id="" l="1" b="6" r="2" t="7" text="1" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="4f4fff" enable="1" visible="1" fontsize="12" border="0" pstyle="0" pwidth="1" pcolor="000000" gl="10" gt="10" gr="10" gb="10"/>
 			<Control id="" l="1" b="8" r="2" t="9" text="2" bgmode="1" fgmode="1" bgcolor="f0f0f0" fgcolor="4f4fff" enable="1" visible="1" fontsize="12" border="0" pstyle="0" pwidth="1" pcolor="000000" gl="10" gt="10" gr="10" gb="10"/>
 		</CDciStaticCtrl>

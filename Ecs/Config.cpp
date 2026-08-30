@@ -83,11 +83,11 @@ void CConfig::LoadConfigDATABASE()
 		m_strDATABASE_DRIVER.Format(_T("%s"), szTemp);
 		::GetPrivateProfileString(_T("DB_2"), _T("SERVER"), _T("LOCALHOST") , szTemp, _MAX_PATH, ECS_INI_FILE);
 		m_strDATABASE_SERVER.Format(_T("%s"), szTemp); 
-		::GetPrivateProfileString(_T("DB_2"), _T("USERID"), _T("HUONS") ,  szTemp, _MAX_PATH, ECS_INI_FILE);
+		::GetPrivateProfileString(_T("DB_2"), _T("USERID"), _T("KET_WCS") ,  szTemp, _MAX_PATH, ECS_INI_FILE);
 		m_strDATABASE_USERID.Format(_T("%s"), szTemp); 
-		::GetPrivateProfileString(_T("DB_2"), _T("USERPASSWORD"), _T("HUONS") ,  szTemp, _MAX_PATH, ECS_INI_FILE);
+		::GetPrivateProfileString(_T("DB_2"), _T("USERPASSWORD"), _T("KET_WCS") ,  szTemp, _MAX_PATH, ECS_INI_FILE);
 		m_strDATABASE_USERPASSWORD.Format(_T("%s"), szTemp); 
-		::GetPrivateProfileString(_T("DB_2"), _T("DATABASE"), _T("HUONS") ,  szTemp, _MAX_PATH, ECS_INI_FILE);
+		::GetPrivateProfileString(_T("DB_2"), _T("DATABASE"), _T("KET_WCS") ,  szTemp, _MAX_PATH, ECS_INI_FILE);
 		m_strDATABASE_DATABASE.Format(_T("%s"), szTemp);
 #endif
 }
@@ -178,9 +178,9 @@ void CConfig::InitializeConfigWH()
 void CConfig::InitializeConfigDATABASE()
 {
 	m_strDATABASE_SERVER = _T("LOCALHOST");
-	m_strDATABASE_USERID = _T("HUONS");
-	m_strDATABASE_USERPASSWORD = _T("HUONS");
-	m_strDATABASE_DATABASE = _T("HUONS");
+	m_strDATABASE_USERID = _T("KET_WCS");
+	m_strDATABASE_USERPASSWORD = _T("KET_WCS");
+	m_strDATABASE_DATABASE = _T("KET_WCS");
 }
 
 void CConfig::InitializeConfigUSER()

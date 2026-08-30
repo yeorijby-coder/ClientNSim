@@ -75,8 +75,8 @@ BOOL CSystemLoginDlg::OnInitDialog()
 	
 	if(m_pDoc->m_strId == _T(""))
 	{
-		m_edtId.SetWindowText(_T("HUONS"));//ONLY_VIEW
-		m_edtPw.SetWindowText(_T("HUONS"));//ONLY_VIEW
+		m_edtId.SetWindowText(_T("KET_WCS"));//ONLY_VIEW
+		m_edtPw.SetWindowText(_T("KET_WCS"));//ONLY_VIEW
 		OnBnClickedOk();
 	}
 
@@ -140,7 +140,7 @@ void CSystemLoginDlg::OnBnClickedOk()
 	}
 
 	//클라이언트 최초 실행 때 로그인 여부를 false로 설정
-	if(strId == "HUONS")//ONLY_VIEW
+	if(strId == "KET_WCS")//ONLY_VIEW
 	{
 		m_blLogYn = FALSE;
 	}
@@ -173,7 +173,7 @@ void CSystemLoginDlg::OnBnClickedOk()
 		//m_pDoc->GetQueryInsertClientLog(_T("CSystemLoginDlg"), strLOG_LUGG_NO, strLOG_BOTTOM_TRAY, strLOG_TOP_TRAY, strLOG_MSG);
 
 		CSkinDialog::OnOK();
-		if (strId != "HUONS")//ONLY_VIEW
+		if (strId != "KET_WCS")//ONLY_VIEW
 		{
 			m_blLogYn = TRUE;
 		}
@@ -265,8 +265,8 @@ void CSystemLoginDlg::OnBnClickedLock()
 	if(AfxMessageBox(m_pDoc->GetMsgLangDef(_T("로그아웃 하시겠습니까?")), MB_YESNO) == IDYES)
 	{
 
-		strId = _T("HUONS");//ONLY_VIEW
-		strPw = _T("HUONS");//ONLY_VIEW
+		strId = _T("KET_WCS");//ONLY_VIEW
+		strPw = _T("KET_WCS");//ONLY_VIEW
 
 		strSql.Format(_T(" SELECT USER_ID ")
 			_T("	 FROM USER_MST ")

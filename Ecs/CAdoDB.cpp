@@ -1,4 +1,4 @@
-
+Ôªø
 
 #include "stdafx.h"
 #include "Ecs.h"
@@ -61,7 +61,7 @@ BOOL CAdoDB::RollbackTrans()
 }
 ///////////////////////////////////////////////
 //
-BOOL CAdoDB::ConnectDB() //∫∏∑˘6
+BOOL CAdoDB::ConnectDB() //Î≥¥Î•ò6
 {
 	CString strConnet;
 
@@ -207,7 +207,7 @@ BOOL CAdoDB::ExecuteStoredProc(CAdoDbIO *pAdoDbIO, int nScNum)
 		_bstr_t bstrDescription(err.Description());
 		_bstr_t bstrErrMsg(err.ErrorMessage());
 
-		m_strErrMsg.Format(_T("[«¡∑ŒΩ√¿˙∏Ì]=%s\n [SOURCE]=%s\n [DESCRIPTION]=%s\n [MSG]=%s"), 
+		m_strErrMsg.Format(_T("[ÌîÑÎ°úÏãúÏ†ÄÎ™Ö]=%s\n [SOURCE]=%s\n [DESCRIPTION]=%s\n [MSG]=%s"), 
 							strProcName, (LPCTSTR)bstrSource, (LPCTSTR)bstrDescription, (LPCTSTR)bstrErrMsg);
 
 		if ( err.Error() == E_FAIL )
@@ -218,7 +218,7 @@ BOOL CAdoDB::ExecuteStoredProc(CAdoDbIO *pAdoDbIO, int nScNum)
 	}
 	catch(...)
 	{
-		m_strErrMsg.Format(_T("[«¡∑ŒΩ√¿˙∏Ì]=%s\n √≥∏Æ µ«¡ˆ æ ¿∫ øπø‹ πﬂª˝.. ∞¸∏Æ¿⁄ø°∞‘ πÆ¿«"),
+		m_strErrMsg.Format(_T("[ÌîÑÎ°úÏãúÏ†ÄÎ™Ö]=%s\n Ï≤òÎ¶¨ ÎêòÏßÄ ÏïäÏùÄ ÏòàÏô∏ Î∞úÏÉù.. Í¥ÄÎ¶¨ÏûêÏóêÍ≤å Î¨∏Ïùò"),
 							strProcName);
 
 		m_pDoc->LeaveBlcokingSection();
@@ -259,7 +259,7 @@ BOOL CAdoDB::ExecuteQueryString(CString strSql)
 	}
 	catch(...)
 	{
-		m_strErrMsg.Format(_T("[ExecuteQueryString]\n √≥∏Æ µ«¡ˆ æ ¿∫ øπø‹ πﬂª˝.. ∞¸∏Æ¿⁄ø°∞‘ πÆ¿«"));
+		m_strErrMsg.Format(_T("[ExecuteQueryString]\n Ï≤òÎ¶¨ ÎêòÏßÄ ÏïäÏùÄ ÏòàÏô∏ Î∞úÏÉù.. Í¥ÄÎ¶¨ÏûêÏóêÍ≤å Î¨∏Ïùò"));
 
 		m_pDoc->LeaveBlcokingSection();
 		return FALSE;
@@ -311,7 +311,7 @@ _RecordsetPtr CAdoDB::SelectSqlForThread_RecordSet(CString strSql, int &nRowCnt,
 		rsPtr->Close();
 		return rtrsPtr;
 	}
-	// Error πﬂª˝ Ω√ √≥∏Æ
+	// Error Î∞úÏÉù Ïãú Ï≤òÎ¶¨
 	catch(_com_error &err){
  		_bstr_t bstrSource(err.Source());
 		_bstr_t bstrDescription(err.Description());
@@ -322,7 +322,7 @@ _RecordsetPtr CAdoDB::SelectSqlForThread_RecordSet(CString strSql, int &nRowCnt,
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, strMsg);
 		rsPtr  = NULL;
 
-		// err∞° E_FAIL¿œ∂ß √≥∏Æ..
+		// errÍ∞Ä E_FAILÏùºÎïå Ï≤òÎ¶¨..
 		if ( err.Error() == E_FAIL ) 	
 			m_bConnected=FALSE;
 
@@ -330,7 +330,7 @@ _RecordsetPtr CAdoDB::SelectSqlForThread_RecordSet(CString strSql, int &nRowCnt,
 
 	}
 	catch(...){
-		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl √≥∏Æ ¡ﬂ ø¿∑˘ πﬂª˝..");
+		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl Ï≤òÎ¶¨ Ï§ë Ïò§Î•ò Î∞úÏÉù..");
 		rsPtr  = NULL;	
 		return FALSE;
 	}
@@ -400,7 +400,7 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, CStringList &strTempList, int nR
 		rsPtr->Close();
 
 	}
-	// Error πﬂª˝ Ω√ √≥∏Æ
+	// Error Î∞úÏÉù Ïãú Ï≤òÎ¶¨
 	catch(_com_error &err){
 		_bstr_t bstrSource(err.Source());
 		_bstr_t bstrDescription(err.Description());
@@ -411,14 +411,14 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, CStringList &strTempList, int nR
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, strMsg);
 		rsPtr  = NULL;
 
-		// err∞° E_FAIL¿œ∂ß √≥∏Æ..
+		// errÍ∞Ä E_FAILÏùºÎïå Ï≤òÎ¶¨..
 		if ( err.Error() == E_FAIL ) 	m_bConnected=FALSE;
 		
 		return FALSE;
 
 	}
 	catch(...){
-		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl √≥∏Æ ¡ﬂ ø¿∑˘ πﬂª˝..");
+		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl Ï≤òÎ¶¨ Ï§ë Ïò§Î•ò Î∞úÏÉù..");
 		rsPtr  = NULL;	
 		return FALSE;
 	}
@@ -448,7 +448,7 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, int &nRowCnt, CString &strMsg)
 		nRowCnt = rsPtr->RecordCount; 
 		rsPtr->Close();
 	}
-	// Error πﬂª˝ Ω√ √≥∏Æ
+	// Error Î∞úÏÉù Ïãú Ï≤òÎ¶¨
 	catch(_com_error &err){
 		_bstr_t bstrSource(err.Source());
 		_bstr_t bstrDescription(err.Description());
@@ -462,7 +462,7 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, int &nRowCnt, CString &strMsg)
 
 	}
 	catch(...){
-		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl √≥∏Æ ¡ﬂ ø¿∑˘ πﬂª˝..");
+		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl Ï≤òÎ¶¨ Ï§ë Ïò§Î•ò Î∞úÏÉù..");
 		rsPtr  = NULL;	
 		return FALSE;
 	}
@@ -497,14 +497,14 @@ BOOL CAdoDB::ExecuteSqlForMainPGM(CString strSql)
 					(LPCTSTR)bstrSource, (LPCTSTR)bstrDescription, (LPCTSTR)bstrErrMsg);
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, strMsg);
 
-		// err∞° E_FAIL¿œ∂ß √≥∏Æ..
+		// errÍ∞Ä E_FAILÏùºÎïå Ï≤òÎ¶¨..
 		if ( err.Error() == E_FAIL ) 	m_bConnected=FALSE;
 		
 		return FALSE;
 	}
 	catch(...)
 	{
-		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "ExecuteSqlForMainPGM:µ•¿Ã≈∏ ∫£¿ÃΩ∫ ∞¸∏Æ¿⁄ø°∞‘ πÆ¿« «œΩ Ω√ø‰");
+		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "ExecuteSqlForMainPGM:Îç∞Ïù¥ÌÉÄ Î≤†Ïù¥Ïä§ Í¥ÄÎ¶¨ÏûêÏóêÍ≤å Î¨∏Ïùò ÌïòÏã≠ÏãúÏöî");
 		return FALSE;
 	}
 
@@ -512,7 +512,7 @@ BOOL CAdoDB::ExecuteSqlForMainPGM(CString strSql)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Procedure Ω««‡
+// Procedure Ïã§Ìñâ
 BOOL CAdoDB::ExecuteProcForInputOrder(CString strStorProc, CStringList &strTempList, int &nRetCd, CString &strRetMsg)
 {
 	_bstr_t		bstrValue;
@@ -561,7 +561,7 @@ BOOL CAdoDB::ExecuteProcForInputOrder(CString strStorProc, CStringList &strTempL
 
 		nRetCd = atoi((LPCSTR)_bstr_t(vPoRetCd));
 		strRetMsg.Format(_T("%s"), (LPCTSTR)_bstr_t(vPoMsg));
-		// Not Found √≥∏Æ
+		// Not Found Ï≤òÎ¶¨
 		//if (atoi(_bstr_t(vPoRetCd)) == -2) 
 		if (atoi((LPCSTR)_bstr_t(vPoRetCd)) < 0)
 		{
@@ -587,7 +587,7 @@ BOOL CAdoDB::ExecuteProcForInputOrder(CString strStorProc, CStringList &strTempL
 		//AfxMessageBox(strMsg);
 		strRetMsg.Format(_T("%s"), strMsg);
 
-		// err∞° E_FAIL¿œ∂ß √≥∏Æ..
+		// errÍ∞Ä E_FAILÏùºÎïå Ï≤òÎ¶¨..
 		nRetCd = -1;
 		if ( err.Error() == E_FAIL ) 	m_bConnected = FALSE;
 
@@ -596,7 +596,7 @@ BOOL CAdoDB::ExecuteProcForInputOrder(CString strStorProc, CStringList &strTempL
 	catch(...)
 	{
 		CString strMsg;
-		strMsg.Format(_T("ExecuteProcForInputOrder:µ•¿Ã≈∏ ∫£¿ÃΩ∫ ∞¸∏Æ¿⁄ø°∞‘ πÆ¿« «œΩ Ω√ø‰"));
+		strMsg.Format(_T("ExecuteProcForInputOrder:Îç∞Ïù¥ÌÉÄ Î≤†Ïù¥Ïä§ Í¥ÄÎ¶¨ÏûêÏóêÍ≤å Î¨∏Ïùò ÌïòÏã≠ÏãúÏöî"));
 		strRetMsg.Format(_T("%s"), strMsg);
 		nRetCd = -1;
 		return FALSE;
@@ -658,7 +658,7 @@ BOOL CAdoDB::ExecuteProcForOutputOrder(CString strStorProc, CStringList &strTemp
 		nRetCd = atoi((LPCSTR)_bstr_t(vPoRetCd));
 		strRetMsg.Format(_T("%s"), (LPCTSTR)_bstr_t(vPoMsg));
 		strJobNo.Format(_T("%s"), (LPCTSTR)_bstr_t(vPoJobNo));
-		// Not Found √≥∏Æ
+		// Not Found Ï≤òÎ¶¨
 		//if (atoi(_bstr_t(vPoRetCd)) == -2) 
 		if (atoi((LPCSTR)_bstr_t(vPoRetCd)) < 0)
 		{
@@ -684,7 +684,7 @@ BOOL CAdoDB::ExecuteProcForOutputOrder(CString strStorProc, CStringList &strTemp
 		//AfxMessageBox(strMsg);
 		strRetMsg.Format(_T("%s"), strMsg);
 
-		// err∞° E_FAIL¿œ∂ß √≥∏Æ..
+		// errÍ∞Ä E_FAILÏùºÎïå Ï≤òÎ¶¨..
 		nRetCd = -1;
 		if ( err.Error() == E_FAIL ) 	m_bConnected = FALSE;
 
@@ -693,7 +693,7 @@ BOOL CAdoDB::ExecuteProcForOutputOrder(CString strStorProc, CStringList &strTemp
 	catch(...)
 	{
 		CString strMsg;
-		strMsg.Format(_T("ExecuteProcForOutputOrder:µ•¿Ã≈∏ ∫£¿ÃΩ∫ ∞¸∏Æ¿⁄ø°∞‘ πÆ¿« «œΩ Ω√ø‰"));
+		strMsg.Format(_T("ExecuteProcForOutputOrder:Îç∞Ïù¥ÌÉÄ Î≤†Ïù¥Ïä§ Í¥ÄÎ¶¨ÏûêÏóêÍ≤å Î¨∏Ïùò ÌïòÏã≠ÏãúÏöî"));
 		strRetMsg.Format(_T("%s"), strMsg);
 		nRetCd = -1;
 		return FALSE;
@@ -702,7 +702,7 @@ BOOL CAdoDB::ExecuteProcForOutputOrder(CString strStorProc, CStringList &strTemp
 	return TRUE;
 }
 
-// ¿ÃªÛΩ√ √≥∏Æ
+// Ïù¥ÏÉÅÏãú Ï≤òÎ¶¨
 BOOL CAdoDB::ExecuteProcForManualOrder(CString strStorProc, CStringList &strTempList, int &nRetCd, CString &strRetMsg)
 {
 	_bstr_t		bstrValue;
@@ -751,7 +751,7 @@ BOOL CAdoDB::ExecuteProcForManualOrder(CString strStorProc, CStringList &strTemp
 
 		nRetCd = atoi((LPCSTR)_bstr_t(vPoRetCd));
 		strRetMsg.Format(_T("%s"), (LPCTSTR)_bstr_t(vPoMsg));
-		// Not Found √≥∏Æ
+		// Not Found Ï≤òÎ¶¨
 		//if (atoi(_bstr_t(vPoRetCd)) == -2) 
 		if (atoi((LPCSTR)_bstr_t(vPoRetCd)) < 0)
 		{
@@ -777,7 +777,7 @@ BOOL CAdoDB::ExecuteProcForManualOrder(CString strStorProc, CStringList &strTemp
 		//AfxMessageBox(strMsg);
 		strRetMsg.Format(_T("%s"), strMsg);
 
-		// err∞° E_FAIL¿œ∂ß √≥∏Æ..
+		// errÍ∞Ä E_FAILÏùºÎïå Ï≤òÎ¶¨..
 		nRetCd = -1;
 		if ( err.Error() == E_FAIL ) 	m_bConnected=FALSE;
 
@@ -786,7 +786,7 @@ BOOL CAdoDB::ExecuteProcForManualOrder(CString strStorProc, CStringList &strTemp
 	catch(...)
 	{
 		CString strMsg;
-		strMsg.Format(_T("ExecuteProcForManualOrder:µ•¿Ã≈∏ ∫£¿ÃΩ∫ ∞¸∏Æ¿⁄ø°∞‘ πÆ¿« «œΩ Ω√ø‰"));
+		strMsg.Format(_T("ExecuteProcForManualOrder:Îç∞Ïù¥ÌÉÄ Î≤†Ïù¥Ïä§ Í¥ÄÎ¶¨ÏûêÏóêÍ≤å Î¨∏Ïùò ÌïòÏã≠ÏãúÏöî"));
 		
 
 		strRetMsg.Format(_T("%s"), strMsg);

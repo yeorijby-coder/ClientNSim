@@ -40,3 +40,10 @@ ASSERT.LOG
 *.dmp
 # Tools\Deploy.ps1 가 만드는 배포 폴더
 /Deploy/
+
+# 백업 스냅샷 폴더 / 압축 백업 - 저장소에 넣지 않는다
+Ecs_2026*/
+*.zip
+*.suo
+# 실행 중 남는 TRACE 로그
+*TRACE.LOG

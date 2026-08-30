@@ -1,17 +1,17 @@
-#pragma once
+ï»¿#pragma once
 
 
-// CDialogScDelFork ´ëÈ­ »óÀÚ
+// CDialogScDelFork ëŒ€í™” ìƒì
 
 class CDialogScDelFork : public CDialog
 {
 //	DECLARE_DYNAMIC(CDialogScDelFork)
 
 public:
-	CDialogScDelFork(CWnd* pParent = nullptr);   // Ç¥ÁØ »ı¼ºÀÚÀÔ´Ï´Ù.
+	CDialogScDelFork(CWnd* pParent = nullptr);   // í‘œì¤€ ìƒì„±ìì…ë‹ˆë‹¤.
 	virtual ~CDialogScDelFork();
 
-// ´ëÈ­ »óÀÚ µ¥ÀÌÅÍÀÔ´Ï´Ù.
+// ëŒ€í™” ìƒì ë°ì´í„°ì…ë‹ˆë‹¤.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDC_DIALOG_SC_DEL_FORK };
 
@@ -21,7 +21,7 @@ public:
 	int		m_nDelFork;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Áö¿øÀÔ´Ï´Ù.
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV ì§€ì›ì…ë‹ˆë‹¤.
 
 	DECLARE_MESSAGE_MAP()
 };

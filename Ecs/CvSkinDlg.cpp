@@ -1394,7 +1394,20 @@ void CCvSkinDlg::UpdateTrackData(int pBtnJob)
 			pCopyJob->COPY_YN = true;
 			GetDlgItem(IDC_BTN_CV_PASTE)->EnableWindow(TRUE);
 
+			CString strLOG_LUGG_NO = strJobNo;
+			if (strLOG_LUGG_NO == _T("")) { strLOG_LUGG_NO = _T("0"); }
+			CString strLOG_BARCODE = strBarcode;
+			CString strLOG_MSG = _T("");
+			strLOG_MSG.Format(_T("CV 복사 -> CV 번호 : %s , 작업번호 : %s->%s, 작업구분 : %s->%s , 도착지 : %s->%s"), strTrackNo, strLOG_LUGG_NO_RD, strJobNo, strLOG_JOB_TYP_RD, strJobTyp, strLOG_DEST_POS_RD, strDestPos);
+			if (!m_pDoc->GetQueryInsertClientLog(_T("CCvSkinDlg"), strLOG_LUGG_NO_RD, strLOG_BARCODE, strLOG_MSG))
+			{
+				m_pDoc->RollbackTrans_DLG();
+				InvalidateTrackData(m_nLang);
+				return;
+			}
+
 		}
+		m_pDoc->CommitTrans_DLG();
 		AfxMessageBox(m_pDoc->GetMsgLangDef(_T("CV 데이터 복사 성공")));
 		break;
 
@@ -1433,6 +1446,19 @@ void CCvSkinDlg::UpdateTrackData(int pBtnJob)
 
 			if(isSuccess == TRUE)
 			{
+				CString strLOG_LUGG_NO = strJobNo;
+				if (strLOG_LUGG_NO == _T("")) { strLOG_LUGG_NO = _T("0"); }
+				CString strLOG_BARCODE = strBarcode;
+				CString strLOG_MSG = _T("");
+
+				strLOG_MSG.Format(_T("CV 잘라내기 -> CV 번호 : %s , 작업번호 : %s->%s, 작업구분 : %s->%s , 도착지 : %s->%s"), strTrackNo, strLOG_LUGG_NO_RD, strJobNo, strLOG_JOB_TYP_RD, strJobTyp, strLOG_DEST_POS_RD, strDestPos);
+				if (!m_pDoc->GetQueryInsertClientLog(_T("CCvSkinDlg"), strLOG_LUGG_NO_RD, strLOG_BARCODE, strLOG_MSG))
+				{
+					m_pDoc->RollbackTrans_DLG();
+					InvalidateTrackData(m_nLang);
+					return;
+				}
+
 				m_pDoc->CommitTrans_DLG();
 				AfxMessageBox(m_pDoc->GetMsgLangDef(_T("CV 데이터 잘라내기 성공")));
 				SetCvStatus(_T("0000"), _T("0"), _T("000"),_T(""), _T("WRITE"));
@@ -1468,6 +1494,19 @@ void CCvSkinDlg::UpdateTrackData(int pBtnJob)
 
 			if(isSuccess == TRUE)
 			{
+				CString strLOG_LUGG_NO = strJobNo;
+				if (strLOG_LUGG_NO == _T("")) { strLOG_LUGG_NO = _T("0"); }
+				CString strLOG_BARCODE = strBarcode;
+				CString strLOG_MSG = _T("");
+
+				strLOG_MSG.Format(_T("CV 에러리셋 -> CV 번호 : %s , 작업번호 : %s->%s, 작업구분 : %s->%s , 도착지 : %s->%s"), strTrackNo, strLOG_LUGG_NO_RD, strJobNo, strLOG_JOB_TYP_RD, strJobTyp, strLOG_DEST_POS_RD, strDestPos);
+				if (!m_pDoc->GetQueryInsertClientLog(_T("CCvSkinDlg"), strLOG_LUGG_NO_RD, strLOG_BARCODE, strLOG_MSG))
+				{
+					m_pDoc->RollbackTrans_DLG();
+					InvalidateTrackData(m_nLang);
+					return;
+				}
+
 				m_pDoc->CommitTrans_DLG();
 				AfxMessageBox(m_pDoc->GetMsgLangDef(_T("CV 에러 리셋 성공")));
 				return;
@@ -1503,11 +1542,11 @@ void CCvSkinDlg::UpdateTrackData(int pBtnJob)
 
 			if(isSuccess == TRUE)
 			{
-
 				CString strLOG_LUGG_NO = strJobNo;
 				if (strLOG_LUGG_NO == _T("")) { strLOG_LUGG_NO = _T("0");}
 				CString strLOG_BARCODE = strBarcode;
 				CString strLOG_MSG = _T("");
+
 				strLOG_MSG.Format(_T("CV 붙여넣기 -> CV 번호 : %s , 작업번호 : %s->%s, 작업구분 : %s->%s , 도착지 : %s->%s"), strTrackNo, strLOG_LUGG_NO_RD, pCopyJob->LUGG_NO, strLOG_JOB_TYP_RD, pCopyJob->JOB_TYP, strLOG_DEST_POS_RD, pCopyJob->DEST_POS);
 				if (!m_pDoc->GetQueryInsertClientLog(_T("CCvSkinDlg"), strLOG_LUGG_NO_RD, strLOG_BARCODE, strLOG_MSG))
 				{
