@@ -751,6 +751,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 		#pragma endregion
+		break;
 	case ID_STATUS_CV_2:
 #pragma region ID_STATUS_CV_2
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("102"));
@@ -768,6 +769,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
+		break;
 	case ID_STATUS_CV_3:
 #pragma region ID_STATUS_CV_3
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("103"));
@@ -785,6 +787,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
+		break;
 	case ID_STATUS_CV_4:
 #pragma region ID_STATUS_CV_4
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("104"));
@@ -802,6 +805,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
+		break;
 	case ID_STATUS_CV_5:
 #pragma region ID_STATUS_CV_5
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("105"));
@@ -819,6 +823,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
+		break;
 	case ID_STATUS_CV_6:
 #pragma region ID_STATUS_CV_6
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("106"));
@@ -836,6 +841,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
+		break;
 	case ID_STATUS_CV_7:
 #pragma region ID_STATUS_CV_7
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("107"));
@@ -853,6 +859,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
+		break;
 	case ID_STATUS_CV_8:
 #pragma region ID_STATUS_CV_8
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("108"));
