@@ -30,6 +30,7 @@ CTrackInfo::CTrackInfo(CEquipment* pEquipment)
 	m_nCvPlcNum = 0;
 	m_nNumber = 0;
 	m_nDestination = 0;
+	m_nDestCode = 0;		// EcsDefine.xml 에 DestCode 가 없는 트랙은 0 (초기화 누락이었다)
 	m_bReportTrack	= FALSE;
 	m_pTrackCtrl = NULL;
 	m_pTrackCtrl2 = NULL;

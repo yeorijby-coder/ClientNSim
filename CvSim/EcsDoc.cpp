@@ -403,7 +403,18 @@ BOOL CEcsDoc::IsDestination(CString strArgName, int nValue, int nTrNo, int nMeth
 		CTrackInfo* pTrack = GetTrackInfo(nTrNo);
 		int nTrDestCode = (pTrack != NULL) ? pTrack->m_nDestCode : 0;
 		// 목적지 테이블을 바꿀 필요가 있음!
-		BOOL bIsSelfDest = (nValue == nTrDestCode);		// (nValue == nTrNo);
+		//
+		// 자기 목적지인지 판단하는 기준이 두 가지다.
+		//   일반 트랙   : 트랙번호가 곧 목적지다. (레거시 기준)
+		//   스테이션    : EcsDefine.xml 의 DestCode 가 목적지다.
+		//                 예) 트랙 204 는 <ArvStation DestCode="151"/> 이라
+		//                     목적지 151 로 화물이 오면 그 자리가 종착지다.
+		//
+		// DestCode 만 보도록 바뀌어 있어서, DestCode 가 없는 일반 트랙이
+		// 0 과 비교되어 자기 목적지를 영영 못 알아봤다. 둘 중 하나만 맞아도
+		// 자기 목적지로 본다. (EcsView 의 화물 이동 판정과 같은 규칙)
+		BOOL bIsSelfDest = ((nTrNo != 0)        && (nValue == nTrNo))
+		                || ((nTrDestCode != 0)  && (nValue == nTrDestCode));
 		BOOL bIsScDest1 = (nValue > m_nScDestFrom && nValue < m_nScDestTo);
 		BOOL bIsScDest2 = (m_strDestList.Find(CConvert::ToString(nValue)) != -1);
 		BOOL bIsScDest = bIsScDest1 || bIsScDest2;
