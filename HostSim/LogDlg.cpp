@@ -337,7 +337,7 @@ void CLogDlg::OnLogSaveas()
 
 	for (int i = 0; i < pListCtrl->GetItemCount(); i++)
 	{
-		sprintf_s(Buff, "%s %-4s %-8s %-13s %s\r\n", 
+		_snprintf_s(Buff, _TRUNCATE, "%s %-4s %-8s %-13s %s\r\n", 
 			(LPCSTR)CT2A(pListCtrl->GetItemText(i, 1)), 
 			(LPCSTR)CT2A(pListCtrl->GetItemText(i, 2)), 
 			(LPCSTR)CT2A(pListCtrl->GetItemText(i, 3)), 

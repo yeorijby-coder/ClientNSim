@@ -32,7 +32,7 @@ CStartupTip::CStartupTip()
 
 	m_nLines = 0;
 	for(int i=0; i<10; i++)
-		memset(&Tips[i].Text[0], 0, 100);
+		memset(&Tips[i].Text[0], 0, sizeof(Tips[i].Text));
 
 	m_pfontOld = NULL;
 
@@ -241,7 +241,7 @@ void CStartupTip::ResetTipText()
 {
 	m_listHead.RemoveAll();
 	for(int i=0; i<10; i++)
-		memset(&Tips[i].Text[0], 0, 100);
+		memset(&Tips[i].Text[0], 0, sizeof(Tips[i].Text));
 
 	Invalidate(true);
 }
@@ -281,12 +281,12 @@ void CStartupTip::SetTipText(LPCTSTR lpText)
 	CString str = lpText;
 
 	TCHAR szWord[100];
-	memset(szWord,0,100);
+	memset(szWord, 0, sizeof(szWord));
 
 	int i=0;
 	m_nLines=0;
 	for(i=0; i<10; i++)
-		memset(&Tips[i].Text[0], 0, 100);
+		memset(&Tips[i].Text[0], 0, sizeof(Tips[i].Text));
 
 	i=GetWord((LPCTSTR)str, (LPTSTR)&szWord[0]);
 	int u=0;  // letter counter in string
@@ -297,8 +297,8 @@ void CStartupTip::SetTipText(LPCTSTR lpText)
 		u = u+k+1;
 		if (u < m_nTipLen)
 		{
-			wcscat_s(Tips[p].Text, &szWord[0]);
-			wcscat_s(Tips[p].Text, _T(" "));
+			wcsncat_s(Tips[p].Text, &szWord[0], _TRUNCATE);
+			wcsncat_s(Tips[p].Text, _T(" "), _TRUNCATE);
 		}
 		else
 		{
@@ -306,14 +306,14 @@ void CStartupTip::SetTipText(LPCTSTR lpText)
 			{
 				p++;
 				u=k+1;
-				wcscat_s(Tips[p].Text, &szWord[0]);
-				wcscat_s(Tips[p].Text, _T(" "));
+				wcsncat_s(Tips[p].Text, &szWord[0], _TRUNCATE);
+				wcsncat_s(Tips[p].Text, _T(" "), _TRUNCATE);
 			};
 		};
 
 		int j = str.GetLength();
 		str=str.Right(j-i);
-		memset(szWord, 0, 100);
+		memset(szWord, 0, sizeof(szWord));
 		i=GetWord((LPCTSTR)str, (LPTSTR)&szWord[0]);
 	};
 

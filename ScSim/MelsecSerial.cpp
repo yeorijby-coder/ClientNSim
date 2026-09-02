@@ -538,7 +538,7 @@ CString CMelsecSerial::GetHexString(CByteArray& arrBuffer)
 BOOL CMelsecSerial::Write(const BYTE* pTxBuff, int BaseAddr, int nWordCnt, int Type)
 {
     BYTE TxBuff[256], SumA, SumB;
-    char szStartAddr[6], szRange[6];
+    char szStartAddr[16], szRange[16];
     m_strErrMsg = "";
     memset(TxBuff, 0x0, sizeof(TxBuff));
 

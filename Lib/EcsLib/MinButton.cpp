@@ -228,7 +228,7 @@ void CMinButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 				for(i=0;i<4;i++) len[i]=0;
 
 				//strcpy_s(sbuf, strTitle);		// JBY
-				strcpy_s(sbuf, CT2A(strTitle));
+				strncpy_s(sbuf, CT2A(strTitle), _TRUNCATE);
 				//_tcscpy( sbuf , strTitle );
 
 				p = strtok_s(sbuf, "\n", &ptr);
@@ -318,7 +318,7 @@ CMinButton& CMinButton::SetFontName(const CString& strFont, BYTE byCharSet /* De
 {	
 	m_logFont.lfCharSet = byCharSet;
 	//strcpy_s(m_logFont.lfFaceName, strFont);		// JBY
-	_tcscpy_s(m_logFont.lfFaceName, strFont);
+	_tcsncpy_s(m_logFont.lfFaceName, strFont, _TRUNCATE);
 	
 //	ReconstructFont();
 	m_newFont.DeleteObject();
