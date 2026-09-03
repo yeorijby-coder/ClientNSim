@@ -231,6 +231,10 @@ public:
 	// Auto(구역 비트) 워드가 바뀐 내역을 CvSim_Auto.log 에 남긴다 (EcsDoc.cpp 의 본체 주석 참고)
 	void TraceAutoWrite(int nPlcIdx, int nTrackNo, int nAddr, int nInOrder, int nOption,
 						WORD wBefore, WORD wAfter);
+	// 공유 워드에 옵션 2 가 들어와 막았을 때 남긴다
+	void TraceBlockedBitOff(int nPlcIdx, int nTrackNo, int nAddr, int nInOrder,
+							const CString& strName);
+	void WriteAutoLog(const CString& strLine);
 	int GetBitInOrderByWord(int nNumber, int nDevNum, CString strArgName);
 //	int	UpdateRegDataByName(CString strName, BOOL bSaveObject = TRUE) { return UpdateRegDataByName(m_pTrackProperties, strName, bSaveObject); }
 //	int	GetRegDataByName(CString strName) { return UpdateRegDataByName(m_pTrackProperties, strName, TRUE); }

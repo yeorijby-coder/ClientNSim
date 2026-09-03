@@ -669,19 +669,11 @@ int CEcsDoc::GetBitInOrderByWord(int nNumber, int nDevNum, CString strArgName)
  *   옵션 : 1 그 비트 ON | 2 그 비트만 남기고 나머지 OFF | 3 반전 | 4 그 비트만 OFF
  *   범인은 2 번이다. (1/4 는 남의 구역을 건드리지 않는다)
  */
-void CEcsDoc::TraceAutoWrite(int nPlcIdx, int nTrackNo, int nAddr, int nInOrder, int nOption,
-							 WORD wBefore, WORD wAfter)
+void CEcsDoc::WriteAutoLog(const CString& strLine)
 {
 	try
 	{
 		CTime tmNow = CTime::GetCurrentTime();
-
-		CString strLine;
-		strLine.Format(_T("%s  PLC%02d  TRACK %d  D%d  bit%d  option=%d  %04X -> %04X%s"),
-					   (LPCTSTR)tmNow.Format(_T("%Y-%m-%d %H:%M:%S")),
-					   nPlcIdx + 1, nTrackNo, nAddr, nInOrder - 1, nOption,
-					   (int)wBefore, (int)wAfter,
-					   ((wBefore & ~wAfter) != 0) ? _T("   <== 남의 구역 비트가 날아갔다") : _T(""));
 
 		CStdioFile file;
 		if (file.Open(_T(".\\CvSim_Auto.log"), CFile::modeCreate | CFile::modeNoTruncate |
@@ -689,13 +681,40 @@ void CEcsDoc::TraceAutoWrite(int nPlcIdx, int nTrackNo, int nAddr, int nInOrder,
 			return;
 
 		file.SeekToEnd();
-		file.WriteString(strLine + _T("\n"));
+		file.WriteString(tmNow.Format(_T("%Y-%m-%d %H:%M:%S  ")) + strLine + _T("\n"));
 		file.Close();
 	}
 	catch (CException* e)
 	{
 		e->Delete();
 	}
+}
+
+void CEcsDoc::TraceAutoWrite(int nPlcIdx, int nTrackNo, int nAddr, int nInOrder, int nOption,
+							 WORD wBefore, WORD wAfter)
+{
+	CString strLine;
+	strLine.Format(_T("PLC%02d  TRACK %d  D%d  bit%d  option=%d  %04X -> %04X%s"),
+				   nPlcIdx + 1, nTrackNo, nAddr, nInOrder - 1, nOption,
+				   (int)wBefore, (int)wAfter,
+				   ((wBefore & ~wAfter) != 0) ? _T("   <== 남의 구역 비트가 날아갔다") : _T(""));
+	WriteAutoLog(strLine);
+}
+
+/*
+ * TraceBlockedBitOff :: 공유 워드에 옵션 2(그 비트만 남기고 나머지 OFF)가 들어와 막았을 때
+ *
+ *   XML 데이터가 옛것이면 계속 들어온다. 막았다는 사실을 남겨 두어야
+ *   "동작은 하는데 XML 이 옛것" 임을 알 수 있다.
+ */
+void CEcsDoc::TraceBlockedBitOff(int nPlcIdx, int nTrackNo, int nAddr, int nInOrder,
+								 const CString& strName)
+{
+	CString strLine;
+	strLine.Format(_T("PLC%02d  TRACK %d  D%d  bit%d  option=2 [%s] 막음")
+				   _T(" - 공유 워드라 남의 비트를 끌 뻔했다. Logic.xml 이 옛것인지 확인할 것"),
+				   nPlcIdx + 1, nTrackNo, nAddr, nInOrder - 1, (LPCTSTR)strName);
+	WriteAutoLog(strLine);
 }
 
 int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, const CString& strArgName, WORD wData, int nOption)
@@ -775,6 +794,20 @@ int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, const CString& strArgName, 
 				return -7;		// Bit 일때 Option값 이상 
 
 			//WORD wPrevData = wData;
+
+			// 옵션 2 는 "그 비트만 남기고 같은 워드의 나머지를 다 끈다" 는 뜻이다.
+			// 트랙 하나가 통째로 쓰는 워드(예전 StatusData)에서만 말이 된다.
+			// SeparatelyETC 는 한 워드에 여러 트랙의 비트가 같이 들어 있고,
+			// Auto 는 아예 구역(여섯 트랙) 단위라 남의 자리를 끄게 된다.
+			// 실제로 옛 Logic.xml 의 <action ANum="52" AKeyWord="Auto"/> 한 줄 때문에
+			// 지게차가 화물을 가져갈 때마다 그 PLC 의 다른 구역이 전부 수동으로
+			// 떨어졌다 (D557 007F -> 0001). 실행파일만 새로 올리고 XML 은 옛것이
+			// 남아 있어도 남의 비트는 건드리지 않도록 여기서 막는다.
+			if (nOption == 2 && pTrackProperty->m_bSeparatelyETC == TRUE)
+			{
+				TraceBlockedBitOff(nNumber, nTrackNo, nRealDevNum, nInOrder, pTrackProperty->m_strName);
+				return nRealDevNum;
+			}
 			WORD wTemp;
 			WORD wPrevData = m_arrRegData[nNumber].GetWord(nRealDevNum);
 			WORD wOrgData = wPrevData;	// 추적용 원본 (아래 switch 가 wPrevData 를 바꾼다)
