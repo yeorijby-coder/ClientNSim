@@ -659,6 +659,45 @@ int CEcsDoc::GetBitInOrderByWord(int nNumber, int nDevNum, CString strArgName)
 //									  2 이면 해당 비트만 빼고 OFF,	wData가 기존 값이어야함!
 //									  3 이면 반전					wData가 기존 값이어야함!
 //									  4 이면 특정 비트만 강제 OFF,	wData가 기존 값이어야함!
+/*
+ * TraceAutoWrite :: Auto(구역 비트) 워드가 바뀐 내역을 CvSim_Auto.log 에 남긴다
+ *
+ *   화물이 빠질 때마다 D557 이 한 비트만 남고 나머지 구역이 수동으로 떨어지는데,
+ *   소스를 훑어서는 그 쓰기를 하는 자리를 못 찾았다. 값이 바뀔 때만 찍으므로
+ *   평소 부담이 없고, 한 줄만 봐도 어느 트랙이 어떤 옵션으로 썼는지 나온다.
+ *
+ *   옵션 : 1 그 비트 ON | 2 그 비트만 남기고 나머지 OFF | 3 반전 | 4 그 비트만 OFF
+ *   범인은 2 번이다. (1/4 는 남의 구역을 건드리지 않는다)
+ */
+void CEcsDoc::TraceAutoWrite(int nPlcIdx, int nTrackNo, int nAddr, int nInOrder, int nOption,
+							 WORD wBefore, WORD wAfter)
+{
+	try
+	{
+		CTime tmNow = CTime::GetCurrentTime();
+
+		CString strLine;
+		strLine.Format(_T("%s  PLC%02d  TRACK %d  D%d  bit%d  option=%d  %04X -> %04X%s"),
+					   (LPCTSTR)tmNow.Format(_T("%Y-%m-%d %H:%M:%S")),
+					   nPlcIdx + 1, nTrackNo, nAddr, nInOrder - 1, nOption,
+					   (int)wBefore, (int)wAfter,
+					   ((wBefore & ~wAfter) != 0) ? _T("   <== 남의 구역 비트가 날아갔다") : _T(""));
+
+		CStdioFile file;
+		if (file.Open(_T(".\\CvSim_Auto.log"), CFile::modeCreate | CFile::modeNoTruncate |
+											  CFile::modeWrite | CFile::typeText) == FALSE)
+			return;
+
+		file.SeekToEnd();
+		file.WriteString(strLine + _T("\n"));
+		file.Close();
+	}
+	catch (CException* e)
+	{
+		e->Delete();
+	}
+}
+
 int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, const CString& strArgName, WORD wData, int nOption)
 {
 	// GetAddrByName 과 같은 이유로 지역 CString 을 만들지 않는다.
@@ -738,6 +777,7 @@ int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, const CString& strArgName, 
 			//WORD wPrevData = wData;
 			WORD wTemp;
 			WORD wPrevData = m_arrRegData[nNumber].GetWord(nRealDevNum);
+			WORD wOrgData = wPrevData;	// 추적용 원본 (아래 switch 가 wPrevData 를 바꾼다)
 
 			switch (nInOrder)
 			{
@@ -760,6 +800,13 @@ int CEcsDoc::SetAddrByName(int nNumber, int nDevNum, const CString& strArgName, 
 			default:	return -5;	// InOrder 값 이상(bit 일때 17이상 )
 			}
 			m_arrRegData[nNumber].SetWord(nRealDevNum, wTemp);
+
+			// Auto 는 트랙 하나가 아니라 구역(여러 트랙) 비트라, 한 워드에 그 PLC 의
+			// 모든 구역이 같이 들어 있다. 한 트랙 때문에 남의 구역 비트가 날아가면
+			// 그 구역 트랙들이 통째로 수동으로 떨어진다. 그런 일이 생기면 누가
+			// 그랬는지 파일에 남긴다. (평소에는 거의 안 찍힌다 - 값이 바뀔 때만)
+			if (pTrackProperty->m_strName == _T("Auto") && wOrgData != wTemp)
+				TraceAutoWrite(nNumber, nTrackNo, nRealDevNum, nInOrder, nOption, wOrgData, wTemp);
 			#pragma endregion
 		}
 		return nRealDevNum;

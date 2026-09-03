@@ -228,6 +228,9 @@ public:
 	// 이 두 함수는 트랙마다 초당 수십 번씩 불려서 그 비용이 그대로 CPU 로 나타났다.
 	int GetAddrByName(int nNumber, int nDevNum, const CString& strArgName, BOOL bParent = FALSE);
 	int SetAddrByName(int nNumber, int nDevNum, const CString& strArgName, WORD wData, int nOption = 0);
+	// Auto(구역 비트) 워드가 바뀐 내역을 CvSim_Auto.log 에 남긴다 (EcsDoc.cpp 의 본체 주석 참고)
+	void TraceAutoWrite(int nPlcIdx, int nTrackNo, int nAddr, int nInOrder, int nOption,
+						WORD wBefore, WORD wAfter);
 	int GetBitInOrderByWord(int nNumber, int nDevNum, CString strArgName);
 //	int	UpdateRegDataByName(CString strName, BOOL bSaveObject = TRUE) { return UpdateRegDataByName(m_pTrackProperties, strName, bSaveObject); }
 //	int	GetRegDataByName(CString strName) { return UpdateRegDataByName(m_pTrackProperties, strName, TRUE); }
