@@ -1381,8 +1381,13 @@ void CEcsView::OnTimer(UINT nIDEvent)
 				nDevNum = (pTrack->m_nNumber - pCv->m_nStTrNum + 1) * pDoc->m_nWordCnt;
 				
 				pTrack->SetLuggNum(pDoc->m_arrRegData[nPlcNum - 1][nDevNum]);
-				pTrack->SetDestPos(pDoc->m_arrRegData[nPlcNum - 1][nDevNum + 1] & 0x000F);
-				pTrack->SetJobType((pDoc->m_arrRegData[nPlcNum - 1][nDevNum + 1] >> 12) & 0x000F);
+				// D5n+1 은 DeviceMap 에 ByteL=DestPos / ByteH=JobType 으로 잡혀 있다.
+				//   CV 타스크도 그렇게 쓴다. (cDeviceMapRuntime.SetWriteValue - 'B' 는 8비트 단위)
+				//   여기서만 니블(4비트)로 읽고 있었다. 목적지 103 은 0x0067 인데 하위 니블만
+				//   떼어 7 이 되고, 작업구분은 12~15비트를 보니 늘 0 이었다. 그래서 출고대에
+				//   지난 작업구분이 남아 보였다. 바이트 단위로 맞춘다.
+				pTrack->SetDestPos(pDoc->m_arrRegData[nPlcNum - 1][nDevNum + 1] & 0x00FF);
+				pTrack->SetJobType((pDoc->m_arrRegData[nPlcNum - 1][nDevNum + 1] >> 8) & 0x00FF);
 				WORD wTemp = 0x0000;
 				BOOL bTemp = FALSE;
 				BOOL bErrEM = FALSE;
