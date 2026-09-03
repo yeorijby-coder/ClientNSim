@@ -654,7 +654,16 @@ void CEcsView::InvokeRetStation(CCv* pCv, CTrackInfo* pTrack, CStationInfo* pSta
 		// TRACK DATA 삭제
 		//pDoc->m_arrRegData[m_nNumber - 1].SetWord(nDevNum + 7, nStatus & enBit11);
 		//SET_REG_INFO(_T("StatusData"), (nStatus & enBit11), 0);		// 특정비트만 남기고 나머지는 다 OFF
-		SET_REG_INFO(_T("Auto"), nStatus, 2);							// 특정비트만 남기고 나머지는 다 OFF
+		// Auto 는 여기서 건드리지 않는다.
+		//   원래는 StatusData(트랙 하나짜리 워드)에서 자동 비트만 남기고 나머지
+		//   상태 비트를 지우던 줄이었다. SeparatelyETC 로 옮기면서 키워드만
+		//   Auto 로 바꿔 놓았는데, Auto 는 트랙 하나가 아니라 구역(여섯 트랙)
+		//   비트라 한 워드에 PLC 의 모든 구역이 같이 들어 있다.
+		//   옵션 2 는 '그 비트만 남기고 나머지 다 OFF' 다. 그래서 지게차가 화물을
+		//   가져가 이 자리가 비는 순간 D557 이 자기 구역 비트 하나만 남고
+		//   (출고대#1 이면 0x0001) 나머지 구역이 전부 수동으로 떨어졌다.
+		//   매번 '전체 자동' 을 다시 눌러야 했던 이유다.
+		//   Logic.xml 에서 같은 이유로 Auto OFF 액션을 뺀 것과 같은 건이다.
 
 		//pDoc->m_arrRegData[m_nNumber - 1].SetWord(nDevNum + 0, 0x0000);
 		//pDoc->m_arrRegData[m_nNumber - 1].SetWord(nDevNum + 1, 0x0000);
@@ -819,7 +828,16 @@ void CEcsView::InvokeStoStation(CCv* pCv, CTrackInfo* pTrack, CStationInfo* pSta
 
 			//pDoc->m_arrRegData[m_nNumber - 1].SetWord(nDevNum + 7, nStatus & enBit11);
 			//SET_REG_INFO(_T("StatusData"), (nStatus& enBit11), 0);		// 특정비트만 남기고 나머지는 다 OFF
-			SET_REG_INFO(_T("Auto"), nStatus, 2);							// 특정비트만 남기고 나머지는 다 OFF
+			// Auto 는 여기서 건드리지 않는다.
+			//   원래는 StatusData(트랙 하나짜리 워드)에서 자동 비트만 남기고 나머지
+			//   상태 비트를 지우던 줄이었다. SeparatelyETC 로 옮기면서 키워드만
+			//   Auto 로 바꿔 놓았는데, Auto 는 트랙 하나가 아니라 구역(여섯 트랙)
+			//   비트라 한 워드에 PLC 의 모든 구역이 같이 들어 있다.
+			//   옵션 2 는 '그 비트만 남기고 나머지 다 OFF' 다. 그래서 지게차가 화물을
+			//   가져가 이 자리가 비는 순간 D557 이 자기 구역 비트 하나만 남고
+			//   (출고대#1 이면 0x0001) 나머지 구역이 전부 수동으로 떨어졌다.
+			//   매번 '전체 자동' 을 다시 눌러야 했던 이유다.
+			//   Logic.xml 에서 같은 이유로 Auto OFF 액션을 뺀 것과 같은 건이다.
 
 			//pDoc->m_arrRegData[m_nNumber - 1].SetWord(nDevNum + 0, 0x0000);
 			//pDoc->m_arrRegData[m_nNumber - 1].SetWord(nDevNum + 1, 0x0000);
