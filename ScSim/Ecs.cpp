@@ -49,6 +49,44 @@ CEcsApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CEcsApp initialization
 
+
+/*
+ * GetBuildStamp :: 돌고 있는 실행파일의 최종 수정 시각
+ *
+ *   제목표시줄에 붙여, 어느 빌드가 도는지 창만 보고 알 수 있게 한다.
+ *   원격지에 옛 실행파일이 남아 고친 것이 반영되지 않았는데도 코드를
+ *   다시 뒤진 적이 있다. (실행 중인 exe 는 덮어쓰기가 막히는데 복사
+ *   도구가 조용히 넘어가는 경우가 많다)
+ *
+ *   __DATE__ / __TIME__ 은 그 소스가 다시 컴파일될 때만 갱신되어
+ *   다른 파일만 고친 빌드에서는 옛 시각이 남는다. 그래서 파일 시각을 쓴다.
+ *   탐색기에서 보이는 값과 같으므로 원격지 파일과 눈으로 대조하기도 쉽다.
+ */
+static CString GetBuildStamp()
+{
+	TCHAR szPath[_MAX_PATH] = { 0 };
+	if (::GetModuleFileName(NULL, szPath, _MAX_PATH) == 0)
+		return _T("");
+
+	WIN32_FILE_ATTRIBUTE_DATA fad;
+	::ZeroMemory(&fad, sizeof(fad));
+	if (!::GetFileAttributesEx(szPath, GetFileExInfoStandard, &fad))
+		return _T("");
+
+	SYSTEMTIME stUtc, stLocal;
+	::ZeroMemory(&stUtc, sizeof(stUtc));
+	::ZeroMemory(&stLocal, sizeof(stLocal));
+	if (!::FileTimeToSystemTime(&fad.ftLastWriteTime, &stUtc))
+		return _T("");
+	if (!::SystemTimeToTzSpecificLocalTime(NULL, &stUtc, &stLocal))
+		stLocal = stUtc;
+
+	CString strStamp;
+	strStamp.Format(_T("   [빌드 %04d-%02d-%02d %02d:%02d]"),
+					stLocal.wYear, stLocal.wMonth, stLocal.wDay,
+					stLocal.wHour, stLocal.wMinute);
+	return strStamp;
+}
 BOOL CEcsApp::InitInstance()
 {
 //	HANDLE hMutex = ::CreateMutex(NULL, TRUE, _T("SC_SIMULATOR"));
@@ -126,7 +164,7 @@ BOOL CEcsApp::InitInstance()
 	::GetPrivateProfileString(_T("COMMON"), _T("Title"), _T("Stacker Crain Simulation"), szTemp, _MAX_PATH, ECS_INI_FILE);
 //	m_strEcsPath.Format(_T("%s"),		szTemp);
 
-	m_pMainWnd->SetWindowText(szTemp);
+	m_pMainWnd->SetWindowText(CString(szTemp) + GetBuildStamp());
 	m_pMainWnd->ShowWindow(SW_SHOWMAXIMIZED);
 	m_pMainWnd->UpdateWindow();
 
