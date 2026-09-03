@@ -1449,7 +1449,11 @@ void CEcsView::CheckRequest(int nPlcNum)
 			m_bJob2[nPlcNum] = FALSE;
 			m_bFirstComplete[nPlcNum] = FALSE;
 			m_bOldFirstComplete[nPlcNum] = FALSE;
-			pDoc->m_arrRegData[nPlcNum][109] = 0;
+			// 포크 데이터를 지운다고 크레인이 멈추는 것은 아니다.
+			//   여기서 D109 (운전상태) 를 0 으로 내려 버려서, 작업이 끝나고 스케줄러가
+			//   포크를 비우는 지시(FORK 삭제)를 보낼 때마다 화면의 ACTIVE 가 STOP 으로
+			//   떨어졌다. 멈추는 것은 REMOTE CONTROL 의 '정지'(0x0004) 가 할 일이다.
+			//   pDoc->m_arrRegData[nPlcNum][109] = 0;
 			break;	// FORK #1 삭제
 		case 0x0020:
 			pDoc->DeleteData(nPlcNum, 2);
@@ -1462,7 +1466,11 @@ void CEcsView::CheckRequest(int nPlcNum)
 			m_bJob2[nPlcNum] = FALSE;
 			m_bFirstComplete[nPlcNum] = FALSE;
 			m_bOldFirstComplete[nPlcNum] = FALSE;
-			pDoc->m_arrRegData[nPlcNum][109] = 0;
+			// 포크 데이터를 지운다고 크레인이 멈추는 것은 아니다.
+			//   여기서 D109 (운전상태) 를 0 으로 내려 버려서, 작업이 끝나고 스케줄러가
+			//   포크를 비우는 지시(FORK 삭제)를 보낼 때마다 화면의 ACTIVE 가 STOP 으로
+			//   떨어졌다. 멈추는 것은 REMOTE CONTROL 의 '정지'(0x0004) 가 할 일이다.
+			//   pDoc->m_arrRegData[nPlcNum][109] = 0;
 			break;	// FORK #2 삭제
 		case 0x0040:																						
 			pDoc->DeleteData(nPlcNum, 3);	
@@ -1476,7 +1484,11 @@ void CEcsView::CheckRequest(int nPlcNum)
 			m_bFirstComplete[nPlcNum] = FALSE;
 			m_bOldFirstComplete[nPlcNum] = FALSE;
 
-			pDoc->m_arrRegData[nPlcNum][109] = 0;		
+			// 포크 데이터를 지운다고 크레인이 멈추는 것은 아니다.
+			//   여기서 D109 (운전상태) 를 0 으로 내려 버려서, 작업이 끝나고 스케줄러가
+			//   포크를 비우는 지시(FORK 삭제)를 보낼 때마다 화면의 ACTIVE 가 STOP 으로
+			//   떨어졌다. 멈추는 것은 REMOTE CONTROL 의 '정지'(0x0004) 가 할 일이다.
+			//   pDoc->m_arrRegData[nPlcNum][109] = 0;
 			break;	// FORK #1,2 삭제
 		}
 
