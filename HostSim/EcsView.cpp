@@ -191,8 +191,18 @@ void CEcsView::OnInitialUpdate()
 		m_lstHostSv.GetWindowRect(&rcList);
 		ScreenToClient(&rcList);
 
-		CRect rcChk(rcList.left, rcList.top - 18, rcList.left + 200, rcList.top - 2);
-		m_btnShowStatusMsg.Create(_T("상태전문(S) 표시"),
+		/*
+		 * @.리스트 위에 그냥 얹으면 테두리에 붙어 눈에 안 띈다.
+		 *   리스트를 한 줄 높이만큼 내리고, 비워진 자리에 체크박스를 앉힌다.
+		 */
+		const int nChkH = 22;
+
+		CRect rcChk(rcList.left, rcList.top, rcList.right, rcList.top + nChkH);
+
+		m_lstHostSv.MoveWindow(rcList.left, rcList.top + nChkH + 2,
+								   rcList.Width(), rcList.Height() - nChkH - 2);
+
+		m_btnShowStatusMsg.Create(_T(" 상태전문(S) 표시"),
 									  WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX,
 									  rcChk, this, IDC_CHK_SHOW_STATUS_MSG);
 		m_btnShowStatusMsg.SetFont(GetFont());
