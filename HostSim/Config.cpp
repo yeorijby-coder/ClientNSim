@@ -509,14 +509,36 @@ BOOL CConfig::LoadLogicXml()
 	}
 
 	m_nLogicGroupCnt = (int)m_pDoc->m_pLogicGorupInfos.GetSize();
+	// @.파일은 있는데 쓸 그룹이 하나도 없다. 남의 Logic 파일을 잘못 짚었을 때가 그렇다.
+	//   (예전 이름이 Logic.xml 이라 CvSim 것과 겹쳤다. CvSim 것은 뿌리가 <LogicDatas> 라
+	//    여기 질의 /Logic/Group 이 하나도 안 걸리고, 조용히 ini 정의로 내려가 버렸다)
+	//   조용히 넘어가면 엉뚱한 설정으로 도는 줄도 모르므로 여기서만 알린다.
+	if (m_nLogicGroupCnt <= 0)
+	{
+		CString strMsg;
+		strMsg.Format(_T("%s 를 읽었지만 쓸 로직그룹이 하나도 없습니다.\r\n")
+						  _T("다른 프로그램의 로직 파일을 짚은 것은 아닌지 확인하십시오.\r\n\r\n")
+						  _T("이대로면 HostSim.ini 의 옛 [LOGIC_GROUPnn] 정의로 돌아갑니다."), strFile);
+		AfxMessageBox(strMsg, MB_OK | MB_ICONWARNING);
+	}
+
 	return (m_nLogicGroupCnt > 0);
 }
 
 void CConfig::LoadConfig6()
 {
-	// @.Logic.xml 이 있으면 그것을 쓴다. 없을 때만 예전 ini 정의로 돌아간다.
+	// @.HostSimLogic.xml 이 있으면 그것을 쓴다. 없을 때만 예전 ini 정의로 돌아간다.
+	//   ini 정의는 손대는 사람이 없어 현장과 어긋나 있기 쉽다. 여기로 내려왔다는 것은
+	//   대개 로직 파일을 못 찾았다는 뜻이니, 어느 파일을 찾았는지 남겨 둔다.
 	if (LoadLogicXml())
 		return;
+
+	{
+		CString strMsg;
+			CString strLogicFile = ECS_LOGIC_FILE;   // @.매크로가 괄호 없는 식이라 바로 캐스팅하면 안 된다
+		strMsg.Format(_T("%s 를 쓰지 못해 HostSim.ini 의 옛 [LOGIC_GROUPnn] 정의로 돌아갑니다."), (LPCTSTR)strLogicFile);
+		TRACE(_T("%s\r\n"), (LPCTSTR)strMsg);
+	}
 
 	TCHAR szTemp[_MAX_PATH] = { 0 };
 	m_nJobCnt = ::GetPrivateProfileInt(_T("LOGIC_CONTROL"), _T("JobCount"), 1, ECS_INI_FILE);

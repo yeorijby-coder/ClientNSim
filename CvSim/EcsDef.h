@@ -25,7 +25,7 @@
 
 #define DEVICE_MAP_FILE			            _T(".\\DeviceMap.xml")
 #define KEY_WORD_FILE			            _T(".\\KeyWord.xml")
-#define LOGIC_FILE							_T(".\\Logic.xml")
+#define LOGIC_FILE							_T(".\\CvSimLogic.xml")		// @.HostSim 의 HostSimLogic.xml 과 겹치지 않게 이름을 나눴다
 
 #define ECS_CODE_FILE			g_strEcsPath + _T("\\EcsCode.dat")
 #define ECS_USER_FILE			g_strEcsPath + _T("\\Data\\EcsUser.dat")
