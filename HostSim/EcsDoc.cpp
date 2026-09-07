@@ -1134,12 +1134,44 @@ BOOL CEcsDoc::OnOrderNak(int nLuggNum, int* pNakCount /* = NULL */)
 			if (pNakCount != NULL)
 				*pNakCount = pInfo->m_nNakCount;
 
-			// @.번호는 풀어 준다. 물고 있으면 다시 보낼 수도 없다.
-			pInfo->m_nPrevLuggNum    = pInfo->m_nWorkingLuggNum;
-			pInfo->m_nWorkingLuggNum = 0;
-			pInfo->m_bCompleteStore  = FALSE;
-			pInfo->m_bCompleteMove   = FALSE;
-			pInfo->m_nWorkingJobType = 0;
+			pInfo->m_nPrevLuggNum = pInfo->m_nWorkingLuggNum;
+
+			/*
+			 * @.거절당한 것이 체인의 어느 단계였느냐에 따라 다르게 푼다.
+			 *
+			 *   로직은 한 화물을 이동 -> 입고 -> 출고 로 이어 간다. 그런데 예전에는
+			 *   어느 단계가 거절되든 슬롯을 0 으로 비웠다. 0 은 "체인이 끝났다" 는 뜻으로도
+			 *   쓰이므로, 다음 주기에 앞 화물을 놔둔 채 새 이동 작업을 내 버렸다.
+			 *
+			 *   입고까지 해 놓고 출고가 거절되면 곧바로 다음 이동이 나가고, 그 이동이
+			 *   끝난 뒤에는 입고가 안 붙어 체인이 끊긴 채로 남았다.
+			 *
+			 *   이동이 거절된 것이면 아직 물린 것이 없으니 종전대로 비운다.
+			 *   체인 중간(입고 / 출고)이 거절된 것이면 슬롯을 물린 채로 두고 완료 표시를
+			 *   되돌린다. 그러면 다음 주기에 새 이동이 아니라 그 단계를 다시 낸다.
+			 *   (번호는 새로 매겨 나가므로 같은 번호로 또 거절되는 일은 없다)
+			 */
+			int nRejected = pInfo->m_nWorkingJobType;
+
+			pInfo->m_bCompleteStore = FALSE;
+			pInfo->m_bCompleteMove  = FALSE;
+
+			if (nRejected == enJobTypeAutoSto)
+			{
+				// 입고가 거절 - 이동 완료 상태로 되돌려 입고를 다시 내게 한다
+				pInfo->m_bCompleteMove = TRUE;
+			}
+			else if (nRejected == enJobTypeAutoRet)
+			{
+				// 출고가 거절 - 입고 완료 상태로 되돌려 출고를 다시 내게 한다
+				pInfo->m_bCompleteStore = TRUE;
+			}
+			else
+			{
+				// 이동(또는 알 수 없는 단계) - 물린 것이 없으니 슬롯을 비운다
+				pInfo->m_nWorkingLuggNum = 0;
+				pInfo->m_nWorkingJobType = 0;
+			}
 
 			if (pInfo->m_nNakCount >= MAX_ORDER_NAK)
 			{
