@@ -1205,6 +1205,42 @@ void CEcsDoc::ClearOrderNak(int nLuggNum)
 	}
 }
 
+/*
+ * @.WCS 에서 받은 전문을 화면 수신 리스트에 보여 주기 위해 담아 둔다.
+ *
+ *   화면에 리스트가 둘인데 보낸 것(m_lstHostCl)만 채우고 받은 것(m_lstHostSv)은
+ *   DDX 로 묶어만 놓고 아무것도 안 넣고 있었다. 수신 자체는 제대로 하고 파일 로그에도
+ *   남는데 화면에만 안 보였다.
+ *
+ *   수신은 소켓 알림에서 일어나므로 여기 담아 두고 뷰의 타이머가 꺼내 간다.
+ *   화면에 못 그리는 사이 밀릴 수 있으니 담아 두는 양에 상한을 둔다.
+ */
+void CEcsDoc::AddHostRecv(LPCTSTR lpszMsg)
+{
+	if (lpszMsg == NULL)
+		return;
+
+	CSingleLock lock(&m_csHostRecv, TRUE);
+
+	// @.뷰가 오래 못 꺼내 가면 오래된 것부터 버린다.
+	while (m_arrHostRecv.GetSize() >= 500)
+		m_arrHostRecv.RemoveAt(0);
+
+	m_arrHostRecv.Add(lpszMsg);
+}
+
+BOOL CEcsDoc::PopHostRecv(CString& strMsg)
+{
+	CSingleLock lock(&m_csHostRecv, TRUE);
+
+	if (m_arrHostRecv.GetSize() <= 0)
+		return FALSE;
+
+	strMsg = m_arrHostRecv[0];
+	m_arrHostRecv.RemoveAt(0);
+	return TRUE;
+}
+
 // @.로직그룹 하나의 연속 거절 횟수를 모두 0 으로 (시작 / 종료 때)
 void CEcsDoc::ClearGroupNak(int nGroupIndex)
 {

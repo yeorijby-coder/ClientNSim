@@ -164,6 +164,23 @@ public:
 	// @.로직그룹 하나의 연속 거절 횟수를 모두 0 으로 (시작/종료 때)
 	void ClearGroupNak(int nGroupIndex);
 
+	/*
+	 * @.WCS 에서 받은 전문을 화면에 보여 주기 위한 줄 (수신 리스트용)
+	 *
+	 *   화면에 리스트가 둘인데 보낸 것(m_lstHostCl)만 채우고 받은 것(m_lstHostSv)은
+	 *   묶어만 놓고 아무것도 안 넣고 있었다. 받기는 제대로 받아 처리하고 파일 로그에도
+	 *   남는데 화면에만 안 보였다.
+	 *
+	 *   수신은 소켓 알림에서 일어나므로 여기 담아 두고, 뷰의 타이머가 꺼내 간다.
+	 */
+	void   AddHostRecv(LPCTSTR lpszMsg);   // 수신 전문을 담는다
+	BOOL   PopHostRecv(CString& strMsg);   // 담긴 것을 하나 꺼낸다 (없으면 FALSE)
+
+private:
+	CStringArray    m_arrHostRecv;
+	CCriticalSection m_csHostRecv;
+public:
+
 	afx_msg void OnJobResetLugg();		// @.메뉴 [작업]-[로직 작업번호 초기화]
 
 	int m_nScRetFrontRemainJobCnt[SC1_PLC_CNT];

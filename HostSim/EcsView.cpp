@@ -313,6 +313,26 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 //		strTemp.Format(_T("%d"), unit.GetKey(k));
 
 
+	/*
+	 * @.WCS 에서 받은 전문을 수신 리스트에 흘린다.
+	 *
+	 *   보낸 것(m_lstHostCl)은 JobOrder 마다 넣어 주는데 받은 것(m_lstHostSv)은
+	 *   묶어만 놓고 아무것도 안 넣어 늘 비어 있었다. 수신은 소켓 알림에서 일어나므로
+	 *   문서에 담아 두고 여기서 꺼내 온다. (한 주기에 몰아서 꺼낸다)
+	 */
+	if (m_lstHostSv.GetSafeHwnd() != NULL)
+	{
+		CString strRecv;
+		while (pDoc->PopHostRecv(strRecv))
+		{
+			// @.보낸 쪽과 달리 받은 쪽은 상한을 둔다. 계속 쌓이면 화면이 무거워진다.
+			while (m_lstHostSv.GetCount() >= 500)
+				m_lstHostSv.DeleteString(m_lstHostSv.GetCount() - 1);
+
+				m_lstHostSv.InsertString(0, strRecv);
+		}
+	}
+
 	// 2초마다 할일
 	if (nCount % 2 == 0)
 	{

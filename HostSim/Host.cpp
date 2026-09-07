@@ -267,6 +267,9 @@ void CHostSv::OnReceive(int nErrorCode)
 //			continue;
 //		}
 
+		// @.받은 전문을 화면 수신 리스트에도 보낸다. (보낸 것만 보이고 받은 것은 안 보였다)
+		m_pDoc->AddHostRecv(strRxFrame);
+
 		Parsing(RxBuff + MSG_LENGTH_HEADER);
 		UpdateCommSv(NOTIFY_RECEIVE);
 	}
@@ -987,6 +990,9 @@ void CHostCl::OnReceive(int nErrorCode)
 //			LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, strLog);
 //			continue;
 //		}
+
+		// @.받은 전문을 화면 수신 리스트에도 보낸다. (보낸 것만 보이고 받은 것은 안 보였다)
+		m_pDoc->AddHostRecv(strRxFrame);
 
 		Parsing(RxBuff + MSG_LENGTH_HEADER);
 		UpdateCommCl(NOTIFY_RECEIVE);
