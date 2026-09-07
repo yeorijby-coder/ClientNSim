@@ -1518,12 +1518,35 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 	
 	memset(m_JobOrderMsg, 0x0, sizeof(m_JobOrderMsg));
 
-	static int nLuggNum = 1000;
+	/*
+	 * 작업번호는 HostSim.ini [JOB] LastLuggNum 에 남긴다.
+	 *
+	 *   전에는 static 1000 이라 프로그램을 켤 때마다 1001 부터 다시 매겼다.
+	 *   ECS 의 JOB_MST 에 그 번호가 남아 있으면 (시험이 중간에 끊겨 남은 것 등)
+	 *   첫 지시가 이미 지시된 작업 으로 거절되고, CHostCl::Parsing 의 NAK 처리가
+	 *   그 번호를 슬롯에서 풀어 다음 주기에 새 번호로 다시 보낸다. 한 번 지시한 것이
+	 *   두 번 나간 것처럼 보이던 것이 이것이다. (실제로 만들어진 작업은 하나다)
+	 *
+	 *   이어서 매기면 지난 번호를 다시 밟지 않는다. 재시도 처리 자체는 그대로 둔다.
+	 *   같은 번호로 재시도하면 영영 거절되므로 새 번호로 가는 것이 맞다.
+	 */
+	static int nLuggNum = 0;
+
+	if (nLuggNum == 0)
+	{
+		nLuggNum = ::GetPrivateProfileInt(_T("JOB"), _T("LastLuggNum"), 1000, ECS_INI_FILE);
+
+		// @.INI 가 비었거나 손상됐으면 예전처럼 1000 부터 간다.
+		if ((nLuggNum < 1000) || (nLuggNum > 8999))
+			nLuggNum = 1000;
+	}
 
 	++nLuggNum;
 
 	if (nLuggNum > 8999)
 		nLuggNum = 1000;
+
+	::WritePrivateProfileString(_T("JOB"), _T("LastLuggNum"), CConvert::ToString(nLuggNum), ECS_INI_FILE);
 		
 	CString strJobType = "";
 
