@@ -1098,6 +1098,98 @@ void CEcsDoc::OnJobResetLugg()
 	::AfxMessageBox(strLog, MB_OK | MB_ICONINFORMATION);
 }
 
+/*
+ * @.작업지시 거절(NAK) 을 한 번 센다.
+ *
+ *   거절을 받으면 슬롯을 풀어 다음 주기에 새 번호로 다시 보내는데, 거절 사유가
+ *   데이터 문제(작업대 정의가 없다 / 같은 작업이 이미 있다 등)라 그대로 남아 있으면
+ *   이것이 2초마다 끝없이 반복된다. 번호만 소모하며 전문이 쏟아지고, 정작 사유는
+ *   로그에 파묻힌다.
+ *
+ *   같은 슬롯에서 MAX_ORDER_NAK 번 연속 거절되면 그 로직그룹을 멈춘다. 멈추면
+ *   화면의 시작 버튼이 다시 살아나므로, 데이터를 고친 뒤 눌러 이어가면 된다.
+ *   (연속 횟수는 지시가 받아들여지면 ClearOrderNak 이 0 으로 되돌린다)
+ */
+BOOL CEcsDoc::OnOrderNak(int nLuggNum, int* pNakCount /* = NULL */)
+{
+	BOOL bStopped = FALSE;
+
+	for (int i = 0; i < m_pLogicGorupInfos.GetSize(); ++i)
+	{
+		SLogicGorupInfo* pGroup = m_pLogicGorupInfos[i];
+		if (pGroup == NULL)
+			continue;
+
+		for (int j = 0; j < pGroup->m_pJobInvokeInfos.GetSize(); ++j)
+		{
+			SJobInvokeInfo* pInfo = pGroup->m_pJobInvokeInfos[j];
+			if (pInfo == NULL)
+				continue;
+
+			if (pInfo->m_nWorkingLuggNum != nLuggNum)
+				continue;
+
+			pInfo->m_nNakCount++;
+
+			if (pNakCount != NULL)
+				*pNakCount = pInfo->m_nNakCount;
+
+			// @.번호는 풀어 준다. 물고 있으면 다시 보낼 수도 없다.
+			pInfo->m_nPrevLuggNum    = pInfo->m_nWorkingLuggNum;
+			pInfo->m_nWorkingLuggNum = 0;
+			pInfo->m_bCompleteStore  = FALSE;
+			pInfo->m_bCompleteMove   = FALSE;
+			pInfo->m_nWorkingJobType = 0;
+
+			if (pInfo->m_nNakCount >= MAX_ORDER_NAK)
+			{
+				pGroup->m_bStart = FALSE;   // @.이 로직그룹을 멈춘다
+				bStopped = TRUE;
+			}
+		}
+	}
+
+	return bStopped;
+}
+
+// @.지시가 받아들여졌으면 그 슬롯의 연속 거절 횟수를 0 으로 되돌린다.
+void CEcsDoc::ClearOrderNak(int nLuggNum)
+{
+	for (int i = 0; i < m_pLogicGorupInfos.GetSize(); ++i)
+	{
+		SLogicGorupInfo* pGroup = m_pLogicGorupInfos[i];
+		if (pGroup == NULL)
+			continue;
+
+		for (int j = 0; j < pGroup->m_pJobInvokeInfos.GetSize(); ++j)
+		{
+			SJobInvokeInfo* pInfo = pGroup->m_pJobInvokeInfos[j];
+			if (pInfo == NULL)
+				continue;
+
+			if (pInfo->m_nWorkingLuggNum == nLuggNum)
+				pInfo->m_nNakCount = 0;
+		}
+	}
+}
+
+// @.로직그룹 하나의 연속 거절 횟수를 모두 0 으로 (시작 / 종료 때)
+void CEcsDoc::ClearGroupNak(int nGroupIndex)
+{
+	if (nGroupIndex < 0 || nGroupIndex >= m_pLogicGorupInfos.GetSize())
+		return;
+
+	SLogicGorupInfo* pGroup = m_pLogicGorupInfos[nGroupIndex];
+	if (pGroup == NULL)
+		return;
+
+	for (int j = 0; j < pGroup->m_pJobInvokeInfos.GetSize(); ++j)
+	{
+		if (pGroup->m_pJobInvokeInfos[j] != NULL)
+			pGroup->m_pJobInvokeInfos[j]->m_nNakCount = 0;
+	}
+}
+
 int CEcsDoc::ReleaseWorkingLugg(int nLuggNum /* = 0 */)
 {
 	int nReleased = 0;
@@ -1125,6 +1217,7 @@ int CEcsDoc::ReleaseWorkingLugg(int nLuggNum /* = 0 */)
 			pInfo->m_bCompleteStore  = FALSE;
 			pInfo->m_bCompleteMove   = FALSE;
 			pInfo->m_nWorkingJobType = 0;
+			pInfo->m_nNakCount       = 0;
 			nReleased++;
 		}
 	}

@@ -1018,16 +1018,31 @@ void CHostCl::Parsing(char *pFrame)
 		{
 			// 작업지시에 대한 전문 재보고 
 
-			// @.거절당한 작업번호를 로직 슬롯에서 풀어 준다.
+			// @.거절당한 작업번호를 로직 슬롯에서 풀고, 연속 거절 횟수를 센다.
 			//   안 풀면 그 슬롯이 이 번호를 계속 물고 있어서, 다음 주기에도 같은
 			//   번호로 내고 ECS 는 "이미 지시된 작업입니다" 로 또 거절한다.
-			int nReleased = m_pDoc->ReleaseWorkingLugg(nLuggNum);
+			//   그렇다고 끝없이 다시 보내면, 거절 사유가 데이터 문제라 그대로 남아
+			//   있을 때 2초마다 새 번호로 전문이 쏟아진다. 번호만 소모하고 정작
+			//   사유는 로그에 파묻힌다. 연속 MAX_ORDER_NAK 번이면 로직을 멈춘다.
+			int  nNakCount = 0;
+			BOOL bStopped  = m_pDoc->OnOrderNak(nLuggNum, &nNakCount);
 
-			strLog.Format(_T("작업지시 거절 [작업번호:%d] [%d=%s] - 슬롯 %d개 해제. 다음 주기에 다시 시도한다."),
-						  nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode), nReleased);
+			if (bStopped == TRUE)
+			{
+				strLog.Format(_T("작업지시 거절 [작업번호:%d] [%d=%s] - %d회 연속이라 로직을 멈춘다. 사유를 고친 뒤 시작을 다시 누르면 된다."),
+							  nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode), nNakCount);
+				m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
+				return;
+			}
+
+			strLog.Format(_T("작업지시 거절 [작업번호:%d] [%d=%s] - %d/%d회. 다음 주기에 다시 시도한다."),
+						  nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode), nNakCount, CEcsDoc::MAX_ORDER_NAK);
 			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
 			return;
 		}
+
+		// @.받아들여졌으면 그 슬롯의 연속 거절 횟수를 0 으로 되돌린다.
+			m_pDoc->ClearOrderNak(nLuggNum);
 		break;
 	case	CMD_ALT_LOC_ANSWER:
 		if ((nResultCode != enHostErrorNone) || (ucAckNak != 'A'))

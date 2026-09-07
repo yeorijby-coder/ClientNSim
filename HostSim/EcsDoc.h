@@ -84,6 +84,7 @@ public:
 	CString	m_strToPos;			// 기타 작업할 포지션 
 	int		m_nWorkingJobType;	// 현재 작업중인 작업구분 
 	CString m_strTime;			// 작업 시간
+	int		m_nNakCount;		// @.연속 거절(NAK) 횟수 - ACK 를 받거나 시작/종료하면 0
 
 
 //	int		m_nScCount;			// 해당 로직에서 작업중인 크레인 수
@@ -142,6 +143,26 @@ public:
 	// @.거절당한(또는 어긋난) 작업번호를 로직 슬롯에서 풀어 준다.
 	//   nLuggNum 이 0 이면 전 슬롯을 푼다. 푼 개수를 돌려준다.
 	int ReleaseWorkingLugg(int nLuggNum = 0);
+
+	/*
+	 * @.작업지시 거절(NAK) 처리 - 연속 거절이 이어지면 그 로직그룹을 멈춘다.
+	 *
+	 *   거절을 받으면 번호를 풀고 다음 주기에 새 번호로 다시 보낸다. 거절 사유가
+	 *   데이터 문제라 계속 남아 있으면 이것이 2초마다 끝없이 반복된다.
+	 *   (작업번호만 소모하며 전문이 쏟아진다)
+	 *   같은 슬롯에서 MAX_ORDER_NAK 번 연속 거절되면 로직을 멈춰 사유가 드러나게 한다.
+	 */
+	static const int MAX_ORDER_NAK = 3;		// @.연속 거절 허용 횟수
+
+	// @.거절 1회를 센다. 번호를 풀고, 상한에 닿으면 그 로직그룹을 멈춘다.
+	//   상한에 닿아 멈췄으면 TRUE 를 주고 pNakCount 에 누적 횟수를 담는다.
+	BOOL OnOrderNak(int nLuggNum, int* pNakCount = NULL);
+
+	// @.지시가 받아들여졌으면 그 슬롯의 연속 거절 횟수를 0 으로 되돌린다.
+	void ClearOrderNak(int nLuggNum);
+
+	// @.로직그룹 하나의 연속 거절 횟수를 모두 0 으로 (시작/종료 때)
+	void ClearGroupNak(int nGroupIndex);
 
 	afx_msg void OnJobResetLugg();		// @.메뉴 [작업]-[로직 작업번호 초기화]
 

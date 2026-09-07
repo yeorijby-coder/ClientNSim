@@ -2114,6 +2114,9 @@ void CEcsView::OnBnClickedBtnStart()
 
 	pDoc->m_pLogicGorupInfos[nLogicGroup - 1]->m_bStart = TRUE;
 
+	// @.연속 거절로 멈춘 뒤 다시 누른 것일 수 있다. 거절 횟수를 0 으로 두고 시작한다.
+	pDoc->ClearGroupNak(nLogicGroup - 1);
+
 	// 시작 클릭 -> 시작버튼 비활성, 종료버튼 활성
 	ENABLE_WND(IDC_BTN_START, FALSE);
 	ENABLE_WND(IDC_BTN_END, TRUE);
@@ -2196,6 +2199,7 @@ void CEcsView::OnBnClickedBtnEnd()
 		pDoc->m_pLogicGorupInfos[nLogicGroup - 1]->m_pJobInvokeInfos[i]->m_nPrevLuggNum = 0;
 		pDoc->m_pLogicGorupInfos[nLogicGroup - 1]->m_pJobInvokeInfos[i]->m_nWorkingJobType = 0;
 		pDoc->m_pLogicGorupInfos[nLogicGroup - 1]->m_pJobInvokeInfos[i]->m_nWorkingLuggNum = 0;
+		pDoc->m_pLogicGorupInfos[nLogicGroup - 1]->m_pJobInvokeInfos[i]->m_nNakCount = 0;
 	}
 
 	// 어차피 지울 거니까 NULL이라도 상관없음! ㅡ,ㅡ;;;
