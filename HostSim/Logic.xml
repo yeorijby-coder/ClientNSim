@@ -29,7 +29,7 @@
 
 	<Group>
 		<Use>Y</Use>
-		<Name> 101  -> 105 </Name>
+		<Name> 101 -> 107 -> ·¢ -> 105 </Name>
 		<StoStns><Stn>101</Stn></StoStns>
 		<ViaStns><Stn>107</Stn></ViaStns>
 		<RetStns><Stn>105</Stn></RetStns>
@@ -37,8 +37,8 @@
 	</Group>
 
 	<Group>
-		<Use>N</Use>
-		<Name> 102  -> 105 </Name>
+		<Use>Y</Use>
+		<Name> 102 -> 108 -> ·¢ -> 105 </Name>
 		<StoStns><Stn>102</Stn></StoStns>
 		<ViaStns><Stn>108</Stn></ViaStns>
 		<RetStns><Stn>105</Stn></RetStns>
