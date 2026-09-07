@@ -41,6 +41,9 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(CEcsView, CFormView)
 
+// @.상태전문 표시 체크박스의 컨트롤 ID. 리소스에 없는 것을 코드로 만들어 붙인다.
+#define IDC_CHK_SHOW_STATUS_MSG	8801
+
 BEGIN_MESSAGE_MAP(CEcsView, CFormView)
 	ON_MESSAGE(WM_USER_HOST_NOTIFY, OnHostNotify)
 	ON_MESSAGE(WM_USER_CV_NOTIFY, OnCvNotify)
@@ -91,6 +94,7 @@ BEGIN_MESSAGE_MAP(CEcsView, CFormView)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CFormView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CFormView::OnFilePrintPreview)
 	ON_BN_CLICKED(IDC_BTN_START, &CEcsView::OnBnClickedBtnStart)
+	ON_BN_CLICKED(IDC_CHK_SHOW_STATUS_MSG, &CEcsView::OnBnClickedChkShowStatusMsg)
 	ON_CBN_SELCHANGE(IDC_LOGIC_GROUP, &CEcsView::OnCbnSelchangeLogicGroup)
 	ON_BN_CLICKED(IDC_BTN_END, &CEcsView::OnBnClickedBtnEnd)
 END_MESSAGE_MAP()
@@ -141,6 +145,31 @@ BOOL CEcsView::PreCreateWindow(CREATESTRUCT& cs)
 }
 
 #define		ID_MAIN_TIMER		100
+/*
+ * @.상태전문 표시를 켜고 끈다. 고른 값을 ini 에 남겨 다음에도 그대로 뜬다.
+ *   끄면 이미 쌓인 줄까지 치운다. 그래야 가려던 전문이 바로 보인다.
+ */
+void CEcsView::OnBnClickedChkShowStatusMsg()
+{
+	BOOL bShow = (m_btnShowStatusMsg.GetCheck() == BST_CHECKED);
+
+	::WritePrivateProfileString(_T("VIEW"), _T("ShowStatusMsg"),
+								 bShow ? _T("1") : _T("0"), ECS_INI_FILE);
+
+	if (bShow == FALSE && m_lstHostSv.GetSafeHwnd() != NULL)
+	{
+		// @.이미 들어와 있는 상태전문 줄을 걷어낸다.
+		for (int i = m_lstHostSv.GetCount() - 1; i >= 0; --i)
+		{
+				CString strItem;
+				m_lstHostSv.GetText(i, strItem);
+				if (strItem.GetLength() > MSG_LENGTH_HEADER + 1 &&
+					strItem[MSG_LENGTH_HEADER + 1] == CMD_STATUS)
+					m_lstHostSv.DeleteString(i);
+		}
+	}
+}
+
 void CEcsView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
@@ -154,6 +183,24 @@ void CEcsView::OnInitialUpdate()
 		return;
 
 	CWinApp* pApp = AfxGetApp();
+
+	// @.상태전문 표시 체크박스를 수신 리스트 바로 위에 만들어 붙인다.
+	if (m_btnShowStatusMsg.GetSafeHwnd() == NULL && m_lstHostSv.GetSafeHwnd() != NULL)
+	{
+		CRect rcList;
+		m_lstHostSv.GetWindowRect(&rcList);
+		ScreenToClient(&rcList);
+
+		CRect rcChk(rcList.left, rcList.top - 18, rcList.left + 200, rcList.top - 2);
+		m_btnShowStatusMsg.Create(_T("상태전문(S) 표시"),
+									  WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX,
+									  rcChk, this, IDC_CHK_SHOW_STATUS_MSG);
+		m_btnShowStatusMsg.SetFont(GetFont());
+
+		// @.지난번에 고른 값을 되살린다. 기본은 끔 - 켜 두면 다른 전문이 밀려 안 보인다.
+		m_btnShowStatusMsg.SetCheck(
+				::GetPrivateProfileInt(_T("VIEW"), _T("ShowStatusMsg"), 0, ECS_INI_FILE) ? BST_CHECKED : BST_UNCHECKED);
+	}
 
 	pDoc->RunServers();
 
@@ -322,9 +369,23 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 	 */
 	if (m_lstHostSv.GetSafeHwnd() != NULL)
 	{
+		// @.상태전문(S)을 보일지. 체크박스가 아직 없으면 안 보이는 쪽으로 본다.
+		BOOL bShowStatus = (m_btnShowStatusMsg.GetSafeHwnd() != NULL)
+						 ? (m_btnShowStatusMsg.GetCheck() == BST_CHECKED) : FALSE;
+
 		CString strRecv;
 		while (pDoc->PopHostRecv(strRecv))
 		{
+			/*
+			 * @.상태전문은 주기적으로 계속 들어온다. 끄고 보면 완료보고나 지시 응답처럼
+			 *   드물게 오는 전문이 밀리지 않는다.
+			 *   전문 종류는 헤더 다음 STX 바로 뒤 한 글자다. (CHostSv::Parsing 과 같은 자리)
+			 */
+			if (bShowStatus == FALSE &&
+				strRecv.GetLength() > MSG_LENGTH_HEADER + 1 &&
+				strRecv[MSG_LENGTH_HEADER + 1] == CMD_STATUS)
+				continue;
+
 			// @.보낸 쪽과 달리 받은 쪽은 상한을 둔다. 계속 쌓이면 화면이 무거워진다.
 			while (m_lstHostSv.GetCount() >= 500)
 				m_lstHostSv.DeleteString(m_lstHostSv.GetCount() - 1);

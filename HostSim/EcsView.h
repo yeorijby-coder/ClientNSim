@@ -21,6 +21,16 @@ public:
 	//{{AFX_DATA(CEcsView)
 	enum { IDD = IDD_ECS_FORM };
 	CListBox	m_lstHostSv;
+
+	/*
+	 * @.상태전문(S) 을 수신 리스트에 보일지 말지.
+	 *
+	 *   상태전문은 주기적으로 계속 들어와, 켜 두면 완료보고나 지시 응답 같은
+	 *   드문 전문이 금세 밀려 안 보인다. 그래서 끄고 볼 수 있게 한다.
+	 *   체크박스는 리소스에 없어 OnInitialUpdate 에서 만들어 붙인다.
+	 *   (고른 값은 HostSim.ini [VIEW] ShowStatusMsg 에 남는다)
+	 */
+	CButton	m_btnShowStatusMsg;
 	CListBox	m_lstHostCl;
 	CListCtrl	m_lstJobList;
 	CComboBox	m_cbxLamp;
@@ -145,6 +155,7 @@ public:
 	CComboBox m_cbxLogicGroup;
 	afx_msg void OnCbnSelchangeLogicGroup();
 	afx_msg void OnBnClickedBtnEnd();
+	afx_msg void OnBnClickedChkShowStatusMsg();   // @.상태전문 표시 켜고 끄기
 };
 
 #ifndef _DEBUG  // debug version in EcsView.cpp
