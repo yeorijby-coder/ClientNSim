@@ -299,6 +299,11 @@ void CHostSv::Parsing(char *pFrame)
 			CString ucJobDefine	= strFrame.Mid(2, 1);
 			int nStep = _ttoi(strFrame.Mid(9, 1));
 
+			// @.이 완료보고가 로직 슬롯 하나에라도 닿았는지. 닿지 않으면 상위는
+			//   보고를 받았지만 아무 일도 안 일어나고, 다음 작업이 안 나간다.
+			//   전에는 그것이 조용해서 "완료는 됐는데 새 작업이 안 내려온다" 로만 보였다.
+			BOOL bMatched = FALSE;
+
 			int nLogicGroupCnt = m_pDoc->m_pLogicGorupInfos.GetCount();
 
 			for (int i = 0; i < nLogicGroupCnt; i++)
@@ -315,25 +320,47 @@ void CHostSv::Parsing(char *pFrame)
 					if (pJobInvokeInfo == NULL)
 						continue;
 
-					if (pJobInvokeInfo->m_nWorkingLuggNum == nLuggNum)
+					if (pJobInvokeInfo->m_nWorkingLuggNum != nLuggNum)
+						continue;
+
+					bMatched = TRUE;
+
+					if (ucJobDefine == _T("1"))
 					{
-						if (ucJobDefine == _T("1"))
+						pJobInvokeInfo->m_bCompleteStore = TRUE;
+					}
+					else if (ucJobDefine == _T("2") || ucJobDefine == _T("3"))
+					{
+						// @.출고 / 피킹출고 끝. 슬롯을 풀어 다음 주기에 이동으로 다시 시작한다.
+						if (nStep == 1)
 						{
-							pJobInvokeInfo->m_bCompleteStore = TRUE;
-						}
-						else if (ucJobDefine == _T("2") || ucJobDefine == _T("3"))
-						{
-							if (nStep == 1)
-							{
-								pJobInvokeInfo->m_nWorkingLuggNum = 0;
-							}
-						}
-						else if (ucJobDefine == _T("6"))
-						{
-							pJobInvokeInfo->m_bCompleteMove = TRUE;
+							pJobInvokeInfo->m_nWorkingLuggNum = 0;
 						}
 					}
+					else if (ucJobDefine == _T("6"))
+					{
+						pJobInvokeInfo->m_bCompleteMove = TRUE;
+					}
+					else
+					{
+						// @.슬롯은 맞는데 작업구분을 모른다. 반자동(10~15)이 두 자리로 나가
+						//   전문이 밀렸을 때 이러했다. 그대로 두면 슬롯이 영영 물려 있는다.
+						strLog.Format(_T("알 수 없는 작업구분의 완료보고 [작업번호:%d] [작업구분:%s] - 전문을 확인하십시오."),
+									  nLuggNum, (LPCTSTR)ucJobDefine);
+						m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
+					}
 				}
+			}
+
+			// @.어느 슬롯과도 안 맞은 완료보고. 받기는 받았으나 로직은 아무 것도
+			//   이어가지 않는다. 상위를 다시 띄워 지난 번호를 잃었거나, 로직이 아닌
+			//   곳에서 만든 작업이거나, 이미 슬롯이 풀려 새 번호로 나간 뒤일 때다.
+			//   조용히 버리면 "완료는 됐는데 새 작업이 안 내려온다" 로만 보인다.
+			if (bMatched == FALSE)
+			{
+				strLog.Format(_T("완료보고를 받았지만 로직이 물고 있는 작업이 아닙니다 [작업번호:%d] [작업구분:%s] - 이 보고로는 다음 작업이 나가지 않습니다."),
+							  nLuggNum, (LPCTSTR)ucJobDefine);
+				m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
 			}
 
 			/*	// 일반적인 입고 완료 케이스
