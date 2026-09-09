@@ -85,6 +85,7 @@ public:
 	int		m_nWorkingJobType;	// 현재 작업중인 작업구분 
 	CString m_strTime;			// 작업 시간
 	int		m_nNakCount;		// @.연속 거절(NAK) 횟수 - ACK 를 받거나 시작/종료하면 0
+	BOOL	m_bOrderFailLogged;	// @.체인 중간을 못 낸 사유를 한 번 적었는지 (2초마다 같은 줄을 쌓지 않게)
 
 
 //	int		m_nScCount;			// 해당 로직에서 작업중인 크레인 수

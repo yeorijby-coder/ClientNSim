@@ -1601,15 +1601,49 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 	switch(nJobType)
 	{
 	case 1:		//			   1 2   3 4 5  6  7  8  9  10 11 
+		/*
+		 * @.내지 못하고 돌아가는 자리가 셋인데 셀 다 조용했다.
+		 *   부르는 쪽은 0 만 받아 "입고 작업번호가 0" 으로만 보였다.
+		 *   어느 자리에서 돌아섬는지 남긴다. 같은 사유가 계속 되풀이되는 것은
+		 *   부르는 쪽(CEcsView::OnTimer)이 한 번만 적도록 막는다.
+		 */
 		if (n1stStn == 0)
+		{
+			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, _T("입고 지시 못 냄 - 출발 작업대가 0 이다. 로직그룹의 ViaStns 를 확인하십시오."), _T("CHostCl::JobOrder"));
 			return 0;
+		}
 
 		if (CalcurateLocation(TRUE, pScList) == FALSE)
+		{
+			// @.쓸 수 있는 크레인이 하나도 없었다는 뜻이다. 로직그룹의 Scs 가
+			//   현장과 안 맞거나, 그 호기가 전부 오프라인(4) / 에러(5) / 입출고중지(8)
+			//   이거나, 입고중지(6) 일 때 여기로 온다.
+			CString strScs;
+			if (pScList != NULL)
+			{
+				for (int k = 0; k < pScList->GetSize(); ++k)
+				{
+					int nSc = _ttoi(pScList->GetAt(k));
+					CString strOne;
+					strOne.Format(_T("%s%d(상태%d)"), (k == 0) ? _T("") : _T(","), nSc,
+								  (nSc >= 1 && nSc <= SC_CNT) ? m_pDoc->m_nScStatus[nSc - 1] : -1);
+					strScs += strOne;
+				}
+			}
+
+			CString strLogNoSc;
+			strLogNoSc.Format(_T("입고 지시 못 냄 - 쓸 수 있는 크레인이 없습니다 [출발:%03d][호기:%s]. 상태 4=오프라인 5=에러 6=입고중지 8=입출고중지"),
+							  n1stStn, (LPCTSTR)strScs);
+			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLogNoSc, _T("CHostCl::JobOrder"));
 			return 0;
+		}
 
 		// 첫 상태를 받지 않았을때 
 		if (m_pDoc->m_bReceiveStatus == FALSE)
+		{
+			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, _T("입고 지시 못 냄 - 설비 상태전문(S)을 아직 받지 못했습니다."), _T("CHostCl::JobOrder"));
 			return 0;
+		}
 
 		strStation = m_pDoc->m_strStoStation;
 

@@ -479,6 +479,7 @@ BOOL CConfig::LoadLogicXml()
 			pJobInvokeInfo->m_bCompleteStore = FALSE;
 			pJobInvokeInfo->m_bCompleteMove = FALSE;
 			pJobInvokeInfo->m_nNakCount = 0;
+			pJobInvokeInfo->m_bOrderFailLogged = FALSE;
 			pJobInvokeInfo->m_strTime = COleDateTime::GetCurrentTime().Format(_T("%Y-%m-%d %H:%M:%S"));
 			pLogicGorupInfo->m_pJobInvokeInfos.Add(pJobInvokeInfo);
 			pLogicGorupInfo->m_nStoStnCnt = j + 1;
@@ -575,6 +576,7 @@ void CConfig::LoadConfig6()
 			pJobInvokeInfo->m_bCompleteStore = FALSE;		// 초기 작업 완료 상태는 FALSE로 설정	
 			pJobInvokeInfo->m_bCompleteMove = FALSE;		// 초기 이동 완료 상태는 FALSE로 설정	
 			pJobInvokeInfo->m_nNakCount = 0;			// 초기 연속 거절 횟수는 0
+			pJobInvokeInfo->m_bOrderFailLogged = FALSE;
 			CString strTime = COleDateTime::GetCurrentTime().Format(_T("%Y-%m-%d %H:%M:%S"));
 			pJobInvokeInfo->m_strTime = strTime;
 //			pJobInvokeInfos.Add(pJobInvokeInfo);

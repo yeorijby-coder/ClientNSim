@@ -611,27 +611,50 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 										int nJobType = 1;
 										// 입고 랙 뱅크 : 이 로직그룹의 ScNum 목록 내에서만 선정
 										int nLuggNum = pDoc->m_pHostCl->JobOrder(nJobType, _ttoi(strViaStnNum), 0, FALSE, NULL, &pDoc->m_pLogicGorupInfos[i]->m_strScs);
-										CString strTime = COleDateTime::GetCurrentTime().Format(_T("%Y-%m-%d %H:%M:%S"));
 
-										// 입고 작업 생성 - 작업중인 작업번호 UPDATE 
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingLuggNum = nLuggNum;
+										/*
+										 * @.지시를 못 냈으면 슬롯을 건드리지 않는다.
+										 *
+										 *   전에는 돌려받은 0 을 그대로 슬롯에 넣고 완료 표시까지 지웠다.
+										 *   슬롯 0 은 "체인이 끝났다" 는 뜻으로도 쓰이므로, 다음 주기에
+										 *   경유지에 놓인 화물을 버려둔 채 새 이동 작업이 나갔다.
+										 *   (이동 2290 완료 -> 입고 작업번호 0 -> 이동 2292 로 보이던 것)
+										 *
+										 *   그대로 두면 다음 주기에 이 자리로 다시 들어와 입고를 다시 낸다.
+										 *   못 낸 사유는 JobOrder 가 로그에 남긴다.
+										 */
+										if (nLuggNum <= 0)
+										{
+											if (pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged == FALSE)
+											{
+												CString strFailLog;
+												strFailLog.Format(_T("입고 작업을 내지 못했습니다 [경유지:%s] - 이동 완료 상태를 유지하고 다음 주기에 다시 냅니다."),
+																  (LPCTSTR)strViaStnNum);
+												pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strFailLog, _T("CEcsView::OnTimer"));
+												m_lstHostCl.InsertString(0, strFailLog);
+												pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged = TRUE;
+											}
+										}
+										else
+										{
+											CString strTime = COleDateTime::GetCurrentTime().Format(_T("%Y-%m-%d %H:%M:%S"));
 
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bCompleteMove = FALSE;
-										LPCTSTR strTempTemp = (LPCTSTR)pDoc->m_pHostCl->m_JobOrderMsg;
-										m_lstHostCl.InsertString(0, strTempTemp);
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bCompleteMove = FALSE;
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged = FALSE;
+											LPCTSTR strTempTemp = (LPCTSTR)pDoc->m_pHostCl->m_JobOrderMsg;
+											m_lstHostCl.InsertString(0, strTempTemp);
 
+											// 입고 작업 생성 - 작업중인 작업번호 SETTING 
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingLuggNum = nLuggNum;
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingJobType = nJobType;
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strFromPos = strViaStnNum;
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strToPos = pDoc->m_strStoLocation[nLuggNum];
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strTime = strTime;
 
-										// 입고 작업 생성 - 작업중인 작업번호 SETTING 
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingLuggNum = nLuggNum;
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingJobType = nJobType;
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strFromPos = strViaStnNum;
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strToPos = pDoc->m_strStoLocation[nLuggNum];
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strTime = strTime;
-
-										// 리스트에 작업 추가 - 완료될때 리스트에 작업이 삭제 되는것도 처리해야함!
-										UpdateList(m_lstThisLogicJob, __FUNCTION__, pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]);
-										bComplete = TRUE;
-
+											// 리스트에 작업 추가 - 완료될때 리스트에 작업이 삭제 되는것도 처리해야함!
+											UpdateList(m_lstThisLogicJob, __FUNCTION__, pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]);
+											bComplete = TRUE;
+										}
 									}
 
 									if (pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bCompleteStore == TRUE)
@@ -639,26 +662,40 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 										int nJobType = 2;
 										// 출고 출발지 : 입고 완료된 작업의 랙 위치(m_strToPos)
 										int nLuggNum = pDoc->m_pHostCl->JobOrder(nJobType, _ttoi(strRetStnNum), 0, FALSE, pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strToPos, NULL);
-										CString strTime = COleDateTime::GetCurrentTime().Format(_T("%Y-%m-%d %H:%M:%S"));
 
-										// 출고 작업 생성 - 작업중인 작업번호 UPDATE 
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingLuggNum = nLuggNum;
+										// @.입고와 같다. 못 냈으면 슬롯과 완료 표시를 그대로 두고 다음 주기에 다시 낸다.
+										if (nLuggNum <= 0)
+										{
+											if (pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged == FALSE)
+											{
+												CString strFailLog;
+												strFailLog.Format(_T("출고 작업을 내지 못했습니다 [출고대:%s] - 입고 완료 상태를 유지하고 다음 주기에 다시 냅니다."),
+																  (LPCTSTR)strRetStnNum);
+												pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strFailLog, _T("CEcsView::OnTimer"));
+												m_lstHostCl.InsertString(0, strFailLog);
+												pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged = TRUE;
+											}
+										}
+										else
+										{
+											CString strTime = COleDateTime::GetCurrentTime().Format(_T("%Y-%m-%d %H:%M:%S"));
 
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bCompleteStore = FALSE;
-										LPCTSTR strTempTemp = (LPCTSTR)pDoc->m_pHostCl->m_JobOrderMsg;
-										m_lstHostCl.InsertString(0, strTempTemp);
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bCompleteStore = FALSE;
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged = FALSE;
+											LPCTSTR strTempTemp = (LPCTSTR)pDoc->m_pHostCl->m_JobOrderMsg;
+											m_lstHostCl.InsertString(0, strTempTemp);
 
-										// 출고 작업 생성 - 작업중인 작업번호 SETTING 
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingLuggNum = nLuggNum;
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingJobType = nJobType;
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strFromPos = pDoc->m_strRetLocation[nLuggNum];
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strToPos = strRetStnNum;
-										pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strTime = strTime;
+											// 출고 작업 생성 - 작업중인 작업번호 SETTING 
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingLuggNum = nLuggNum;
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_nWorkingJobType = nJobType;
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strFromPos = pDoc->m_strRetLocation[nLuggNum];
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strToPos = strRetStnNum;
+											pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_strTime = strTime;
 
-										// 리스트에 작업 추가 - 완료될때 리스트에 작업이 삭제 되는것도 처리해야함!
-										UpdateList(m_lstThisLogicJob, __FUNCTION__, pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]);
-										bComplete = TRUE;
-
+											// 리스트에 작업 추가 - 완료될때 리스트에 작업이 삭제 되는것도 처리해야함!
+											UpdateList(m_lstThisLogicJob, __FUNCTION__, pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]);
+											bComplete = TRUE;
+										}
 									}
 
 									//// 종료버튼 누를때 있는 리스트도 다 지워야 함!
