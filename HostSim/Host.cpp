@@ -280,6 +280,29 @@ void CHostSv::OnReceive(int nErrorCode)
 //#define LGV_INFO			m_pDoc->m_pLgvInfo
 //#define TRACK_MSG			m_pDoc->m_ConveyorThreadInfo[CV_6_PLC].m_ConveyorMsg
 
+/*
+ * @.상태전문의 장비번호가 담을 자리를 넘어섬을 때 알린다.
+ *
+ *   범위를 넘으면 버리는 수밖에 없는데, 전에는 그것을 조용히 했다.
+ *   SC_CNT 이 5 였던 동안 6호기 이상의 상태가 들어오지 않는 줄도 몰랐고,
+ *   그 호기를 쓰는 로직그룹은 입고 지시가 작업번호 0 으로 나갔다.
+ *
+ *   상태는 주기적으로 계속 오므로 번호당 한 번만 적는다.
+ */
+void CHostSv::WarnStatusRange(LPCTSTR lpszKind, int nDeviceNo, int nMax, LPCTSTR lpszDefine)
+{
+	int nDummy = 0;
+	if (m_mapWarnedDevice.Lookup(nDeviceNo, nDummy))
+		return;
+
+	m_mapWarnedDevice.SetAt(nDeviceNo, 1);
+
+	CString strLog;
+	strLog.Format(_T("%s %d번 상태전문을 버렸습니다 - 받는 범위가 1~%d 입니다. EcsDef.h 의 %s 를 올려야 합니다."),
+				  lpszKind, nDeviceNo, nMax, lpszDefine);
+	m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostSv::WarnStatusRange"));
+}
+
 void CHostSv::Parsing(char *pFrame)
 {
 	CString strLog;
@@ -448,15 +471,22 @@ void CHostSv::Parsing(char *pFrame)
 			int nDeviceNo    = _ttoi(strFrame.Mid(4, 3));
 			int nStatus      = _ttoi(strFrame.Mid(7, 1));
 
+			// @.범위를 넘는 번호는 담을 자리가 없어 버릴 수밖에 없다. 그런데 조용히
+			//   버리니 SC_CNT 가 5 였던 동안 6호기 상태가 안 들어오는 것도 몰랐다.
+			//   상한을 넘으면 알리고, EcsDef.h 의 값을 고치게 한다.
 			if (nDeviceClass == 1)			// S/C
 			{
 				if (nDeviceNo >= 1 && nDeviceNo <= SC_CNT)
 					m_pDoc->m_nScStatus[nDeviceNo - 1] = nStatus;
+				else
+					WarnStatusRange(_T("크레인"), nDeviceNo, SC_CNT, _T("SC_CNT"));
 			}
 			else if (nDeviceClass == 2)		// C/V (스테이션 상태 : 0=작업불가, 1=작업가능)
 			{
 				if (nDeviceNo >= 1 && nDeviceNo <= STO_STN_CNT)
 					m_pDoc->m_bStoStation[nDeviceNo - 1] = nStatus;
+				else
+					WarnStatusRange(_T("작업대"), nDeviceNo, STO_STN_CNT, _T("STO_STN_CNT"));
 			}
 
 			m_pDoc->m_bReceiveStatus = TRUE;

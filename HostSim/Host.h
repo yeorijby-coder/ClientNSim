@@ -63,6 +63,11 @@ public:
 	BOOL IsConnect() { return (m_enCommStatus == enStatusConnectOK); }
 	void UpdateCommSv(char Status);
 	void Parsing(char *pFrame);
+
+	// @.상태전문의 장비번호가 배열 범위를 넘을 때 한 번만 알린다.
+	//   상태는 주기적으로 계속 오므로 그때마다 적으면 로그가 묻힐다.
+	void WarnStatusRange(LPCTSTR lpszKind, int nDeviceNo, int nMax, LPCTSTR lpszDefine);
+	CMap<int, int, int, int> m_mapWarnedDevice;
 	void Answer(BYTE ucMsgType, int nLuggNum, int nReasonCode);
 	int  GetSeqNum();
 	CString GetStartPos(int nStartPos);
