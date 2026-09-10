@@ -187,6 +187,10 @@ public:
 	int m_nCurScNum;
 
 	TCHAR m_JobOrderMsg[1024];
+
+	// @.JobOrder 가 0 을 돌려줌 때 그 사유. 부르는 쪽이 화면에 보여 준다.
+	//   전에는 파일 로그(EcsLog.exe 로만 열린다)에만 있어 아무도 못 봤다.
+	CString m_strLastOrderFail;
 	TCHAR m_AlterLocMsg[1024];
 	int m_nJobOrderSize;
 	int m_nAlterLocSize;

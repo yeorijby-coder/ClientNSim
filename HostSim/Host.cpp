@@ -1595,6 +1595,7 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 	CString strLog, strTempMsg, strStation, strRetLoc;
 	
 	memset(m_JobOrderMsg, 0x0, sizeof(m_JobOrderMsg));
+	m_strLastOrderFail.Empty();		// @.이번에 못 내면 여기 사유를 담는다
 
 	/*
 	 * 작업번호는 HostSim.ini [JOB] LastLuggNum 에 남긴다.
@@ -1639,7 +1640,8 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 		 */
 		if (n1stStn == 0)
 		{
-			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, _T("입고 지시 못 냄 - 출발 작업대가 0 이다. 로직그룹의 ViaStns 를 확인하십시오."), _T("CHostCl::JobOrder"));
+			m_strLastOrderFail = _T("출발 작업대가 0 입니다. 로직그룹의 ViaStns 를 확인하십시오.");
+			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, m_strLastOrderFail, _T("CHostCl::JobOrder"));
 			return 0;
 		}
 
@@ -1662,8 +1664,9 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 			}
 
 			CString strLogNoSc;
-			strLogNoSc.Format(_T("입고 지시 못 냄 - 쓸 수 있는 크레인이 없습니다 [출발:%03d][호기:%s]. 상태 4=오프라인 5=에러 6=입고중지 8=입출고중지"),
+			strLogNoSc.Format(_T("쓸 수 있는 크레인이 없습니다 [출발:%03d][호기:%s]. 상태 4=오프라인 5=에러 6=입고중지 8=입출고중지"),
 							  n1stStn, (LPCTSTR)strScs);
+			m_strLastOrderFail = strLogNoSc;
 			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLogNoSc, _T("CHostCl::JobOrder"));
 			return 0;
 		}
@@ -1671,7 +1674,8 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 		// 첫 상태를 받지 않았을때 
 		if (m_pDoc->m_bReceiveStatus == FALSE)
 		{
-			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, _T("입고 지시 못 냄 - 설비 상태전문(S)을 아직 받지 못했습니다."), _T("CHostCl::JobOrder"));
+			m_strLastOrderFail = _T("설비 상태전문(S)을 아직 받지 못했습니다.");
+			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, m_strLastOrderFail, _T("CHostCl::JobOrder"));
 			return 0;
 		}
 

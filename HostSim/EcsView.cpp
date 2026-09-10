@@ -628,8 +628,10 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 											if (pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged == FALSE)
 											{
 												CString strFailLog;
-												strFailLog.Format(_T("입고 작업을 내지 못했습니다 [경유지:%s] - 이동 완료 상태를 유지하고 다음 주기에 다시 냅니다."),
-																  (LPCTSTR)strViaStnNum);
+												// @.사유는 JobOrder 가 m_strLastOrderFail 에 담아 둔다. 파일 로그는
+												//   EcsLog.exe 로만 열려 아무도 못 보므로 화면에도 같이 적는다.
+												strFailLog.Format(_T("입고 작업을 내지 못했습니다 [경유지:%s] - %s (이동 완료 상태를 유지하고 다음 주기에 다시 냅니다)"),
+																  (LPCTSTR)strViaStnNum, (LPCTSTR)pDoc->m_pHostCl->m_strLastOrderFail);
 												pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strFailLog, _T("CEcsView::OnTimer"));
 												m_lstHostCl.InsertString(0, strFailLog);
 												pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged = TRUE;
@@ -669,8 +671,10 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 											if (pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged == FALSE)
 											{
 												CString strFailLog;
-												strFailLog.Format(_T("출고 작업을 내지 못했습니다 [출고대:%s] - 입고 완료 상태를 유지하고 다음 주기에 다시 냅니다."),
-																  (LPCTSTR)strRetStnNum);
+												// @.사유는 JobOrder 가 m_strLastOrderFail 에 담아 둔다. 파일 로그는
+												//   EcsLog.exe 로만 열려 아무도 못 보므로 화면에도 같이 적는다.
+												strFailLog.Format(_T("입고 작업을 내지 못했습니다 [경유지:%s] - %s (이동 완료 상태를 유지하고 다음 주기에 다시 냅니다)"),
+																  (LPCTSTR)strViaStnNum, (LPCTSTR)pDoc->m_pHostCl->m_strLastOrderFail);
 												pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strFailLog, _T("CEcsView::OnTimer"));
 												m_lstHostCl.InsertString(0, strFailLog);
 												pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged = TRUE;
