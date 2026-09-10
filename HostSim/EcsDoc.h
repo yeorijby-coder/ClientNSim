@@ -177,6 +177,17 @@ public:
 	void   AddHostRecv(LPCTSTR lpszMsg);   // 수신 전문을 담는다
 	BOOL   PopHostRecv(CString& strMsg);   // 담긴 것을 하나 꺼낸다 (없으면 FALSE)
 
+	/*
+	 * @.진단을 읽을 수 있는 파일로 남긴다.
+	 *
+	 *   기존 WriteLog 는 Log\LOGnn.elg 로 가고 EcsLog.exe 로만 열린다.
+	 *   원격지에서 돌릴 때는 화면도 못 보고 그 파일도 못 열어, 진단이
+	 *   있으나 없으나 마찬가지였다. 메모장으로 열리는 파일에 같이 적는다.
+	 *   (HostSim_Diag.log - exe 와 같은 폴더)
+	 *   화면 수신 리스트에도 같이 올린다.
+	 */
+	void   WriteDiag(LPCTSTR lpszMsg);
+
 private:
 	CStringArray    m_arrHostRecv;
 	CCriticalSection m_csHostRecv;

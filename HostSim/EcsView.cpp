@@ -633,6 +633,7 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 												strFailLog.Format(_T("입고 작업을 내지 못했습니다 [경유지:%s] - %s (이동 완료 상태를 유지하고 다음 주기에 다시 냅니다)"),
 																  (LPCTSTR)strViaStnNum, (LPCTSTR)pDoc->m_pHostCl->m_strLastOrderFail);
 												pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strFailLog, _T("CEcsView::OnTimer"));
+												pDoc->WriteDiag(strFailLog);
 												m_lstHostCl.InsertString(0, strFailLog);
 												pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged = TRUE;
 											}
@@ -676,6 +677,7 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 												strFailLog.Format(_T("입고 작업을 내지 못했습니다 [경유지:%s] - %s (이동 완료 상태를 유지하고 다음 주기에 다시 냅니다)"),
 																  (LPCTSTR)strViaStnNum, (LPCTSTR)pDoc->m_pHostCl->m_strLastOrderFail);
 												pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strFailLog, _T("CEcsView::OnTimer"));
+												pDoc->WriteDiag(strFailLog);
 												m_lstHostCl.InsertString(0, strFailLog);
 												pDoc->m_pLogicGorupInfos[i]->m_pJobInvokeInfos[j]->m_bOrderFailLogged = TRUE;
 											}

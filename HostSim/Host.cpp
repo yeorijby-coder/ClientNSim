@@ -301,6 +301,7 @@ void CHostSv::WarnStatusRange(LPCTSTR lpszKind, int nDeviceNo, int nMax, LPCTSTR
 	strLog.Format(_T("%s %d번 상태전문을 버렸습니다 - 받는 범위가 1~%d 입니다. EcsDef.h 의 %s 를 올려야 합니다."),
 				  lpszKind, nDeviceNo, nMax, lpszDefine);
 	m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostSv::WarnStatusRange"));
+	m_pDoc->WriteDiag(strLog);
 }
 
 void CHostSv::Parsing(char *pFrame)
@@ -371,6 +372,7 @@ void CHostSv::Parsing(char *pFrame)
 						strLog.Format(_T("알 수 없는 작업구분의 완료보고 [작업번호:%d] [작업구분:%s] - 전문을 확인하십시오."),
 									  nLuggNum, (LPCTSTR)ucJobDefine);
 						m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
+						m_pDoc->WriteDiag(strLog);
 					}
 				}
 			}
@@ -384,6 +386,7 @@ void CHostSv::Parsing(char *pFrame)
 				strLog.Format(_T("완료보고를 받았지만 로직이 물고 있는 작업이 아닙니다 [작업번호:%d] [작업구분:%s] - 이 보고로는 다음 작업이 나가지 않습니다."),
 							  nLuggNum, (LPCTSTR)ucJobDefine);
 				m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
+				m_pDoc->WriteDiag(strLog);
 			}
 
 			/*	// 일반적인 입고 완료 케이스
@@ -1095,12 +1098,14 @@ void CHostCl::Parsing(char *pFrame)
 				strLog.Format(_T("작업지시 거절 [작업번호:%d] [%d=%s] - %d회 연속이라 로직을 멈춘다. 사유를 고친 뒤 시작을 다시 누르면 된다."),
 							  nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode), nNakCount);
 				m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
+				m_pDoc->WriteDiag(strLog);
 				return;
 			}
 
 			strLog.Format(_T("작업지시 거절 [작업번호:%d] [%d=%s] - %d/%d회. 다음 주기에 다시 시도한다."),
 						  nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode), nNakCount, CEcsDoc::MAX_ORDER_NAK);
 			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
+			m_pDoc->WriteDiag(strLog);
 			return;
 		}
 
@@ -1117,6 +1122,7 @@ void CHostCl::Parsing(char *pFrame)
 			strLog.Format(_T("재작업 지시 거절 [작업번호:%d] [%d=%s] - 슬롯 %d개 해제. 다음 주기에 다시 시도한다."),
 						  nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode), nReleased);
 			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
+			m_pDoc->WriteDiag(strLog);
 			return;
 		}
 		break;

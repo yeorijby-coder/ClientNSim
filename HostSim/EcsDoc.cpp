@@ -1229,6 +1229,46 @@ void CEcsDoc::AddHostRecv(LPCTSTR lpszMsg)
 	m_arrHostRecv.Add(lpszMsg);
 }
 
+/*
+ * @.진단 한 줄을 파일과 화면에 같이 남긴다.
+ *
+ *   원격지에서 돌릴 때는 화면을 볼 수 없고, WriteLog 가 남기는 .elg 는
+ *   EcsLog.exe 가 있어야 열린다. 메모장으로 바로 열리는 파일에 쌓아
+ *   원격지에서도 사유를 읽을 수 있게 한다.
+ */
+void CEcsDoc::WriteDiag(LPCTSTR lpszMsg)
+{
+	if (lpszMsg == NULL)
+		return;
+
+	// @.화면에도 올린다. (뷰의 타이머가 꺼내 수신 리스트에 넣는다)
+	AddHostRecv(lpszMsg);
+
+	try
+	{
+		CString strPath;
+		strPath.Format(_T("%s\HostSim_Diag.log"), (LPCTSTR)g_strEcsPath);
+
+		CStdioFile file;
+		if (!file.Open(strPath, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite | CFile::typeText))
+			return;
+
+		file.SeekToEnd();
+
+		CString strLine;
+		// @.typeText 로 열었으므로 LF 하나면 CRLF 로 바꿔 쓴다.
+		strLine.Format(_T("%s  %s") + CString((TCHAR)10),
+					   COleDateTime::GetCurrentTime().Format(_T("%Y-%m-%d %H:%M:%S")), lpszMsg);
+		file.WriteString(strLine);
+		file.Close();
+	}
+	catch (CFileException* e)
+	{
+		// @.진단을 남기다 죽으면 주와 객이 바뀜다. 못 쓰면 그냥 넘어간다.
+		e->Delete();
+	}
+}
+
 BOOL CEcsDoc::PopHostRecv(CString& strMsg)
 {
 	CSingleLock lock(&m_csHostRecv, TRUE);
