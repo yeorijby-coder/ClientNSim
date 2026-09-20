@@ -116,6 +116,8 @@ public:
 	CStaticTransparent m_lblScPosVRd;
 	CStaticTransparent m_lblScPosHRd;
 	CStaticTransparent m_lblScSensorFkRd;
+	CStaticTransparent m_lblScForkPosFk1Rd;
+	CStaticTransparent m_lblScForkPosFk2Rd;
 
 	CEdit m_edtScOnlineModeRd;
 	CEdit m_edtScAutoModeRd;
@@ -125,6 +127,8 @@ public:
 	CEdit m_edtScPosVRd;
 	CEdit m_edtScPosHRd;
 	CEdit m_edtScSensorFkRd;
+	CEdit m_edtScForkPosFk1Rd;
+	CEdit m_edtScForkPosFk2Rd;
 
 	//포크상태
 	CStaticTransparent m_lblScErrStaFk1Rd;
@@ -319,6 +323,10 @@ public:
 	void InvalidateScDataSuspend(EN_LANG pLang);
 	void InvalidateLangControl( EN_LANG enLangTemp );
 	void UpdateScData(int pBntJob);
+
+	// @.이중입고 재지정 - 에러 확인, 새 로케이션 입력·검증, 확인까지.
+	BOOL PrepareDualStore(CString& strLuggNo, int& nBank, int& nBay, int& nLevel);
+	static BOOL ParseLocation(CString strLoc, int& nBank, int& nBay, int& nLevel);
 	void GetCommonCode(CString pWH_TYP, CString pSC_NO);
 	CString GetSelectQry(CString pWH_TYP, CString pSC_NO);
 	CString GetUpdateQry(CString pWH_TYP, CString pPLC_NO, CString pSC_NO, CString pSuspned);

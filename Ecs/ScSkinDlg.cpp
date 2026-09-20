@@ -78,6 +78,8 @@ void CScSkinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LBL_SC_POS_V_RD, m_lblScPosVRd);
 	DDX_Control(pDX, IDC_LBL_SC_POS_H_RD, m_lblScPosHRd);
 	DDX_Control(pDX, IDC_LBL_SC_SENSOR_FK_RD, m_lblScSensorFkRd);
+	DDX_Control(pDX, IDC_LBL_SC_FORKPOS_FK1_RD, m_lblScForkPosFk1Rd);
+	DDX_Control(pDX, IDC_LBL_SC_FORKPOS_FK2_RD, m_lblScForkPosFk2Rd);
 
 	DDX_Control(pDX, IDC_EDT_SC_ONLINE_MODE_RD, m_edtScOnlineModeRd);
 	DDX_Control(pDX, IDC_EDT_SC_AUTO_MODE_RD, m_edtScAutoModeRd);
@@ -87,7 +89,8 @@ void CScSkinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDT_SC_POS_V_RD, m_edtScPosVRd);
 	DDX_Control(pDX, IDC_EDT_SC_POS_H_RD, m_edtScPosHRd);
 	DDX_Control(pDX, IDC_EDT_SC_SENSOR_FK_RD, m_edtScSensorFkRd);
-
+	DDX_Control(pDX, IDC_EDT_SC_FORKPOS_FK1_RD, m_edtScForkPosFk1Rd);
+	DDX_Control(pDX, IDC_EDT_SC_FORKPOS_FK2_RD, m_edtScForkPosFk2Rd);
 
 	//에러정보
 	DDX_Control(pDX, IDC_EDT_SC_JOB_SC_ERR_CODE, m_edtScErrCode);
@@ -386,6 +389,14 @@ void CScSkinDlg::RenameResource(EN_LANG m_enLang)
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("sensorfk"), (int)m_enLang);
 	SetDlgItemText(IDC_LBL_SC_SENSOR_FK_RD, strValue);
 
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_sc\\"), _T("dlg_sc"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("forkposfk1"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_SC_FORKPOS_FK1_RD, strValue);
+
+	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_sc\\"), _T("dlg_sc"), strExtension);
+	strValue = CLib::GetIniStringFromPath(strFullPath, _T("forkposfk2"), (int)m_enLang);
+	SetDlgItemText(IDC_LBL_SC_FORKPOS_FK2_RD, strValue);
+
 
 	//포크상태
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_sc\\"), _T("dlg_sc"), strExtension);
@@ -478,9 +489,18 @@ void CScSkinDlg::RedrawSize()
 			m_edtScStartLocFork2.ShowWindow(SW_HIDE);
 			m_edtScDestLocFork2.ShowWindow(SW_HIDE);
 
+			m_lblScForkPosFk2Rd.ShowWindow(SW_HIDE);
+			m_edtScForkPosFk2Rd.ShowWindow(SW_HIDE);
+
 			m_lblScErrStaFk2Rd.ShowWindow(SW_HIDE);
 
 			m_edtScErrStaFk2Rd.ShowWindow(SW_HIDE);
+
+			m_lblScItnLuggFk2.ShowWindow(SW_HIDE);
+			m_lblScBcrBottomFk2.ShowWindow(SW_HIDE);
+
+			m_edtScItnLuggFk2.ShowWindow(SW_HIDE);
+			m_edtScBcrBottomFk2.ShowWindow(SW_HIDE);
 
 			m_grpScScJobInformationFork1.GetWindowRect(&rect);
 			ScreenToClient(&rect);
@@ -502,10 +522,21 @@ void CScSkinDlg::RedrawSize()
 			ScreenToClient(&rect);
 			m_edtScDestLocFork1.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
 
+			m_edtScForkPosFk1Rd.GetWindowRect(&rect);
+			ScreenToClient(&rect);
+			m_edtScForkPosFk1Rd.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
+
 			m_edtScErrStaFk1Rd.GetWindowRect(&rect);
 			ScreenToClient(&rect);
 			m_edtScErrStaFk1Rd.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
 
+			m_edtScItnLuggFk1.GetWindowRect(&rect);
+			ScreenToClient(&rect);
+			m_edtScItnLuggFk1.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
+
+			m_edtScBcrBottomFk1.GetWindowRect(&rect);
+			ScreenToClient(&rect);
+			m_edtScBcrBottomFk1.MoveWindow(rect.left, rect.top, 380, rect.Height(), true);
 		}
 	}
 
@@ -692,6 +723,13 @@ void CScSkinDlg::InvalidateScData(EN_LANG pLang)
 		m_edtScJobTypFork1.SetWindowText(pRsw->GetItem(_T("JOB_TYP_FK1")));
 		m_edtScStartLocFork1.SetWindowText(pRsw->GetItem(_T("START_LOC_FK1")));
 		m_edtScDestLocFork1.SetWindowText(pRsw->GetItem(_T("DEST_LOC_FK1")));
+
+		// @.이중입고 에러일 때만 도착 로케이션 칸을 열어 재지정 입력란으로 쓴다.
+		//   구 ECS 는 재지정 전용 창(CRedirectionDlg)을 띄웠는데, 신규에는 그 창이 없다.
+		CString strErrCodeRd = m_pSC_DATA->V_ERR_CODE_RD;
+		BOOL bDualStoreErr = (strErrCodeRd == _T("0060") || strErrCodeRd == _T("0061") ||
+							  strErrCodeRd == _T("0062") || strErrCodeRd == _T("0063"));
+		m_edtScDestLocFork1.SetReadOnly(!bDualStoreErr);
 		m_edtScJobNoFork2.SetWindowText(pRsw->GetItem(_T("LUGG_NO_FK2")));
 		m_edtScJobTypFork2.SetWindowText(pRsw->GetItem(_T("JOB_TYP_FK2")));
 		m_edtScStartLocFork2.SetWindowText(pRsw->GetItem(_T("START_LOC_FK2")));
@@ -705,6 +743,8 @@ void CScSkinDlg::InvalidateScData(EN_LANG pLang)
 		m_edtScPosVRd.SetWindowText(pRsw->GetItem(_T("POS_V_RD")));	// 수직 위치 = 승강(POS_V)
 		m_edtScPosHRd.SetWindowText(pRsw->GetItem(_T("POS_H_RD")));	// 수평 위치 = 주행(POS_H)
 		m_edtScSensorFkRd.SetWindowText(pRsw->GetItem(_T("SENSOR_FK_RD")));
+		m_edtScForkPosFk1Rd.SetWindowText(pRsw->GetItem(_T("FORKPOS_FK1_RD")));
+		m_edtScForkPosFk2Rd.SetWindowText(pRsw->GetItem(_T("FORKPOS_FK2_RD")));
 
 		m_edtScErrStaFk1Rd.SetWindowText(pRsw->GetItem(_T("ERR_STA_FK1_RD")));
 		m_edtScErrStaFk2Rd.SetWindowText(pRsw->GetItem(_T("ERR_STA_FK2_RD")));
@@ -1042,8 +1082,20 @@ void CScSkinDlg::UpdateScData(int nBtnJob)
 	//잘라내기
 	else if (nBtnJob == EN_BtnScManual) { strCmdId = _T("MOD"); strFK = _T("0");  strMsg = _T("수동지시를 진행하시겠습니까?"); }			//수동지시
 
-	if (AfxMessageBox(m_pDoc->GetMsgLangDef(strMsg), MB_YESNO) != IDYES)
-		return;
+	// @.이중입고는 새 로케이션을 받아야 해서 확인창을 따로 띄운다.
+	CString strDualLugg = _T("0");
+	int nDualBank = 0, nDualBay = 0, nDualLevel = 0;
+
+	if (nBtnJob == EN_BtnScDualStore)
+	{
+		if (!PrepareDualStore(strDualLugg, nDualBank, nDualBay, nDualLevel))
+			return;
+	}
+	else
+	{
+		if (AfxMessageBox(m_pDoc->GetMsgLangDef(strMsg), MB_YESNO) != IDYES)
+			return;
+	}
 
 	m_pDoc->BeginTrans_DLG();
 
@@ -1057,13 +1109,91 @@ void CScSkinDlg::UpdateScData(int nBtnJob)
 				return;
 		}
 	}
-	strSql.Format(_T(" UPDATE SC_DATA						  \n")
-		_T("    SET CMD_RQ_ID = '%s'						  \n")
-		_T("	  , OD_RQ_YN = 'Y'							  \n")
-		_T("	  , READ_UPD_DT = ") + m_pDoc->SYSDATE + _T(" \n")
-		_T("  WHERE WH_TYP = '%s'							  \n")
-		_T("	AND PLC_NO = '%s'							  \n")
-		_T("    AND MC_NO = '%s'							   "), strCmdId, strWhTyp, strPlcNo, strScNo);
+
+	if (strCmdId == _T("CTH"))
+	{
+		/*
+		 * @.홈복귀는 D199 상태명령이 아니라 D171 작업명령이다.
+		 *
+		 *   SC_TASK 의 SC_OD_RQ_YN() 은 SC_DATA 의 _OD 칸을 그대로 읽어 D171~D199 를
+		 *   한 번에 쓴다. 작업구분만 5 로 바꾸면 직전 입고/출고가 남긴 좌표가 그대로
+		 *   실려 나간다. 구 ECS 의 CSc::CallToHome() 은 버퍼를 0 으로 밀고 작업구분만
+		 *   5 를 넣어 보냈다. 같은 바이트가 나가도록 좌표도 같이 0 으로 만든다.
+		 */
+		strSql.Format(_T(" UPDATE SC_DATA						  \n")
+			_T("    SET JOB_TYP_OD       = '5'				  \n")
+			_T("	  , USE_FK_OD          = '0'			  \n")
+			_T("	  , LUGG_NO_FK1_OD     = '0'			  \n")
+			_T("	  , START_BANK_FK1_OD  = '0'			  \n")
+			_T("	  , START_BAY_FK1_OD   = '0'			  \n")
+			_T("	  , START_LEVEL_FK1_OD = '0'			  \n")
+			_T("	  , START_HSPOS_FK1_OD = '0'			  \n")
+			_T("	  , DEST_BANK_FK1_OD   = '0'			  \n")
+			_T("	  , DEST_BAY_FK1_OD    = '0'			  \n")
+			_T("	  , DEST_LEVEL_FK1_OD  = '0'			  \n")
+			_T("	  , DEST_HSPOS_FK1_OD  = '0'			  \n")
+			_T("	  , LUGG_NO_FK2_OD     = '0'			  \n")
+			_T("	  , START_BANK_FK2_OD  = '0'			  \n")
+			_T("	  , START_BAY_FK2_OD   = '0'			  \n")
+			_T("	  , START_LEVEL_FK2_OD = '0'			  \n")
+			_T("	  , START_HSPOS_FK2_OD = '0'			  \n")
+			_T("	  , DEST_BANK_FK2_OD   = '0'			  \n")
+			_T("	  , DEST_BAY_FK2_OD    = '0'			  \n")
+			_T("	  , DEST_LEVEL_FK2_OD  = '0'			  \n")
+			_T("	  , DEST_HSPOS_FK2_OD  = '0'			  \n")
+			_T("	  , SC_PLT_JOB_TYP_OD  = '0'			  \n")
+			_T("	  , OD_RQ_YN          = 'Y'				  \n")
+			_T("	  , READ_UPD_DT = ") + m_pDoc->SYSDATE + _T(" \n")
+			_T("  WHERE WH_TYP = '%s'							  \n")
+			_T("	AND PLC_NO = '%s'							  \n")
+			_T("    AND MC_NO = '%s'							   "), strWhTyp, strPlcNo, strScNo);
+	}
+	else if (strCmdId == _T("DUSTO"))
+	{
+		/*
+		 * @.이중입고 재지정. 구 ECS 의 CScDlg::OnButtonDualStore + CSc::Store 와 같다.
+		 *   작업구분 1(입고) 로 새 랙 위치를 다시 지시한다. 화물은 이미 포크에 있으므로
+		 *   출발 좌표는 0 이고, 출발 H/S 만 구 ECS 의 SC_DEFAULT_HS_STORE(1) 를 넣는다.
+		 */
+		strSql.Format(_T(" UPDATE SC_DATA						  \n")
+			_T("    SET JOB_TYP_OD       = '1'				  \n")
+			_T("	  , USE_FK_OD          = '0'			  \n")
+			_T("	  , LUGG_NO_FK1_OD     = '%s'			  \n")
+			_T("	  , START_BANK_FK1_OD  = '0'			  \n")
+			_T("	  , START_BAY_FK1_OD   = '0'			  \n")
+			_T("	  , START_LEVEL_FK1_OD = '0'			  \n")
+			_T("	  , START_HSPOS_FK1_OD = '1'			  \n")
+			_T("	  , DEST_BANK_FK1_OD   = '%d'			  \n")
+			_T("	  , DEST_BAY_FK1_OD    = '%d'			  \n")
+			_T("	  , DEST_LEVEL_FK1_OD  = '%d'			  \n")
+			_T("	  , DEST_HSPOS_FK1_OD  = '0'			  \n")
+			_T("	  , LUGG_NO_FK2_OD     = '0'			  \n")
+			_T("	  , START_BANK_FK2_OD  = '0'			  \n")
+			_T("	  , START_BAY_FK2_OD   = '0'			  \n")
+			_T("	  , START_LEVEL_FK2_OD = '0'			  \n")
+			_T("	  , START_HSPOS_FK2_OD = '0'			  \n")
+			_T("	  , DEST_BANK_FK2_OD   = '0'			  \n")
+			_T("	  , DEST_BAY_FK2_OD    = '0'			  \n")
+			_T("	  , DEST_LEVEL_FK2_OD  = '0'			  \n")
+			_T("	  , DEST_HSPOS_FK2_OD  = '0'			  \n")
+			_T("	  , SC_PLT_JOB_TYP_OD  = '0'			  \n")
+			_T("	  , OD_RQ_YN          = 'Y'				  \n")
+			_T("	  , READ_UPD_DT = ") + m_pDoc->SYSDATE + _T(" \n")
+			_T("  WHERE WH_TYP = '%s'							  \n")
+			_T("	AND PLC_NO = '%s'							  \n")
+			_T("    AND MC_NO = '%s'							   "),
+			(LPCTSTR)strDualLugg, nDualBank, nDualBay, nDualLevel, strWhTyp, strPlcNo, strScNo);
+	}
+	else
+	{
+		strSql.Format(_T(" UPDATE SC_DATA						  \n")
+			_T("    SET CMD_RQ_ID = '%s'						  \n")
+			_T("	  , CMD_RQ_YN = 'Y'							  \n")
+			_T("	  , READ_UPD_DT = ") + m_pDoc->SYSDATE + _T(" \n")
+			_T("  WHERE WH_TYP = '%s'							  \n")
+			_T("	AND PLC_NO = '%s'							  \n")
+			_T("    AND MC_NO = '%s'							   "), strCmdId, strWhTyp, strPlcNo, strScNo);
+	}
 
 	BOOL IsSuccess = m_pDoc->ExcuteQueryString_DLG(strSql);
 
@@ -1355,6 +1485,7 @@ void CScSkinDlg::OnCheckRetrieve()
 		}
 		delete pRsw;
 	}
+
 
 
 	//nSUSPEND = CConvert::ToInt(m_pSC_DATA->V_SUSPEND);
@@ -1702,6 +1833,8 @@ CString CScSkinDlg::GetQrySelectSC_STATUS_CCD(CSC_DATA* pSC_DATA)
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.POS_H_RD) AS POS_H_RD");											//수평주행
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.POS_V_RD) AS POS_V_RD");											//수직주행
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(CCD_SENSOR_FK_RD.CCD_NM_KOR, SD.SENSOR_FK_RD) AS SENSOR_FK_RD ");				//화물유무
+	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.FORKPOS_FK1_RD) AS FORKPOS_FK1_RD");											//포크위치#1
+	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.FORKPOS_FK2_RD) AS FORKPOS_FK2_RD");											//포크위치#2
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(CCD_ERR_STA_FK1_RD.CCD_NM_KOR, SD.ERR_STA_FK1_RD) AS ERR_STA_FK1_RD");	//포크상태#1
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(CCD_ERR_STA_FK2_RD.CCD_NM_KOR, SD.ERR_STA_FK2_RD) AS ERR_STA_FK2_RD");	//포크상태#2
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.ITN_LUGG_FK1) AS ITN_LUGG_FK1	");								//내부번호FK1
@@ -1724,7 +1857,7 @@ CString CScSkinDlg::GetQrySelectSC_STATUS_CCD(CSC_DATA* pSC_DATA)
 	strSql += CRLF + _T("                         AND CCD_ONLINE_MODE_RD.CCD_CD = SD.ONLINE_MODE_RD	");
 
 	strSql += CRLF + _T("                  LEFT OUTER JOIN COMMON_CODE CCD_AUTO_MODE_RD ");
-	strSql += CRLF + _T("                          ON CCD_AUTO_MODE_RD.CDX_CD = 'SC_AUTO_MODE' ");
+	strSql += CRLF + _T("                          ON CCD_AUTO_MODE_RD.CDX_CD = 'AUTO_MODE_RD' ");
 	strSql += CRLF + _T("                         AND CCD_AUTO_MODE_RD.CCD_CD = SD.AUTO_MODE_RD ");
 
 	strSql += CRLF + _T("                  LEFT OUTER JOIN COMMON_CODE CCD_UCSTATUS_RD");
@@ -2141,3 +2274,93 @@ void CScSkinDlg::OnStnClickedLblScJobStartLoc()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
 
+
+/*
+ * ParseLocation :: "BANK-BAY-LEVEL" 을 숫자 셋으로 나눈다.
+ *
+ *   화면의 도착 로케이션은 SD.DEST_BANK_FK1_RD || '-' || ... 로 만들어져 "04-010-02" 꼴이다.
+ *   자리수는 상관없다. SC_TASK 가 정수로 바꿔 쓰기 때문이다.
+ */
+BOOL CScSkinDlg::ParseLocation(CString strLoc, int& nBank, int& nBay, int& nLevel)
+{
+	strLoc.Trim();
+	if (strLoc.IsEmpty())
+		return FALSE;
+
+	int nPos = 0;
+	CString strBank = strLoc.Tokenize(_T("-"), nPos);
+	CString strBay  = strLoc.Tokenize(_T("-"), nPos);
+	CString strLev  = strLoc.Tokenize(_T("-"), nPos);
+	CString strRest = strLoc.Tokenize(_T("-"), nPos);
+
+	if (strBank.IsEmpty() || strBay.IsEmpty() || strLev.IsEmpty() || !strRest.IsEmpty())
+		return FALSE;
+
+	nBank  = _ttoi(strBank);
+	nBay   = _ttoi(strBay);
+	nLevel = _ttoi(strLev);
+
+	return (nBank > 0 && nBay > 0 && nLevel > 0);
+}
+
+/*
+ * PrepareDualStore :: 이중입고 재지정에 쓸 값을 받아 온다.
+ *
+ *   구 ECS 의 CScDlg::OnButtonDualStore 와 같은 순서로 막는다.
+ *     1. 이중입고 에러일 때만 쓸 수 있다.
+ *     2. 새 로케이션은 같은 호기 안이어야 한다. (호기 = (Bank + 1) / 2)
+ *
+ *   새 로케이션은 화면의 도착 로케이션 칸에 적어 두고 버튼을 누른다.
+ *   그 칸은 이중입고 에러일 때만 열린다. (InvalidateScData)
+ *   구 ECS 는 재지정 전용 창을 띄웠으나 신규에는 그 창이 없다.
+ */
+BOOL CScSkinDlg::PrepareDualStore(CString& strLuggNo, int& nBank, int& nBay, int& nLevel)
+{
+	CString strErrCode = m_pSC_DATA->V_ERR_CODE_RD;
+
+	if (strErrCode != _T("0060") && strErrCode != _T("0061") &&
+		strErrCode != _T("0062") && strErrCode != _T("0063"))
+	{
+		CString strMsg;
+		strMsg.Format(_T("이중입고 에러일 때만 쓸 수 있습니다.\n현재 에러코드 : [%s]"), (LPCTSTR)strErrCode);
+		AfxMessageBox(m_pDoc->GetMsgLangDef(strMsg));
+		return FALSE;
+	}
+
+	strLuggNo = m_pSC_DATA->V_ITN_LUGG;
+	strLuggNo.Trim();
+	if (strLuggNo.IsEmpty() || strLuggNo == _T("0"))
+	{
+		AfxMessageBox(m_pDoc->GetMsgLangDef(_T("크레인이 물고 있는 작업번호가 없습니다.\n작업 정보를 확인하십시오.")));
+		return FALSE;
+	}
+
+	CString strNewLoc;
+	m_edtScDestLocFork1.GetWindowText(strNewLoc);
+	strNewLoc.Trim();
+
+	if (!ParseLocation(strNewLoc, nBank, nBay, nLevel))
+	{
+		AfxMessageBox(m_pDoc->GetMsgLangDef(_T("도착 로케이션 칸에 새 위치를 [뱅크-베이-레벨] 로 적어 주십시오.\n예) 04-010-02")));
+		return FALSE;
+	}
+
+	// \n.같은 호기 안이어야 한다. 크레인 하나가 뱅크 두 개를 맡는다.
+	int nScNum    = _ttoi(m_pSC_DATA->K_SC_NO) % 100;
+	int nLocScNum = (nBank + 1) / 2;
+
+	if (nScNum != nLocScNum)
+	{
+		CString strMsg;
+		strMsg.Format(_T("같은 호기 안의 로케이션이어야 합니다.\n이 크레인 : [%d]호기 (뱅크 %d~%d)\n적어 주신 곳 : [%d]호기 (뱅크 %d)"),
+					  nScNum, nScNum * 2 - 1, nScNum * 2, nLocScNum, nBank);
+		AfxMessageBox(m_pDoc->GetMsgLangDef(strMsg));
+		return FALSE;
+	}
+
+	CString strAsk;
+	strAsk.Format(_T("이중입고 재지정을 진행하시겠습니까?\n\n작업번호 : [%s]\n새 위치 : [%02d-%03d-%02d]"),
+				  (LPCTSTR)strLuggNo, nBank, nBay, nLevel);
+
+	return (AfxMessageBox(m_pDoc->GetMsgLangDef(strAsk), MB_YESNO) == IDYES);
+}
