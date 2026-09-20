@@ -52,6 +52,7 @@ BOOL CCollectDB::IsDB_POSSIBLE()
 		delete m_pDB_ACCESS->m_pAdoDB;
 		m_pDB_ACCESS->m_pAdoDB = NULL;
 		delete m_pDB_ACCESS;
+		
 		m_pDB_ACCESS = NULL;
 		return FALSE;
 	}
@@ -122,18 +123,18 @@ UINT CCollectDB::DoWork(LPVOID pParm)
 			if(pEquipment == NULL || pEquipment->m_pRsw == NULL)
 			{
 				pThis->Collect_EQUIPMENT(pEquipment);
-				::Sleep(50); //추가
+				::Sleep(50); //Aß°¡
 			}
 		}	
 
 		//if(pDoc->m_blConnectStatus == TRUE)
 		//{
-		//	int HostCnt = 1; //2 (나중에 수정할 부분)
+		//	int HostCnt = 1; //2 (³ªAß¿¡ ¼oA¤CO ºIºÐ)
 		//	for(int nIdxHost = 0; nIdxHost < HostCnt; nIdxHost++)
 		//	{
 		//		CString strHostNum = _T("HOST");  //_T("HOST") + CConvert::ToString(nIdxHost+1); 
 		//		pThis->ConnectStatus(pDoc->m_pConnectStatus, strHostNum);
-		//		::Sleep(50); //추가
+		//		::Sleep(50); //Aß°¡
 		//	}
 		//}
 		::Sleep(1000); //1000
@@ -173,6 +174,7 @@ void CCollectDB::Collect_EQUIPMENT(CEquipment* pEquipment)
 		break;
 	}
 	//*/
+
 
 
 	strSql = pEquipment->GetSelectQry();

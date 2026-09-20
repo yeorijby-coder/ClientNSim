@@ -84,6 +84,7 @@ UINT CEquipment::ThreadProc(LPVOID pParam)
 			{
 				try
 				{
+
 					pThis->AutoRunProc(); //20190522kdh
 					if(pThis->m_pRsw != NULL)
 					{
@@ -97,15 +98,15 @@ UINT CEquipment::ThreadProc(LPVOID pParam)
 					
 					switch(pThis->m_enKind)
 					{
-						case CEquipment::enCV:	strTemp.Format(_T("CV Time:%s"), COleDateTime::GetCurrentTime().Format(_T("%H:%M:%S")));		AfxMessageBox(strTemp);		break;
-						case CEquipment::enSC:	strTemp.Format(_T("SC Time:%s"), COleDateTime::GetCurrentTime().Format(_T("%H:%M:%S")));		AfxMessageBox(strTemp);		break;
+						//case CEquipment::enCV:	strTemp.Format(_T("CV Time:%s"), COleDateTime::GetCurrentTime().Format(_T("%H:%M:%S")));		AfxMessageBox(strTemp);		break;
+						//case CEquipment::enSC:	strTemp.Format(_T("SC Time:%s"), COleDateTime::GetCurrentTime().Format(_T("%H:%M:%S")));		AfxMessageBox(strTemp);		break;
 					}
 					
 				}
 				break;
 			}
 		}
-		::Sleep(100); //1000
+ 		::Sleep(100); //1000
 	}
 	return 0;	
 }
@@ -206,6 +207,7 @@ void CEquipmentArray::InvokeControl(BOOL bManual)
 
 		if (pEquipment->m_enKind == CEquipment::enCV)
 			pInfo->m_bManualModified = TRUE;
+
 
 		//pInfo->InvokeControl();
 		//pEquipment->CallAutoRunProc();

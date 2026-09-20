@@ -31,7 +31,6 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CTGroupBox message handlers
-
 // 그룹박스는 클릭을 안쪽 컨트롤로 흘려보내야 한다.
 // 위 PreSubclassWindow 에서 BS_OWNERDRAW 를 넣는 순간 버튼 종류가
 // BS_GROUPBOX 가 아니게 되어, 그룹박스가 원래 하던 '클릭 통과' 동작이 사라진다.

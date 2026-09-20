@@ -40,8 +40,14 @@ CString CDisplay::GetSelectQry() //kdh20190521
 	//	strPlcNo = m_strThreadNo;
 
 
-	strSql.Format(_T("SELECT DD.*					\n")
-		           _T(" FROM DISPLAY_DATA DD 		\n")
+	strSql.Format(_T("	   SELECT DD.*					\n")
+				   _T("	        , CASE WHEN TO_CHAR(NOW() - EM.UPD_DT, 'YYYYMMDDHH24MISS')::INTEGER > 5 THEN 6 ELSE 0 END AS EQP_TIME		\n")
+				   _T("	        , EM.CONNECTED_YN															  								\n")
+		           _T("      FROM DISPLAY_DATA DD 		\n")
+				   _T("INNER JOIN EQP_MST EM 			\n")
+				   _T("		   ON DD.WH_TYP		= EM.WH_TYP 		\n")
+				   _T("		  AND DD.PLC_NO		= EM.PLC_NO 		\n")
+				   _T("		  AND EM.EQP_TYP	= 'DISPLAY' 			\n")
 		           _T("WHERE DD.WH_TYP = '%s'		\n")
 		           _T("  AND DD.PLC_NO IN ('%s')	\n")
 		           _T("ORDER BY DD.DISP_NO			\n"), m_WH_TYP, m_strPlcNo);
@@ -95,6 +101,8 @@ void CDisplay::AutoRunProc()
 		};
 
 		pDisplayData->SetDISP_DATA(m_pRsw->GetItem(_T("DISP_DATA")));
+		pDisplayData->SetEQP_TIME(m_pRsw->GetItem(_T("EQP_TIME")));
+		pDisplayData->SetEQP_CONNECTED_YN(m_pRsw->GetItem(_T("CONNECTED_YN")));
 
 
 

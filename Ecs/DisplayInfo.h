@@ -42,7 +42,7 @@ public:
 public:
 	CMap<CString, LPCTSTR, CDisplayData*, CDisplayData*> m_MapDisplayData;
 	CDisplayData* m_pDisplayData;
-
+	//CDisplayBoardArray m_pDisplayBoards;
 public:
 	//virtual void Serialize(CArchive& ar);
 
@@ -86,4 +86,6 @@ public:
 	CDisplayBoardArray() {}
 	virtual ~CDisplayBoardArray() {}
 };
+
+
 

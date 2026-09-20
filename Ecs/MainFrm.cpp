@@ -8,6 +8,7 @@
 #include "MFCRibbonPanel_Wrap.h"
 #include "MinButton.h"
 #include "RecordSetWrap.h"
+#include "Config.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -57,17 +58,24 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_9, &CMainFrame::OnUpdateStatusSc9)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_10, &CMainFrame::OnUpdateStatusSc10)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_SC_11, &CMainFrame::OnUpdateStatusSc11)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_DISPLAY_1, &CMainFrame::OnUpdateStatusDisplay1)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_HOST_1, &CMainFrame::OnUpdateStatusHost1)
+	ON_UPDATE_COMMAND_UI(ID_STATUS_BCR_1, &CMainFrame::OnUpdateStatusBcr1)
+
 	//ON_UPDATE_COMMAND_UI(ID_STATUS_RTV_1, &CMainFrame::OnUpdateStatusRtv1)
 	//ON_UPDATE_COMMAND_UI(ID_STATUS_BCR_1, &CMainFrame::OnUpdateStatusBcr1)
 	//ON_UPDATE_COMMAND_UI(ID_STATUS_BCR_2, &CMainFrame::OnUpdateStatusBcr2)
 
-	ON_CONTROL_RANGE(BN_CLICKED, ID_STATUS_CV_1, ID_STATUS_SC_11, &CMainFrame::OnButtonComm)
+	ON_CONTROL_RANGE(BN_CLICKED, ID_STATUS_CV_1, ID_STATUS_HOST_1, &CMainFrame::OnButtonComm)
 
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
 {
 	ID_SEPARATOR,           // 상태 줄 표시기
+	1,
+	2,
+	3,
 	ID_INDICATOR_CAPS,
 	ID_INDICATOR_NUM,
 	ID_INDICATOR_SCRL,
@@ -392,9 +400,12 @@ void CMainFrame::AddCategoryWCS()
 	pBtnJob->SetAlwaysLargeImage();
 	pPanelView->Add(pBtnJob);
 
-	CMFCRibbonButton* pBtnIfstatus = new CMFCRibbonButton(ID_VIEW_IFLIST, _T("IFSTATUS-INFO"), HICONFromPATH(GetConcatPath(strAppPath, _T("Ifstatus"), strExtension)), TRUE);
-	pBtnIfstatus->SetAlwaysLargeImage();
-	pPanelView->Add(pBtnIfstatus);
+	if (CConfig::m_strVIEW_INTERFACE_USE_YON == "Y")
+	{
+		CMFCRibbonButton* pBtnIfstatus = new CMFCRibbonButton(ID_VIEW_IFLIST, _T("IFSTATUS-INFO"), HICONFromPATH(GetConcatPath(strAppPath, _T("Ifstatus"), strExtension)), TRUE);
+		pBtnIfstatus->SetAlwaysLargeImage();
+		pPanelView->Add(pBtnIfstatus);
+	}
 
 	CMFCRibbonButton* pBtnSearch = new CMFCRibbonButton(ID_VIEW_SEARCH, _T("SEARCH"), HICONFromPATH(GetConcatPath(strAppPath, _T("search"), strExtension)), TRUE);
 	pBtnSearch->SetAlwaysLargeImage();
@@ -424,6 +435,9 @@ void CMainFrame::AddCategoryWCS()
 	}
 
 	AddPanelLAYOUT(pCategory);
+
+
+
 }
 
 //	층을 오가는 버튼.
@@ -480,6 +494,21 @@ void CMainFrame::AddCategoryMANUAL()
 	pBtnManualSc->SetAlwaysLargeImage();
 	pPanelManual->Add(pBtnManualSc);
 
+	strAppPath.Format(_T("%s"), chrFileName);
+	strAppPath = strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\mainframe_scjob\\");
+	strExtension = _T(".png");
+
+	CMFCRibbonPanel* pPanelScJob = pCategory->AddPanel(_T("SC작업"));
+
+	CMFCRibbonButton* pBtnScStop = new CMFCRibbonButton(ID_SC_STOP, _T("SC정지"), HICONFromPATH(GetConcatPath(strAppPath, _T("stop"), strExtension)), TRUE);
+	pBtnScStop->SetAlwaysLargeImage();
+	pPanelScJob->Add(pBtnScStop);
+
+	CMFCRibbonButton* pBtnScStart = new CMFCRibbonButton(ID_SC_START, _T("SC시작"), HICONFromPATH(GetConcatPath(strAppPath, _T("start"), strExtension)), TRUE);
+	pBtnScStart->SetAlwaysLargeImage();
+	pPanelScJob->Add(pBtnScStart);
+
+
 	//CMFCRibbonButton* pBtnManualRtv = new CMFCRibbonButton(ID_MANUAL_RTV, _T("RTV"), HICONFromPATH(GetConcatPath(strAppPath, _T("rtv"), strExtension)), TRUE);
 	//pBtnManualRtv->SetAlwaysLargeImage();
 	//pPanelManual->Add(pBtnManualRtv);
@@ -534,7 +563,8 @@ void CMainFrame::RenameRibbonText(EN_LANG penLang)
 	CString strAppPath = _T("");
 	strAppPath.Format(_T("%s"),chrFileName);
 	CString strExtension = _T(".ini");
-	
+	int iViewElement_Idx = 0;
+
 	CMFCRibbonCategory* pCategory = m_wndRibbonBar.GetCategory(1);
 	BOOL bTemp1 = FALSE;
 	BOOL bTemp2 = FALSE;
@@ -560,13 +590,20 @@ void CMainFrame::RenameRibbonText(EN_LANG penLang)
 	pPanel_Wrap_View->SetCenterColumnVert();
 	pPanel_Wrap_View->SetJustifyColumns();
 	pPanel_Wrap_View->SetName(CLib::GetIniStringFromPath(strFullPath, _T("categoryname"), (int)penLang));
-	CMFCRibbonButton* pButton_Job = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(0);
+	CMFCRibbonButton* pButton_Job = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(iViewElement_Idx);
 	pButton_Job->SetText(CLib::GetIniStringFromPath(strFullPath, _T("job-info"), (int)penLang));
 	//CMFCRibbonButton* pButton_emptyplt = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(1);
 	//pButton_emptyplt->SetText(_T("공PLT작업"));
-	CMFCRibbonButton* pButton_Ifstatus = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(1);
-	pButton_Ifstatus->SetText(CLib::GetIniStringFromPath(strFullPath, _T("ifstatus-info"), (int)penLang));
-	CMFCRibbonButton* pButton_Search = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(2);
+
+	if (CConfig::m_strVIEW_INTERFACE_USE_YON == "Y")
+	{
+		iViewElement_Idx += 1;
+		CMFCRibbonButton* pButton_Ifstatus = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(iViewElement_Idx);
+		pButton_Ifstatus->SetText(CLib::GetIniStringFromPath(strFullPath, _T("ifstatus-info"), (int)penLang));
+	}
+	
+	iViewElement_Idx += 1;
+	CMFCRibbonButton* pButton_Search = (CMFCRibbonButton*)pPanel_Wrap_View->GetElement(iViewElement_Idx);
 	pButton_Search->SetText(CLib::GetIniStringFromPath(strFullPath, _T("search"), (int)penLang));
 
 	strFullPath = GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\mainframe_monitor\\"), _T("monitor"), strExtension);
@@ -642,54 +679,82 @@ void CMainFrame::ExcuteTheme()
 void CMainFrame::AddStatusBarPane()
 {
 	m_wndStatusBar.GetStatusBarCtrl().SetMinHeight(10);
-	m_wndStatusBar.SetPaneWidth(0, 20);
+	m_wndStatusBar.SetPaneWidth(0, 10);
 
-	int iwitdh = 80;
+	int iwitdh = 40;
 	int i=0;
 	++i;
 
-	InsertButtonPainToStatusBar(_T("CV_1그룹"), ID_STATUS_CV_1, i + 1, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_2그룹"), ID_STATUS_CV_2, i + 2, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_3그룹"), ID_STATUS_CV_3, i + 3, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_4그룹"), ID_STATUS_CV_4, i + 4, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_5그룹"), ID_STATUS_CV_5, i + 5, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_6그룹"), ID_STATUS_CV_6, i + 6, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_7그룹"), ID_STATUS_CV_7, i + 7, iwitdh);
-	InsertButtonPainToStatusBar(_T("CV_8그룹"), ID_STATUS_CV_8, i + 8, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_1호기"), ID_STATUS_SC_1, i + 9, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_2호기"), ID_STATUS_SC_2, i + 10, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_3호기"), ID_STATUS_SC_3, i + 11, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_4호기"), ID_STATUS_SC_4, i + 12, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_5호기"), ID_STATUS_SC_5, i + 13, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_6호기"), ID_STATUS_SC_6, i + 14, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_7호기"), ID_STATUS_SC_7, i + 15, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_8호기"), ID_STATUS_SC_8, i + 16, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_9호기"), ID_STATUS_SC_9, i + 17, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_10호기"), ID_STATUS_SC_10, i + 18, iwitdh);
-	InsertButtonPainToStatusBar(_T("SC_11호기"), ID_STATUS_SC_11, i + 19, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_1"), ID_STATUS_CV_1, i + 1, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_2"), ID_STATUS_CV_2, i + 2, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_3"), ID_STATUS_CV_3, i + 3, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_4"), ID_STATUS_CV_4, i + 4, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_5"), ID_STATUS_CV_5, i + 5, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_6"), ID_STATUS_CV_6, i + 6, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_7"), ID_STATUS_CV_7, i + 7, iwitdh);
+	InsertButtonPainToStatusBar(_T("CV_8"), ID_STATUS_CV_8, i + 8, iwitdh);
+
+	++i;
+
+	InsertButtonPainToStatusBar(_T("SC_1"), ID_STATUS_SC_1, i + 9, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_2"), ID_STATUS_SC_2, i + 10, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_3"), ID_STATUS_SC_3, i + 11, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_4"), ID_STATUS_SC_4, i + 12, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_5"), ID_STATUS_SC_5, i + 13, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_6"), ID_STATUS_SC_6, i + 14, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_7"), ID_STATUS_SC_7, i + 15, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_8"), ID_STATUS_SC_8, i + 16, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_9"), ID_STATUS_SC_9, i + 17, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_10"), ID_STATUS_SC_10, i + 18, iwitdh);
+	InsertButtonPainToStatusBar(_T("SC_11"), ID_STATUS_SC_11, i + 19, iwitdh);
+
+	++i;
+
+	InsertButtonPainToStatusBar(_T("전광판"), ID_STATUS_DISPLAY_1, i + 20, iwitdh);
+
+	++i;
+
+	InsertButtonPainToStatusBar(_T("HOST"), ID_STATUS_HOST_1, i + 21, iwitdh);
+
+	if (CConfig::m_strBCR_USE_YON == "Y")
+	{
+		++i;
+
+		InsertButtonPainToStatusBar(_T("BCR"), ID_STATUS_BCR_1, i + 22, iwitdh);
+	}
+
 	//InsertButtonPainToStatusBar(_T("RTV_1호기"), ID_STATUS_RTV_1, i + 4, 80);
 	//InsertButtonPainToStatusBar(_T("BCR_1호기"), ID_STATUS_BCR_1, i + 5, 80);
 	//InsertButtonPainToStatusBar(_T("BCR_2호기"), ID_STATUS_BCR_2, i + 6, 80);
 		
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_2, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_3, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_4, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_5, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_6, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_7, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_8, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_2, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_4, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_5, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_6, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_7, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
-	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_1, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_2, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_3, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_4, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_5, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_6, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_7, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_CV_8, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_1, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_2, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_3, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_4, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_5, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_6, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_7, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_8, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_9, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_10, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_SC_11, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_DISPLAY_1, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	m_wndStatusBar.SetPaneInfo(ID_STATUS_HOST_1, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+
+	if (CConfig::m_strBCR_USE_YON == "Y")
+	{
+		m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, 8, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
+	}
+
+
 	//m_wndStatusBar.SetPaneInfo(ID_STATUS_RTV_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	//m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
 	//m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_2, 12, _T("Arial Black"), BLACK, DARK_GRAY, WHITE, CMinButton::Gradient, 100, CMinButton::UPTODOWN);
@@ -729,6 +794,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 	CSC_DATA* pSC_DATA = NULL;
 	CRTV_DATA* pRTV_DATA = NULL;
 	CBCR_MST* pBCR_DATA = NULL;
+	CDisplayData* pDisplayData = NULL;
 
     #pragma region Control 번호를 통해서 필요한 정보들을 설정하는 부분
 
@@ -751,7 +817,6 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 		#pragma endregion
-		break;
 	case ID_STATUS_CV_2:
 #pragma region ID_STATUS_CV_2
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("102"));
@@ -769,7 +834,6 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
-		break;
 	case ID_STATUS_CV_3:
 #pragma region ID_STATUS_CV_3
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("103"));
@@ -787,7 +851,6 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
-		break;
 	case ID_STATUS_CV_4:
 #pragma region ID_STATUS_CV_4
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("104"));
@@ -805,7 +868,6 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
-		break;
 	case ID_STATUS_CV_5:
 #pragma region ID_STATUS_CV_5
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("105"));
@@ -823,7 +885,6 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
-		break;
 	case ID_STATUS_CV_6:
 #pragma region ID_STATUS_CV_6
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("106"));
@@ -841,7 +902,6 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
-		break;
 	case ID_STATUS_CV_7:
 #pragma region ID_STATUS_CV_7
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("107"));
@@ -859,7 +919,6 @@ void CMainFrame::OnButtonComm(UINT nID)
 		nCheckTime = 5;
 
 #pragma endregion
-		break;
 	case ID_STATUS_CV_8:
 #pragma region ID_STATUS_CV_8
 		pTrackInfo = pDoc->GetTrackInfoNew(_T("108"));
@@ -1076,54 +1135,48 @@ void CMainFrame::OnButtonComm(UINT nID)
 
 #pragma endregion
 		break;
+	case ID_STATUS_BCR_1:
+		#pragma region ID_STATUS_BCR_1
+				pBCR_DATA = pDoc->GetBCR_MST(_T("001"));
+		
+				if (pBCR_DATA == NULL)
+					return;
+				strEQP_CONNECTED_YN = pBCR_DATA->V_EQP_CONNECTED_YN;
+				strEQP_TIME = pBCR_DATA->V_EQP_TIME;
+				nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+				strTYPE = _T("BCR");
+				nEQP_NUM = 1;
+				nCheckTime = 5;
+		
+		#pragma endregion
+				break;
+	case ID_STATUS_DISPLAY_1:
+#pragma region ID_STATUS_DISPLAY_1
+		pDisplayData = pDoc->GetDisplayData(_T("1"));
 
+		if (pDisplayData == NULL)
+			return;
+		strEQP_CONNECTED_YN = pDisplayData->V_EQP_CONNECTED_YN;
+		strEQP_TIME = pDisplayData->V_EQP_TIME;
+		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+		strTYPE = _T("DISPLAY");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
 
-//	case ID_STATUS_RTV_1:
-//#pragma region ID_STATUS_RTV_1
-//		pRTV_DATA = pDoc->GetRTV_DATA(_T("801"));
-//
-//		if (pRTV_DATA == NULL)
-//			return;
-//
-//		strEQP_CONNECTED_YN = pRTV_DATA->V_EQP_CONNECTED_YN;
-//		strEQP_TIME = pRTV_DATA->V_EQP_TIME;
-//		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
-//		strTYPE = _T("RTV");
-//		nEQP_NUM = 1;
-//		nCheckTime = 5;
-//
-//#pragma endregion
-//		break;
-//	case ID_STATUS_BCR_1:
-//#pragma region ID_STATUS_BCR_1
-//		pBCR_DATA = pDoc->GetBCR_MST(_T("701"));
-//
-//		if (pBCR_DATA == NULL)
-//			return;
-//		strEQP_CONNECTED_YN = pBCR_DATA->V_EQP_CONNECTED_YN;
-//		strEQP_TIME = pBCR_DATA->V_EQP_TIME;
-//		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
-//		strTYPE = _T("BCR");
-//		nEQP_NUM = 1;
-//		nCheckTime = 5;
-//
-//#pragma endregion
-//		break;
-//	case ID_STATUS_BCR_2:
-//#pragma region ID_STATUS_BCR_2
-//		pBCR_DATA = pDoc->GetBCR_MST(_T("702"));
-//
-//		if (pBCR_DATA == NULL)
-//			return;
-//		strEQP_CONNECTED_YN = pBCR_DATA->V_EQP_CONNECTED_YN;
-//		strEQP_TIME = pBCR_DATA->V_EQP_TIME;
-//		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
-//		strTYPE = _T("BCR");
-//		nEQP_NUM = 2;
-//		nCheckTime = 5;
-//
-//#pragma endregion
-//		break;
+#pragma endregion
+		break;
+	case ID_STATUS_HOST_1:
+#pragma region ID_STATUS_HOST_1
+	
+		pDoc->GetHostConnectInfo(strEQP_CONNECTED_YN, nEQP_TIME);
+
+		strTYPE = _T("HOST");
+		nEQP_NUM = 1;
+		nCheckTime = 5;
+
+#pragma endregion
+		break;
+
 	default:
 		return;
 	}
@@ -1920,6 +1973,110 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 	return;
 }
 
+void CMainFrame::OnUpdateStatusBcr1(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CBCR_MST* pBCR_DATA = pDoc->GetBCR_MST(_T("001"));
+
+	if (pBCR_DATA == NULL)
+		return;
+
+	CString strEQP_TIME = pBCR_DATA->V_EQP_TIME;
+	CString strEQP_COLOR = pBCR_DATA->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pBCR_DATA->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, _T("BCR"), RED, BLACK);
+			pBCR_DATA->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, _T("BCR"), GREEN, BLACK);
+			pBCR_DATA->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+void CMainFrame::OnUpdateStatusDisplay1(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+	CDisplayData* pDisplayData = pDoc->GetDisplayData(_T("1"));
+
+	if (pDisplayData == NULL)
+		return;
+
+	CString strEQP_TIME = pDisplayData->V_EQP_TIME;
+	CString strEQP_COLOR = pDisplayData->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN = pDisplayData->V_EQP_CONNECTED_YN;
+	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		if (strEQP_COLOR != _T("RED"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_DISPLAY_1, _T("HOST"), RED, BLACK);
+			pDisplayData->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		if (strEQP_COLOR != _T("GREEN"))
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_DISPLAY_1, _T("HOST"), GREEN, BLACK);
+			pDisplayData->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
+void CMainFrame::OnUpdateStatusHost1(CCmdUI* pCmdUI)
+{
+	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
+	if (pDoc == NULL)
+		return;
+	//m_pDoc = pDoc;
+
+
+	//CString strEQP_COLOR = pDisplayData->V_EQP_COLOR;
+	CString strEQP_CONNECTED_YN;
+	int nEQP_TIME;
+
+
+	pDoc->GetHostConnectInfo(strEQP_CONNECTED_YN, nEQP_TIME);
+
+	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
+	{
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_HOST_1, _T("HOST"), RED, BLACK);
+			//pDisplayData->SetEQP_COLOR(_T("RED"));
+		}
+	}
+	else
+	{
+		{
+			m_wndStatusBar.SetPaneInfo(ID_STATUS_HOST_1, _T("HOST"), GREEN, BLACK);
+			//pDisplayData->SetEQP_COLOR(_T("GREEN"));
+		}
+	}
+	return;
+}
+
 
 //void CMainFrame::OnUpdateStatusRtv1(CCmdUI* pCmdUI)
 //{
@@ -1958,41 +2115,7 @@ void CMainFrame::OnUpdateStatusSc11(CCmdUI* pCmdUI)
 //	return;
 //}
 //
-//void CMainFrame::OnUpdateStatusBcr1(CCmdUI* pCmdUI)
-//{
-//	CEcsDoc* pDoc = (CEcsDoc*)GetActiveDocument();
-//	if (pDoc == NULL)
-//		return;
-//	//m_pDoc = pDoc;
-//
-//	CBCR_MST* pBCR_DATA = pDoc->GetBCR_MST(_T("701"));
-//
-//	if (pBCR_DATA == NULL)
-//		return;
-//
-//	CString strEQP_TIME = pBCR_DATA->V_EQP_TIME;
-//	CString strEQP_COLOR = pBCR_DATA->V_EQP_COLOR;
-//	CString strEQP_CONNECTED_YN = pBCR_DATA->V_EQP_CONNECTED_YN;
-//	int nEQP_TIME = CConvert::ToInt(strEQP_TIME);
-//
-//	if (nEQP_TIME > 5 || strEQP_CONNECTED_YN == _T("N"))
-//	{
-//		if (strEQP_COLOR != _T("RED"))
-//		{
-//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, _T("BCR_1호기"), RED, BLACK);
-//			pBCR_DATA->SetEQP_COLOR(_T("RED"));
-//		}
-//	}
-//	else
-//	{
-//		if (strEQP_COLOR != _T("GREEN"))
-//		{
-//			m_wndStatusBar.SetPaneInfo(ID_STATUS_BCR_1, _T("BCR_1호기"), GREEN, BLACK);
-//			pBCR_DATA->SetEQP_COLOR(_T("GREEN"));
-//		}
-//	}
-//	return;
-//}
+
 //
 //void CMainFrame::OnUpdateStatusBcr2(CCmdUI* pCmdUI)
 //{

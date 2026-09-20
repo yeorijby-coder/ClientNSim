@@ -108,7 +108,7 @@ public:
 	afx_msg void OnCommandRangeMainFrameSTATUS(UINT nID);
 	afx_msg void OnCommandRangeMainFrameLAYOUT(UINT nID);
 	afx_msg void OnUpdateMainFrameLAYOUT(CCmdUI* pCmdUI);
-
+	afx_msg void OnCommandRangeMainFrameSCJOB(UINT nID);
 
 // 특성입니다.
 public:
@@ -366,4 +366,8 @@ public:
 	BOOL m_blConnectStatus;
 	BOOL m_blJobList;//작업정보 관련
 	BOOL m_blJobListDb;//작업정보 관련
+
+	void UpdateScJob(UINT nID);
+
+	void GetHostConnectInfo(CString& p_strCONNECTD_YN, int& p_iEQP_TIME);
 };

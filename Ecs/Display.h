@@ -20,8 +20,7 @@ public:
 
 	CEcsDoc* m_pDoc;
 	CDisplayInfo* m_pInfo;
-	virtual CInfo* GetInfo() { return m_pInfo; }	// 주석이면 기반 클래스의 NULL이 반환되어
-														// CEquipmentArray::InvokeControl 에서 ASSERT + NULL 역참조가 난다
+	virtual CInfo* GetInfo() { return m_pInfo; }
 
 protected:
 	virtual void AutoRunProc();

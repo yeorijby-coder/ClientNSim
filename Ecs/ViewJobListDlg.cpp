@@ -154,6 +154,17 @@ LRESULT CViewJobListDlg::OnSpreadLClick(WPARAM wParam, LPARAM lParam)
 
 		//작업구분 가져오기 (CDX_CD, CCD_NM_KOR, CCD_CD 순서)
 		CLib::BindSpreadCommonCode(_T("JOB_TYP"), strJobTyp, m_strJOB_TYP, m_pDoc);
+
+		if (m_strJOB_TYP == "1" || m_strJOB_TYP == "4" || m_strJOB_TYP == "5")
+		{
+			m_btnJobScComplete.EnableWindow(TRUE);
+			m_btnJobCvComplete.EnableWindow(false);
+		}
+		if (m_strJOB_TYP == "2" || m_strJOB_TYP == "3" || m_strJOB_TYP == "6")
+		{
+			m_btnJobScComplete.EnableWindow(false);
+			m_btnJobCvComplete.EnableWindow(TRUE);
+		}
 	}
 
 	return 0;
@@ -208,8 +219,8 @@ BOOL CViewJobListDlg::OnInitDialog()
 	CLib::BindCombo(m_cmbJobStatus, _T("JOB_STATUS"), m_pDoc, int(pEn), TRUE);
 	CLib::BindCombo(m_cmbJobStatus2, _T("JOB_STATUS"), m_pDoc, int(pEn), FALSE);
 	CLib::BindCombo(m_cbxJobPriority, _T("JOB_PRIORITY"), m_pDoc, int(pEn), FALSE);
-	CLib::SetBindCombo_DEST_POS_DEF(m_cmbStartPos, m_pDoc);
-	CLib::SetBindCombo_DEST_POS_DEF(m_cmbDestPos, m_pDoc);
+	CLib::SetBindCombo_DEST_POS_DEF(m_cmbStartPos, m_pDoc, _T("Y"), _T(""));
+	CLib::SetBindCombo_DEST_POS_DEF(m_cmbDestPos, m_pDoc, _T(""), _T("Y"));
 
 	InitializeControlLanguage();
 	m_chkAutoSel.SetCheck(1);
@@ -255,7 +266,7 @@ BOOL CViewJobListDlg::OnInitDialog()
 	m_SpreadSheet.AddColHead(_T("도착위치"), 11);
 	m_SpreadSheet.AddColHead(_T("작업구분"), 15);
 	m_SpreadSheet.AddColHead(_T("작업상태"), 15);
-	m_SpreadSheet.AddColHead(_T("팔렛트바코드"), 15);
+	m_SpreadSheet.AddColHead(_T("적재용기"), 15);
 	m_SpreadSheet.AddColHead(_T("우선순위"), 9);
 	m_SpreadSheet.AddColHead(_T("제품정보"), 20);
 	m_SpreadSheet.AddColHead(_T("제품정보2"), 20);
@@ -948,10 +959,12 @@ CString CViewJobListDlg::GetQrySelect_Main(BOOL bSearch)
 
 	strSql.Format(_T(" SELECT ") + m_pDoc->NVL + _T("(CCD_WH_TYP.CCD_NM_KOR, JM.WH_TYP) AS WH_TYP 		\n")
 		_T("		         ,") + m_pDoc->NVL + _T("(JM.LUGG_NO, ' ') AS LUGG_NO						\n")
-		_T("		         ,JM.START_POS AS START_POS													\n")
-		_T("		         ,") + m_pDoc->NVL + _T("(JM.START_LOCATION, ' ') AS START_LOCATION			\n")
-		_T("		         ,JM.DEST_POS AS DEST_POS													\n")
-		_T("		         ,") + m_pDoc->NVL + _T("(JM.DEST_LOCATION, ' ') AS DEST_LOCATION			\n")
+		_T("		         ,") + m_pDoc->NVL + _T("('[' || ST_POS.TRACK_NO || '] TR#'||ST_POS.MC_NO || ' ' ||ST_POS. REMARKS, JM.START_POS) AS START_POS				\n")
+		//_T("		         ,JM.START_POS AS START_POS													\n")
+		_T("		         ,") + m_pDoc->NVL + _T("(wcs_sf_location_format(JM.START_LOCATION), ' ') AS START_LOCATION			\n")
+		_T("		         ,") + m_pDoc->NVL + _T("('[' || DT_POS.TRACK_NO || '] TR#' ||DT_POS.MC_NO || ' ' ||DT_POS. REMARKS, JM.START_POS) AS DEST_POS				\n")
+		//_T("		         ,JM.DEST_POS AS DEST_POS													\n")
+		_T("		         ,") + m_pDoc->NVL + _T("(wcs_sf_location_format(JM.DEST_LOCATION), ' ') AS DEST_LOCATION			\n")
 		_T("		         ,") + m_pDoc->NVL + _T("(CCD_JOB_TYP.CCD_NM_KOR, JM.JOB_TYP) AS JOB_TYP	\n")
 		_T("		         ,") + m_pDoc->NVL + _T("(CC.CCD_NM_KOR, JM.JOB_STATUS) AS JOB_STATUS		\n")
 		_T("		         ,") + m_pDoc->NVL + _T("(JM.BCR_BOTTOM, ' ') AS BCR_BOTTOM					\n")
@@ -972,7 +985,13 @@ CString CViewJobListDlg::GetQrySelect_Main(BOOL bSearch)
 		_T("					        LEFT OUTER JOIN COMMON_CODE CCD_JOB_TYP							\n")
 		_T("										 ON CCD_JOB_TYP.WH_TYP LIKE '%%%s%%'				\n")
 		_T("										AND CCD_JOB_TYP.CDX_CD = 'JOB_TYP'					\n")
-		_T("								 AND JM.JOB_TYP = CCD_JOB_TYP.CCD_CD						\n")
+		_T("								        AND JM.JOB_TYP = CCD_JOB_TYP.CCD_CD					\n")
+
+		_T("					        LEFT OUTER JOIN DEST_POS_DEF ST_POS							    \n")
+		_T("								         ON JM.START_POS = ST_POS.TRACK_NO					    \n")
+		_T("					        LEFT OUTER JOIN DEST_POS_DEF DT_POS							    \n")
+		_T("								         ON JM.DEST_POS = DT_POS.TRACK_NO					    \n")
+
 		_T("			WHERE JM.WH_TYP = '%s'															\n"), m_pDoc->m_WH_TYP, m_pDoc->m_WH_TYP, m_pDoc->m_WH_TYP, m_pDoc->m_WH_TYP, m_pDoc->m_WH_TYP);
 
 	if (strLUGG_NO != "")
@@ -1012,6 +1031,16 @@ CString CViewJobListDlg::GetQrySelect_Main(BOOL bSearch)
 
 void CViewJobListDlg::ClickSpread(long Col, long Row) //셀클릭
 {
+	if (m_strJOB_TYP == "1" || m_strJOB_TYP == "4" || m_strJOB_TYP == "5")
+	{
+		m_btnJobScComplete.EnableWindow(TRUE);
+		m_btnJobCvComplete.EnableWindow(false);
+	}
+	if (m_strJOB_TYP == "2" || m_strJOB_TYP == "3" || m_strJOB_TYP == "6")
+	{
+		m_btnJobScComplete.EnableWindow(false);
+		m_btnJobCvComplete.EnableWindow(TRUE);
+	}
 }
 
 ////////SPREAD 값채우기

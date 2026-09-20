@@ -19,11 +19,18 @@ public:
 	CString K_PLC_NO;
 	CString K_DISP_NO;
 
+	CString V_EQP_TIME;
+	CString V_EQP_CONNECTED_YN;
+	CString V_EQP_COLOR;
+
 public:
 	void SetWH_TYP(CString pWH_TYP);
 	void SetPLC_NO(CString pPLC_NO);
 	void SetDISP_NO(CString pDISP_NO);
 
+	void SetEQP_TIME(CString V_EQP_TIME);
+	void SetEQP_CONNECTED_YN(CString V_EQP_CONNECTED_YN);
+	void SetEQP_COLOR(CString V_EQP_COLOR);
 public:
 	//data
 	CString V_DISP_DATA;

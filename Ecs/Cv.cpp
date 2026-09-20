@@ -65,6 +65,9 @@ CString CCv::GetSelectQry() //kdh20190521
 {
 	CString strSql = _T("");
 
+
+
+
 	strSql.Format(_T("SELECT CD.WH_TYP																										\n")
 				  _T("       ,CD.TRACK_NO																									\n")
 				  _T("       ,CD.MC_NO																										\n")
@@ -206,6 +209,8 @@ void CCv::AutoRunProc()
 		pCV_DATA->SetSTN_KIND(m_pRsw->GetItem(_T("STN_KIND")));
 		pCV_DATA->SetEQP_TIME(m_pRsw->GetItem(_T("EQP_TIME")));
 		pCV_DATA->SetEQP_CONNECTED_YN(m_pRsw->GetItem(_T("CONNECTED_YN")));
+
+
 
 		pTrackInfo->m_wDoorStatus = 0x0000;
 

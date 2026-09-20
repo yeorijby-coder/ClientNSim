@@ -19,6 +19,7 @@
 #include "BCRSkinDlg.h"
 #include "ViewJobListDlg.h"
 #include "RecordSetWrap.h"
+#include "DisplayDlg.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -582,10 +583,30 @@ LRESULT CEcsView::OnRefreshDialog(WPARAM wParam, LPARAM lParam)
 		}
 	case CEquipment::enDISPLAY:
 		{
-			//CDisplayDlg m_DisplayDlg(GetDocument(), GetDocument()->m_pDisplay, this);
-			//m_DisplayDlg.DoModal();
+		if (pDoc->m_pDisplayDlg == NULL)
+		{
+			pDoc->m_pDisplayDlg = new CDisplayDlg(pDoc);
+			pDoc->m_pDisplayDlg->Create(IDD_SKIN_DISPLAY_CTRL);
+			CRect MainRect;
+			CRect Rect;
+			CRect PosRect;
+			::AfxGetApp()->GetMainWnd()->GetWindowRect(&MainRect);
+			pDoc->m_pDisplayDlg->GetWindowRect(&Rect);
 
-		break;
+			PosRect.left = ((MainRect.right - MainRect.left) - Rect.Width()) / 2;
+			PosRect.top = ((MainRect.bottom - MainRect.top) - Rect.Height()) / 2;
+			pDoc->m_pRtvSkinDlg->SetWindowPos(&wndTop, PosRect.left, PosRect.top,
+				Rect.Width(), Rect.Height(),
+				SWP_SHOWWINDOW);
+
+			if (pDoc->m_pDisplayDlg == NULL)
+				break;
+		}
+
+		::SetWindowPos(pDoc->m_pDisplayDlg->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		::SetWindowPos(pDoc->m_pDisplayDlg->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		::ShowWindow(pDoc->m_pDisplayDlg->m_hWnd, SW_SHOW);
+		::SendMessage(pDoc->m_pDisplayDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //임시저장소 LPARM 추가파람
 		}
 	}
 	return 0;
@@ -680,6 +701,61 @@ LRESULT CEcsView::OnControlClick(WPARAM wParam, LPARAM lParam)
 			::SendMessage(pDoc->m_pScSkinDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pSC_DATA, (LPARAM)pDoc->m_enLang); //임시저장소 LPARM 추가파람
 			break;
 		}
+		case CEquipment::enDISPLAY:
+			{
+				CDisplayData* pDisplayData = pDoc->GetDisplayData(strEqpKey);
+				if (pDisplayData == NULL) { return 0; };
+
+				if (pDoc->m_pDisplayDlg == NULL)
+				{
+					pDoc->m_pDisplayDlg = new CDisplayDlg(pDoc);
+					pDoc->m_pDisplayDlg->Create(IDD_SKIN_DISPLAY_CTRL);
+					CRect MainRect;
+					CRect Rect;
+					CRect PosRect;
+					::AfxGetApp()->GetMainWnd()->GetWindowRect(&MainRect);
+					pDoc->m_pDisplayDlg->GetWindowRect(&Rect);
+
+					PosRect.left = ((MainRect.right - MainRect.left) - Rect.Width()) / 2;
+					PosRect.top = ((MainRect.bottom - MainRect.top) - Rect.Height()) / 2;
+					pDoc->m_pDisplayDlg->SetWindowPos(&wndTop, PosRect.left, PosRect.top,
+						Rect.Width(), Rect.Height(),
+						SWP_SHOWWINDOW);
+				}
+				::SetWindowPos(pDoc->m_pDisplayDlg->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+				::SetWindowPos(pDoc->m_pDisplayDlg->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+				::ShowWindow(pDoc->m_pDisplayDlg->m_hWnd, SW_SHOWNORMAL);
+				::SendMessage(pDoc->m_pDisplayDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)pDisplayData, (LPARAM)pDoc->m_enLang); //임시저장소 LPARM 추가파람
+
+				break;
+			}
+
+		case CEquipment::enTHS:
+		{
+			if (pDoc->m_pDisplayDlg == NULL)
+			{
+				pDoc->m_pDisplayDlg = new CDisplayDlg(pDoc);
+				pDoc->m_pDisplayDlg->Create(IDD_SKIN_DISPLAY_CTRL);
+				CRect MainRect;
+				CRect Rect;
+				CRect PosRect;
+				::AfxGetApp()->GetMainWnd()->GetWindowRect(&MainRect);
+				pDoc->m_pDisplayDlg->GetWindowRect(&Rect);
+
+				PosRect.left = ((MainRect.right - MainRect.left) - Rect.Width()) / 2;
+				PosRect.top = ((MainRect.bottom - MainRect.top) - Rect.Height()) / 2;
+				pDoc->m_pDisplayDlg->SetWindowPos(&wndTop, PosRect.left, PosRect.top,
+					Rect.Width(), Rect.Height(),
+					SWP_SHOWWINDOW);
+			}
+			::SetWindowPos(pDoc->m_pDisplayDlg->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+			::SetWindowPos(pDoc->m_pDisplayDlg->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+			::ShowWindow(pDoc->m_pDisplayDlg->m_hWnd, SW_SHOWNORMAL);
+			::SendMessage(pDoc->m_pDisplayDlg->m_hWnd, WM_USER_DIALOG_MESSAGE_REFRESH, (WPARAM)NULL, (LPARAM)pDoc->m_enLang); //임시저장소 LPARM 추가파람
+
+			break;
+		}
+
  	//	case CEquipment::enRTV:
  	//	{
 		//	CRTV_DATA* pRTV_DATA = pDoc->GetRTV_DATA(strEqpKey);
@@ -802,7 +878,7 @@ LRESULT CEcsView::OnViewLayoutInfo(WPARAM wParam, LPARAM lParam)
 		if (pEcsLayout == NULL)
 			return 0;
 		
-		pEcsLayout->OnViewLayoutInfo(this);
+		pEcsLayout->OnViewLayoutInfo(this, wParam, lParam);
 		//if (lParam == 1) pEcsLayout->OnViewCvLayoutInfo(this);
 		//else if (lParam == 2) pEcsLayout->OnViewLgLayoutInfo(this, pDoc->m_nLayoutLg);
 		//else if (lParam == 3) pEcsLayout->OnViewPlLayoutInfo(this, pDoc->m_nLayoutPl);
@@ -949,6 +1025,7 @@ BOOL CEcsView::OnEraseBkgnd(CDC* pDC)
 
 	// 배경을 흰색으로 지우면 OnDraw 가 그리기 전까지 흰 화면이 보여 깜빡인다.
 	// OnDraw 에서 메모리DC로 전체를 BitBlt 하므로 배경 지우기는 하지 않는다.
+
 
 	return TRUE;      
 

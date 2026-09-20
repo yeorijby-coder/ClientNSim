@@ -486,8 +486,6 @@ void CConfigLogDelete::OnBnClickedBtnConfigLogDeleteUpdate()
 
 	return;	
 }
-
-
 //	캡션을 rc_resource\dlg_config\dlg_config.ini 에서 읽는다.
 //	예전에는 Ecs.rc 값 그대로라 언어를 바꿔도 그대로였다.
 void CConfigLogDelete::RenameResource(EN_LANG m_enLang)

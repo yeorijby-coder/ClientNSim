@@ -99,9 +99,9 @@ COLORREF CTrackInfo::GetCvColor()
 	int nJobTypTmp = CConvert::ToInt(m_pCV_DATA->V_JOB_TYP_RD);
 	switch (nJobTypTmp)
 	{
-	case enJobTypeAutoSto			: return pConfig->m_clrUSER_COLOR_STO; //return LIGHT_MINT;
-
+	case enJobTypeAutoSto			: return pConfig->m_clrUSER_COLOR_STO; //return LIGHT_MINT
 	case enJobTypeAutoRet			: return pConfig->m_clrUSER_COLOR_RET;
+	case enJobTypeAutoPR			: return pConfig->m_clrUSER_COLOR_RET;
 	case enJobTypeAutoR2R			: return pConfig->m_clrUSER_COLOR_RTR;
 	case enJobTypeAutoMove			: return pConfig->m_clrUSER_COLOR_MOVE;
 	case enJobTypeAutoA2A			: return pConfig->m_clrUSER_COLOR_ATA;	

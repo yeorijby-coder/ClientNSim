@@ -59,7 +59,7 @@ public:		// ABOUT VIEW
 	void OnButtonUp(CWnd* pWnd, UINT nFlag, const CPoint& point);
 	void OnKeyDown(CWnd* pWnd, UINT nChar, UINT nRepCnt, UINT nFlags);
 	/*void OnViewCvLayoutInfo(CWnd* pWnd);*/
-	void OnViewLayoutInfo(CWnd* pWnd);
+	LRESULT OnViewLayoutInfo(CWnd* pWnd, WPARAM wParam, LPARAM lParam);
 	//void OnViewLgLayoutInfo(CWnd* pWnd, CString* Lg, BOOL bTemp = FALSE);
 	//void OnViewPlLayoutInfo(CWnd* pWnd, CString* Pl, BOOL bTemp = FALSE);
 	//void OnViewCmLayoutInfo(CWnd* pWnd, CString* Cm);
@@ -74,4 +74,9 @@ public:
 	CDciMaster* GetDciMaster() { return m_pDCI; }
 	int GetDciCtrlCount() { return m_pDciCtrls->GetCount(); }
 	BOOL Test(CWnd* pWnd, int nLeft, int nRight, int nTop, int nBottom);
+
+	CString SetLuggNo(CEcsDoc* pDoc, CString p_strMC_NO);
+	CString SetLdCtnNo(CEcsDoc* pDoc, CString p_strMC_NO);
+
+
 };

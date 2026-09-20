@@ -36,6 +36,10 @@ public:
 public: 
 	int m_nUSER_LAST_LANG; 
 	int m_nUSER_LAST_TAB_INDEX;
+
+	static CString m_strBCR_USE_YON;
+	static CString m_strVIEW_INTERFACE_USE_YON;
+
 	COLORREF m_clrUSER_COLOR_STO; 
 	COLORREF m_clrUSER_COLOR_RET;
 	COLORREF m_clrUSER_COLOR_MOVE;
@@ -82,6 +86,7 @@ public:
 	void			SaveConfigLANG();
 	void 			LoadConfigDATABASE();
 	void 			LoadConfigUSER();
+	void 			LoadConfigEQUIPMENT();
 	CString			GetIpAddress();
 
 

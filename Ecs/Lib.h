@@ -150,7 +150,7 @@ public:
 	static BOOL BindCombo_SC_NO_MANUAL(CComboBoxWrapper& cbx, CString strCDX_CD, CEcsDoc *pDoc, int nEN_LANG, CString strAGING_TYP, CString strSC_NO);
 	static BOOL BindCombo_RTV_NO(CComboBoxWrapper& cbx, CEcsDoc *pDoc, int nEN_LANG);
 	static BOOL BindCombo_RTV_JOB_TYP(CComboBoxWrapper& cbx, CEcsDoc* pDoc, int nEN_LANG);
-	static bool SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CEcsDoc *pDoc);
+	static bool SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CEcsDoc *pDoc, CString p_strPA_YON, CString p_strPK_YON);
 	static bool BindSpreadCommonCode(CString pCDX_CD, CString pCCD_NM_XXX, CString& pCCD_CD, CEcsDoc *pDoc);
 
 public:

@@ -64,6 +64,7 @@ public:
 	void InitializeRibbonMenu(EN_LANG penLang = EN_LANG::EN_ENG);
 	void AddPanelLAYOUT(CMFCRibbonCategory* pCategory);	// 1F / 2F / 3F
 	void RenameRibbonText(EN_LANG penLang = EN_ENG);
+
 	HICON HICONFromPATH(CString pstrPath);
 	CString GetConcatPath_LANG(CString pstrAppPath, CString pstrFileName, CString pstrExtension, EN_LANG penLang);
 
@@ -115,12 +116,16 @@ public:
 	afx_msg void OnUpdateStatusSc9(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateStatusSc10(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateStatusSc11(CCmdUI* pCmdUI);
-	
+	afx_msg void OnUpdateStatusDisplay1(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusBcr1(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStatusHost1(CCmdUI* pCmdUI);
+
 	//afx_msg void OnUpdateStatusRtv1(CCmdUI* pCmdUI);
-	//afx_msg void OnUpdateStatusBcr1(CCmdUI* pCmdUI);
 	//afx_msg void OnUpdateStatusBcr2(CCmdUI* pCmdUI);
 
 	afx_msg void OnButtonComm(UINT nID);
+
+
 };
 
 

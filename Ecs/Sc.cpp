@@ -71,7 +71,7 @@ CString CSc::GetSelectQry() //kdh20190521
 		          _T("							  SD.MC_NO_NM,																													\n")
 				  _T("       					  SD.SC_TYP,\n")
 				  _T("    ") + m_pDoc->NVL + _T("(SD.ONLINE_MODE_RD,'0') AS ONLINE_MODE_RD,\n")
-				  _T("    ") + m_pDoc->NVL + _T("(SD.AUTO_MODE_RD,'0') AS AUTO_MODE_RD,\n")
+				  _T("    ") + m_pDoc->NVL + _T("(SD.AUTO_MODE_RD,'1') AS AUTO_MODE_RD,\n")
 				  _T("    ") + m_pDoc->NVL + _T("(SD.ACTIVE_MODE_RD,'0') AS ACTIVE_MODE_RD,\n")
 				  _T("    ") + m_pDoc->NVL + _T("(SD.UCSTATUS_RD,'0') AS UCSTATUS_RD,\n")
 				  _T("    ") + m_pDoc->NVL + _T("(SD.SENSOR_FK_RD,'0') AS SENSOR_FK_RD,\n")

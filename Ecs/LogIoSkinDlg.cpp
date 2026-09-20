@@ -174,8 +174,8 @@ BOOL CLogIoSkinDlg::OnInitDialog()
 	CLib::BindCombo(m_cbxIOLogWhTyp,_T("WH_TYP"), m_pDoc, pEn, FALSE);
 	CLib::BindCombo(m_cbxJobTyp, _T("JOB_TYP"), m_pDoc, pEn, TRUE);
 	CLib::BindCombo(m_cbxRowCnt,_T("ROW_CNT"), m_pDoc, pEn, FALSE);
-	CLib::SetBindCombo_DEST_POS_DEF(m_cbxIOFromTrack, m_pDoc);
-	CLib::SetBindCombo_DEST_POS_DEF(m_cbxIOToTrack, m_pDoc);
+	CLib::SetBindCombo_DEST_POS_DEF(m_cbxIOFromTrack, m_pDoc, _T("Y"), _T(""));
+	CLib::SetBindCombo_DEST_POS_DEF(m_cbxIOToTrack, m_pDoc, _T(""), _T("Y"));
 
 	CTime tToDate = CTime::GetTickCount();
 	CTimeSpan span(1,0,0,0); // (d,h,m,s)
@@ -624,10 +624,12 @@ CString CLogIoSkinDlg::GetQrySelect_Main(int nRowCheck, BOOL bSearch)
 	strSql += CRLF + _T(" SELECT HIS.INS_DT AS INS_DT  ");
 	strSql += CRLF + _T("     , CCD_WH_TYP.CCD_NM_KOR AS WH_TYP  ");
 	strSql += CRLF + _T(" 	  , HIS.LUGG_NO AS LUGG_NO  ");
-	strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(HIS.START_POS, '0') AS START_POS  ");
-	strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(HIS.START_LOCATION, '00-000-00') AS START_LOCATION  ");
-	strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(HIS.DEST_POS, '0') AS DEST_POS  ");
-	strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(HIS.DEST_LOCATION, '00-000-00') AS DEST_LOCATION  ");
+	//strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(HIS.START_POS, '0') AS START_POS  ");
+	strSql += CRLF + _T("	  ,") + m_pDoc->NVL + _T("('[' || ST_POS.TRACK_NO || '] TR#'||ST_POS.MC_NO || ' ' ||ST_POS. REMARKS, HIS.START_POS) AS START_POS				");
+	strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(wcs_sf_location_format(HIS.START_LOCATION), '00-000-00') AS START_LOCATION  ");
+	//strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(HIS.DEST_POS, '0') AS DEST_POS  ");
+	strSql += CRLF + _T("	  ,") + m_pDoc->NVL + _T("('[' || DT_POS.TRACK_NO || '] TR#'||DT_POS.MC_NO || ' ' ||DT_POS. REMARKS, HIS.DEST_POS) AS DEST_POS				");
+	strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(wcs_sf_location_format(HIS.DEST_LOCATION), '00-000-00') AS DEST_LOCATION  ");
 	strSql += CRLF + _T(" 	  , CCD_JOB_TYP.CCD_NM_KOR AS JOB_TYP  ");
 	strSql += CRLF + _T(" 	  , ") + m_pDoc->NVL + _T("(CCD_JOB_STATUS.CCD_NM_KOR, HIS.JOB_STATUS) AS JOB_STATUS  ");
 	strSql += CRLF + _T("     , ") + m_pDoc->NVL + _T("(HIS.BCR_BOTTOM, ' ') AS BCR_BOTTOM	");
@@ -644,6 +646,10 @@ CString CLogIoSkinDlg::GetQrySelect_Main(int nRowCheck, BOOL bSearch)
 	strSql += CRLF + _T("   					    LEFT OUTER JOIN COMMON_CODE CCD_JOB_STATUS  ");
 	strSql += CRLF + _T("   					                 ON CCD_JOB_STATUS.CDX_CD = 'JOB_STATUS'  ");
 	strSql += CRLF + _T("   					                AND CCD_JOB_STATUS.CCD_CD = HIS.JOB_STATUS  ");
+	strSql += CRLF + _T("					        LEFT OUTER JOIN DEST_POS_DEF ST_POS							    ");
+	strSql += CRLF + _T("								         ON HIS.START_POS = ST_POS.TRACK_NO					    ");
+	strSql += CRLF + _T("					        LEFT OUTER JOIN DEST_POS_DEF DT_POS							    ");
+	strSql += CRLF + _T("								         ON HIS.DEST_POS = DT_POS.TRACK_NO					    ");
 	strSql += CRLF + _T("  WHERE TO_CHAR(HIS.INS_DT , 'YYYYMMDDHH24MISS') BETWEEN '") + strdtFrom + _T("' AND '") + strdtTo + _T("'");
 
 	if ((strJOB_TYP != _T("")) && (strJOB_TYP != _T("ALL")))

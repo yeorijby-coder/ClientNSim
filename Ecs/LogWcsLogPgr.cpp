@@ -158,8 +158,8 @@ BOOL CLogWcsLogPgr::OnInitDialog()
 	m_SpreadSheet.AddColHead(_T("창고타입"), 9);
 	m_SpreadSheet.AddColHead(_T("장비종류"), 9);
 	m_SpreadSheet.AddColHead(_T("프로그램이름"), 11);
-	m_SpreadSheet.AddColHead(_T("메시지"), 128);
 	m_SpreadSheet.AddColHead(_T("작업번호"), 9);
+	m_SpreadSheet.AddColHead(_T("메시지"), 80);
 
 	BOOL bResult = m_SpreadSheet.Create();
 
@@ -492,8 +492,8 @@ CString CLogWcsLogPgr::GetQrySelect_Main(int nRowCheck, BOOL bSearch)
 	strSql += CRLF + _T("      ,") + m_pDoc->NVL + _T("(CCD_WH_TYP.CCD_NM_KOR, WLP.WH_TYP) AS WH_TYP			");
 	strSql += CRLF + _T("      ,WLP.EQP_TYP AS EQP_TYP															");
 	strSql += CRLF + _T("      ,") + m_pDoc->NVL + _T("(CCD_PGR_NM.CCD_NM_KOR, WLP.PGR_NM) AS PGR_NM			");
-	strSql += CRLF + _T("      ,WLP.LOG_KOR AS LOG_KOR															");
 	strSql += CRLF + _T("      ,WLP.LUGG_NO AS LUGG_NO															");
+	strSql += CRLF + _T("      ,WLP.LOG_KOR AS LOG_KOR															");
 	strSql += CRLF + _T("  FROM WCS_LOG_PGR WLP																	");
 	strSql += CRLF + _T("       LEFT OUTER JOIN COMMON_CODE CCD_WH_TYP											");
 	strSql += CRLF + _T("                    ON WLP.WH_TYP = CCD_WH_TYP.CCD_CD									");

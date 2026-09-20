@@ -150,7 +150,7 @@ BOOL CLogClientSkinDlg::OnInitDialog()
 	m_SpreadSheet.m_bAutoResizeCol = true;
 	m_SpreadSheet.m_colorBaseBack = WHITE;
 	m_SpreadSheet.m_wGridType = SS_GRID_HORIZONTAL | SS_GRID_VERTICAL | SS_GRID_SOLID;
-
+	
 	m_SpreadSheet.m_rectMargin = rectMargin;
 
 	HFONT hFontH = CreateFont(15,0,0,0,700,0,0,0,0,0,0,0,0,_T("System"));
@@ -160,11 +160,12 @@ BOOL CLogClientSkinDlg::OnInitDialog()
 	m_SpreadSheet.AddColHead(_T("추가시간"), 21);
 	m_SpreadSheet.AddColHead(_T("창고타입"), 9);
 	m_SpreadSheet.AddColHead(_T("유저IP"), 14);
-	m_SpreadSheet.AddColHead(_T("메세지"), 36);
-	m_SpreadSheet.AddColHead(_T("유저ID"), 13);
 	m_SpreadSheet.AddColHead(_T("화면"), 15);
 	m_SpreadSheet.AddColHead(_T("작업번호"), 9);
 	m_SpreadSheet.AddColHead(_T("팔렛트바코드"), 15);
+	m_SpreadSheet.AddColHead(_T("메세지"), 36);
+	m_SpreadSheet.AddColHead(_T("유저ID"), 13);
+
 
 	BOOL bResult = m_SpreadSheet.Create();
 
@@ -174,6 +175,9 @@ BOOL CLogClientSkinDlg::OnInitDialog()
 #pragma endregion
 
 	InitializeSpread(0, TRUE);
+
+	//ShowWindow(SW_MAXIMIZE);
+
 	return TRUE;  
 }
 
@@ -528,11 +532,11 @@ CString CLogClientSkinDlg::GetQrySelect_Main(int nRowCheck,BOOL bSearch)
 	strSql += CRLF + _T("SELECT INS_DT AS INS_DT, ");
 	strSql += CRLF + _T("       ") + m_pDoc->NVL + _T("(CD_WH_TYP.CCD_NM_KOR, WCL.WH_TYP) AS WH_TYP , ");
 	strSql += CRLF + _T("		IP AS IP, ");
-	strSql += CRLF + _T("		") + m_pDoc->NVL + _T("(MESSAGE, '') AS MESSAGE, ");
-	strSql += CRLF + _T("		USER_ID AS USER_ID, ");
 	strSql += CRLF + _T("		CASE WHEN CD_PGR_NM.CCD_NM_KOR IS NULL THEN WCL.WIN_ID ELSE CD_PGR_NM.CCD_NM_KOR || '(' || WCL.WIN_ID || ')' END AS WIN_ID, ");
 	strSql += CRLF + _T("		") + m_pDoc->NVL + _T("(LUGG_NO, '0000') AS LUGG_NO, ");
-	strSql += CRLF + _T("		BOTTOM_TRAY AS BOTTOM_TRAY");
+	strSql += CRLF + _T("		BOTTOM_TRAY AS BOTTOM_TRAY,");
+	strSql += CRLF + _T("		") + m_pDoc->NVL + _T("(MESSAGE, '') AS MESSAGE, ");
+	strSql += CRLF + _T("		USER_ID AS USER_ID ");
 	strSql += CRLF + _T("  FROM WCS_CLIENT_LOG WCL LEFT OUTER JOIN COMMON_CODE CD_WH_TYP ");
 	strSql += CRLF + _T("                                      ON CD_WH_TYP.CDX_CD = 'WH_TYP' ");
 	strSql += CRLF + _T("                                     AND CD_WH_TYP.CCD_CD = WCL.WH_TYP ");

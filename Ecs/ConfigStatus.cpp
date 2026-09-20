@@ -204,8 +204,6 @@ void CConfigStatus::OnBnClickedInitColor()
 	// 레이아웃 수정
 	m_pDoc->m_pEquipments.InvokeControl(TRUE);
 }
-
-
 //	캡션을 rc_resource\dlg_legend\dlg_legend.ini 에서 읽는다.
 //	예전에는 Ecs.rc 값 그대로라 언어를 바꿔도 그대로였다.
 void CConfigStatus::RenameResource(EN_LANG m_enLang)

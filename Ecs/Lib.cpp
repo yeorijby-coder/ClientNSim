@@ -1261,7 +1261,7 @@ bool CLib::BindCombo_SC_HS_DEF(CComboBoxWrapper& cbx, CEcsDoc *pDoc, int nEN_LAN
       strHS_NO = pRsw->GetItem(_T("HS_NO"));
 	  strHS_MC_NO = pRsw->GetItem(_T("HS_MC_NO"));
 	  strMC_NO_NM = pRsw->GetItem(_T("MC_NO_NM"));
-	  strPOS = strHS_MC_NO + _T(" (") + strMC_NO_NM + _T(")");
+	  strPOS = strHS_MC_NO + _T(" (") + strMC_NO_NM + _T(")"); 
       
       cbx.AddString(strPOS);
 	  cbx.SetItemDataEx(j++, strHS_NO);
@@ -1564,6 +1564,14 @@ BOOL CLib::BindCombo_RTV_NO(CComboBoxWrapper& cbx, CEcsDoc *pDoc, int nEN_LANG)
       cbx.SetItemDataEx(i, strRTV_NO);
 
       pRsw->MoveNext();
+
+    if (pDoc->IsConnectDB() == FALSE) 
+		return FALSE;
+
+	CStringList strList;
+	CString strSql;
+	CString strTRACK_NO, strREMARKS, strMC_NO;
+	int nRowCnt = 0, j=0;
    }
 
    cbx.SetCurSel(0);
@@ -1644,27 +1652,34 @@ void CLib::RenameColumn(CStringArray& pColArray, int pLang, CStringArray& pColRe
    }
 }
 
-bool CLib::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CEcsDoc *pDoc)
+bool CLib::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CEcsDoc *pDoc, CString p_strPA_YON, CString p_strPK_YON)
 {
 	if (pDoc   == NULL)                     
 		return false;
-
-    if (pDoc->IsConnectDB() == FALSE) 
-		return FALSE;
-
-	CStringList strList;
-	CString strSql;
-	CString strTRACK_NO, strREMARKS, strMC_NO;
-	int nRowCnt = 0, j=0;
 	CString strDEST_POS;
+    CString strSql;
+    CString strTRACK_NO, strREMARKS, strMC_NO;
+
+    int nRowCnt = 0, j = 0;
+
 	CString strMessage;
+
 	cbx.ResetContent();
-	strSql.Format(_T("  SELECT TRACK_NO						")
-				  _T("       , REMARKS						") 
-				  _T("       , GROUP_NO						")
-				  _T("       , MC_NO						")
-				  _T("	  FROM DEST_POS_DEF					")
-				  _T("ORDER BY GROUP_NO, MC_NO				"));
+    strSql.Format(_T("  SELECT TRACK_NO						")      //스테이션번호  
+                  _T("       , REMARKS						")
+                  _T("       , GROUP_NO						")
+                  _T("       , MC_NO						")      //트랙넘버
+                  _T("	  FROM DEST_POS_DEF					")
+                  _T("	 WHERE 1=1                          "));
+    if (p_strPA_YON != "")
+    {
+             strSql += _T("AND PA_YON = '") + p_strPA_YON + _T("' \n");
+    }
+    if (p_strPK_YON != "")
+    {
+             strSql += _T("AND PK_YON = '") + p_strPK_YON + _T("' \n");
+    }
+           strSql += _T("ORDER BY GROUP_NO, TRACK_NO");
 
 	_RecordsetPtr pRsptr = pDoc->GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
 	CRecordSetWrap* pRsw = new CRecordSetWrap(pRsptr);
@@ -1676,8 +1691,8 @@ bool CLib::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CEcsDoc *pDoc)
 	
 	for(int i = 1; i <= nRowCnt; i++)
 	{
-		strTRACK_NO = pRsw->GetItem(_T("MC_NO")) + _T(" (") + pRsw->GetItem(_T("REMARKS")) + _T(")");
-		strMC_NO = pRsw->GetItem(_T("MC_NO"));
+		strTRACK_NO = _T("[") + pRsw->GetItem(_T("TRACK_NO")) + _T("]TR#") + pRsw->GetItem(_T("MC_NO")) + _T(" ") + pRsw->GetItem(_T("REMARKS"));
+		strMC_NO = pRsw->GetItem(_T("TRACK_NO"));
 		cbx.SetItemDataEx(i, strMC_NO);
 		cbx.AddString(strTRACK_NO);
 

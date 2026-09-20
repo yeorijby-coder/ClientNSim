@@ -18,6 +18,9 @@ static char THIS_FILE[] = __FILE__;
 //
 IMPLEMENT_DYNCREATE(CConfig, CObject)
 
+CString CConfig::m_strBCR_USE_YON = _T("");
+CString CConfig::m_strVIEW_INTERFACE_USE_YON = _T("");
+
 CConfig::CConfig()
 {
 }
@@ -37,6 +40,9 @@ CConfig::CConfig(CEcsDoc* pDoc)
 
 	LoadConfigDATABASE(); //DB 타입별로 DB정보 가져오기
 	LoadConfigUSER();
+	LoadConfigEQUIPMENT();
+
+
 }
 
 CConfig::~CConfig()
@@ -94,16 +100,19 @@ void CConfig::LoadConfigDATABASE()
 
 void CConfig::LoadConfigUSER()
 {
+	TCHAR szTemp[_MAX_PATH] = { 0 };
+
 	//	저장된 것이 없으면 한국어로 시작한다. (0:KOR 1:ENG 2:HUN 3:CHIN)
 	m_nUSER_LAST_LANG = ::GetPrivateProfileInt(_T("USER"), _T("LAST_LANG"), 0, ECS_INI_FILE);
 	m_nUSER_LAST_TAB_INDEX = ::GetPrivateProfileInt(_T("USER"), _T("LAST_TAB_INDEX"), 1, ECS_INI_FILE);
+
 
 	if (m_strWH_WH_TYP == _T("40"))
 	{
 		m_nUSER_LAST_TAB_INDEX = 1;
 	}
 
-	TCHAR szTemp[_MAX_PATH] = {0};
+	//TCHAR szTemp[_MAX_PATH] = {0};
 	::GetPrivateProfileString(_T("USER"), _T("USER_COLOR_STO"),	CConvert::ToString(m_clrUSER_COLOR_STO),	szTemp, _MAX_PATH, ECS_INI_FILE);	
 	m_clrUSER_COLOR_STO = CConvert::ToColor(CString(szTemp));
 
@@ -168,6 +177,18 @@ void CConfig::LoadConfigUSER()
 	::GetPrivateProfileString(_T("USER"), _T("USER_COLOR_SC_INVK"),	CConvert::ToString(m_clrUSER_COLOR_SC_INVK),	szTemp, _MAX_PATH, ECS_INI_FILE);	
 	m_clrUSER_COLOR_SC_INVK = CConvert::ToColor(CString(szTemp));
 		
+}
+
+void CConfig::LoadConfigEQUIPMENT()
+{
+	TCHAR szTemp[_MAX_PATH] = { 0 };
+
+	::GetPrivateProfileString(_T("EQUIPMENT"), _T("BCR_USE_YON"), _T("N"), szTemp, _MAX_PATH, ECS_INI_FILE);
+	m_strBCR_USE_YON.Format(_T("%s"), szTemp);
+
+	::GetPrivateProfileString(_T("EQUIPMENT"), _T("VIEW_INTERFACE_USE_YON"), _T("N"), szTemp, _MAX_PATH, ECS_INI_FILE);
+	m_strVIEW_INTERFACE_USE_YON.Format(_T("%s"), szTemp);
+
 }
 
 void CConfig::InitializeConfigWH()

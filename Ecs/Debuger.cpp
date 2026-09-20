@@ -27,7 +27,7 @@ CDebuger::~CDebuger()
 }
 
 
-// CDebuger 멤버 함수
+// CDebuger ¸a¹o CO¼o
 //
 void CDebuger::WriteLog(LPCTSTR lpszLog, LPCTSTR lpszFileName)
 {
@@ -63,8 +63,9 @@ void CDebuger::Assert(BOOL bValid, LPCTSTR lpszLog, int nLine, LPCSTR lpszFile)
 	// Ecs.ini 의 [COMMON] DebugerAssert 가 0 이면 대화상자를 띄우지 않는다.
 	// (예전에는 이 스위치를 무시하고 무조건 띄워, 데이터가 조금만 달라도
 	//  기동이 Assertion 대화상자에 막혔다. 로그 기록은 아래에서 그대로 한다)
+	
 	if (!bValid && m_bAssert) 
-		::AfxAssertFailedLine(lpszFile, nLine);
+			::AfxAssertFailedLine(lpszFile, nLine);
 #endif
 
 	if (bValid)
@@ -84,6 +85,7 @@ void CDebuger::Assert(int nIndex, int nSize, LPCSTR lpszLog, int nLine, LPCSTR l
 #ifdef _DEBUG
 	// 위와 같은 이유로 DebugerAssert 스위치를 존중한다.
 	if (((nIndex < 0) || (nIndex >= nSize)) && m_bAssert) 
+
 		::AfxAssertFailedLine(lpszFile, nLine);
 #endif
 

@@ -260,7 +260,7 @@ BOOL CCvSkinDlg::OnInitDialog()
 
 	m_chkDebugMode.SetCheck(nTemp);
 
-	m_btnCvSuspend.EnableWindow(false);
+	m_btnCvSuspend.EnableWindow(TRUE);
 
 	m_chkAutoSel.SetCheck(1);
 	m_blAutoSel = true;
@@ -726,10 +726,10 @@ void CCvSkinDlg::InvalidateTrackData(EN_LANG pLang)
 	else
 		GetDlgItem(IDC_BTN_CV_DISCHARGE)->EnableWindow(FALSE);
 
-	if (!m_pTrackInfo->m_pCV_DATA->IsNotInvokeTrack())
-		GetDlgItem(IDC_BTN_CV_SUSPEND)->EnableWindow(TRUE);
-	else
-		GetDlgItem(IDC_BTN_CV_SUSPEND)->EnableWindow(FALSE);
+	//if (!m_pTrackInfo->m_pCV_DATA->IsNotInvokeTrack())
+	//	GetDlgItem(IDC_BTN_CV_SUSPEND)->EnableWindow(TRUE);
+	//else
+	//	GetDlgItem(IDC_BTN_CV_SUSPEND)->EnableWindow(FALSE);
 
 	CString strJobTyp, strDestPos;
 
@@ -1451,7 +1451,15 @@ void CCvSkinDlg::UpdateTrackData(int pBtnJob)
 				CString strLOG_BARCODE = strBarcode;
 				CString strLOG_MSG = _T("");
 
-				strLOG_MSG.Format(_T("CV 잘라내기 -> CV 번호 : %s , 작업번호 : %s->%s, 작업구분 : %s->%s , 도착지 : %s->%s"), strTrackNo, strLOG_LUGG_NO_RD, strJobNo, strLOG_JOB_TYP_RD, strJobTyp, strLOG_DEST_POS_RD, strDestPos);
+				strLOG_MSG.Format(_T("CV 잘라내기 -> 이전DATA CV 번호 : %s , 작업번호 : %s, 작업구분 : %s , 도착지 : %s"), strTrackNo, strLOG_LUGG_NO_RD, strLOG_JOB_TYP_RD,  strLOG_DEST_POS_RD);
+				if (!m_pDoc->GetQueryInsertClientLog(_T("CCvSkinDlg"), strLOG_LUGG_NO_RD, strLOG_BARCODE, strLOG_MSG))
+				{
+					m_pDoc->RollbackTrans_DLG();
+					InvalidateTrackData(m_nLang);
+					return;
+				}
+
+				strLOG_MSG.Format(_T("CV 잘라내기 -> 지시DATA CV 번호 : %s , 작업번호 : %s, 작업구분 : %s , 도착지 : %s"), strTrackNo, _T("0"), _T("0"), _T("0"));
 				if (!m_pDoc->GetQueryInsertClientLog(_T("CCvSkinDlg"), strLOG_LUGG_NO_RD, strLOG_BARCODE, strLOG_MSG))
 				{
 					m_pDoc->RollbackTrans_DLG();
@@ -1547,7 +1555,15 @@ void CCvSkinDlg::UpdateTrackData(int pBtnJob)
 				CString strLOG_BARCODE = strBarcode;
 				CString strLOG_MSG = _T("");
 
-				strLOG_MSG.Format(_T("CV 붙여넣기 -> CV 번호 : %s , 작업번호 : %s->%s, 작업구분 : %s->%s , 도착지 : %s->%s"), strTrackNo, strLOG_LUGG_NO_RD, pCopyJob->LUGG_NO, strLOG_JOB_TYP_RD, pCopyJob->JOB_TYP, strLOG_DEST_POS_RD, pCopyJob->DEST_POS);
+				strLOG_MSG.Format(_T("CV 붙여넣기 -> 이전DATA CV 번호 : %s , 작업번호 : %s, 작업구분 : %s , 도착지 : %s"), strTrackNo, strLOG_LUGG_NO_RD,  strLOG_JOB_TYP_RD,  strLOG_DEST_POS_RD);
+				if (!m_pDoc->GetQueryInsertClientLog(_T("CCvSkinDlg"), strLOG_LUGG_NO_RD, strLOG_BARCODE, strLOG_MSG))
+				{
+					m_pDoc->RollbackTrans_DLG();
+					InvalidateTrackData(m_nLang);
+					return;
+				}
+
+				strLOG_MSG.Format(_T("CV 붙여넣기 -> 지시DATA CV 번호 : %s , 작업번호 : %s, 작업구분 : %s , 도착지 : %s"), strTrackNo, pCopyJob->LUGG_NO, pCopyJob->JOB_TYP, pCopyJob->DEST_POS);
 				if (!m_pDoc->GetQueryInsertClientLog(_T("CCvSkinDlg"), strLOG_LUGG_NO_RD, strLOG_BARCODE, strLOG_MSG))
 				{
 					m_pDoc->RollbackTrans_DLG();
@@ -1645,21 +1661,34 @@ void CCvSkinDlg::OnBnClickedBtnCvSuspend()
 	CString strPlcNo = m_pTrackInfo->m_pCV_DATA->K_PLC_NO;
 	CString strLOG_MSG = _T("");
 	CString strTrPauseRd = _T("");
+	CString strMsg;
 
 	UpdateData(TRUE);
 
 	strTrackNo = m_pTrackInfo->m_pCV_DATA->K_TRACK_NO;
 	if (m_pTrackInfo->m_pCV_DATA->V_TR_PAUSE_RD == "1")
+	{
 		strTrPauseRd = "0";
-	else strTrPauseRd = "1";
+		strMsg = _T("정상 으로 변경하시겠습니까?");
+	}
+	else
+	{
+		strTrPauseRd = "1";
+		strMsg = _T("일시정지로 변경하시겠습니까?");
+	};
+
+
+	if (AfxMessageBox(m_pDoc->GetMsgLangDef(strMsg), MB_YESNO) != IDYES)
+		return;
+
 
 	strSql.Format(_T(" UPDATE CV_DATA					                \n")
 		_T("		      SET TR_PAUSE_OD = '%s'		                \n")
+		_T("		         ,TR_PAUSE_RD = '%s'		                \n")
 		_T("				 ,CMD_RQ_ID = 'SUSPEND'			                \n")
-		_T("				 ,CMD_RQ_YN = 'Y'			                \n")
 		_T("		       WHERE WH_TYP = '%s'						\n")
 		_T("			  AND PLC_NO = '%s'								\n")
-		_T("			  AND MC_NO = '%s'								  "), strTrPauseRd, strWhTyp, strPlcNo, strTrackNo);
+		_T("			  AND MC_NO = '%s'								  "), strTrPauseRd, strTrPauseRd, strWhTyp, strPlcNo, strTrackNo);
 
 	BOOL isSuccess =  m_pDoc->ExcuteQueryString_DLG(strSql);
 
@@ -1779,7 +1808,7 @@ void CCvSkinDlg::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CString strGro
 
 	CStringList strList;
 	CString strSql;
-	CString strTRACK_NO, strREMARKS;
+	CString strTRACK_NO, strREMARKS, strSTATION_NO;
 	int nRowCnt = 0, j=0;
 	CString strDEST_POS;
 	CString strMessage;
@@ -1803,8 +1832,10 @@ void CCvSkinDlg::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CString strGro
 	for(int i = 1; i <= nRowCnt; i++)
 	{
 		strTRACK_NO = pRsw->GetItem(_T("MC_NO"));		
+		strSTATION_NO = pRsw->GetItem(_T("TRACK_NO"));
 		strREMARKS = pRsw->GetItem(_T("REMARKS"));		
-		strDEST_POS = strTRACK_NO +_T(" - ") + strREMARKS;
+		strDEST_POS = _T("[") + strSTATION_NO + _T("]TR#") + strTRACK_NO + _T(" ") + strREMARKS;
+
 		cbx.AddString(strDEST_POS);
 		cbx.SetItemData(i, CConvert::ToInt(strTRACK_NO));
 

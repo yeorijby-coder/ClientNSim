@@ -65,6 +65,7 @@ BEGIN_MESSAGE_MAP(CEcsDoc, CDocument)
 	ON_COMMAND_RANGE(ID_STATUS_CV, ID_STATUS_WC1, &CEcsDoc::OnCommandRangeMainFrameSTATUS)
 	ON_COMMAND_RANGE(ID_LAYOUT_1F, ID_LAYOUT_3F, &CEcsDoc::OnCommandRangeMainFrameLAYOUT)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_LAYOUT_1F, ID_LAYOUT_3F, &CEcsDoc::OnUpdateMainFrameLAYOUT)
+	ON_COMMAND_RANGE(ID_SC_STOP, ID_SC_START, &CEcsDoc::OnCommandRangeMainFrameSCJOB)
 END_MESSAGE_MAP()
 
 
@@ -118,6 +119,7 @@ CEcsDoc::CEcsDoc()
 	m_pScSkinDlg = NULL;
 	m_pRtvSkinDlg = NULL;
 	m_pBcrSkinDlg = NULL;
+	m_pDisplayDlg = NULL;
 
 	m_pLogIoSkinDlg = NULL;
 	m_pLogEqpErrSkinDlg = NULL;
@@ -186,6 +188,7 @@ CEcsDoc::~CEcsDoc()
 	if (m_pScSkinDlg != NULL) { delete m_pScSkinDlg; }
 	if (m_pRtvSkinDlg != NULL) { delete m_pRtvSkinDlg; }
 	if (m_pBcrSkinDlg != NULL) { delete m_pBcrSkinDlg; }
+	if (m_pDisplayDlg != NULL) { delete m_pDisplayDlg; }
 	if (m_pManualRtv != NULL) { delete m_pManualRtv; }
 	if (m_pManualSc != NULL) { delete m_pManualSc; }
 	if (m_pScManualRet != NULL) { delete m_pScManualRet; }
@@ -702,6 +705,11 @@ void CEcsDoc::OnCommandRangeMainFrameCONFIGURATION(UINT nID)
 	}
 }
 
+void CEcsDoc::OnCommandRangeMainFrameSCJOB(UINT nID)
+{
+	UpdateScJob(nID);
+}
+
 BOOL CEcsDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
@@ -1095,6 +1103,41 @@ CDisplayData* CEcsDoc::GetDisplayData(CString pstrDISP_NO)
 	return NULL;
 }
 
+void CEcsDoc::GetHostConnectInfo(CString& p_strCONNECTD_YN, int& p_iEQP_TIME)
+{
+	CString strSql = _T("");
+	CString CRLF = _T("\r\n");
+	CString strMessage = _T("");
+
+	int nRowCnt = -1;
+
+	strSql.Format(_T("	   SELECT EM.CONNECTED_YN		\n")
+		_T("	        , CASE WHEN TO_CHAR(NOW() - EM.UPD_DT, 'YYYYMMDDHH24MISS')::INTEGER > 5 THEN 6 ELSE 0 END AS EQP_TIME		\n")
+		_T("      FROM EQP_MST EM 			\n")
+		_T("WHERE EM.EQP_TYP	= '%s'		\n")
+		_T("  AND EM.WH_TYP		= '%s'		\n")
+		_T("  AND EM.PLC_NO     = '%s' 		\n")
+		_T("ORDER BY EM.WH_TYP, EM.PLC_NO	\n"), _T("HOST"),m_WH_TYP, _T("01"));
+
+	_RecordsetPtr pRsp = GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
+	CRecordSetWrap* pRsw = new CRecordSetWrap(pRsp);
+
+	if (nRowCnt < 0)
+	{
+		if (pRsw != NULL)
+		{
+			delete pRsw;
+		}
+	}
+
+	p_strCONNECTD_YN = pRsw->GetItem(_T("CONNECTED_YN"));
+	p_iEQP_TIME = CConvert::ToInt(pRsw->GetItem(_T("EQP_TIME")));
+
+
+	return;
+}
+
+
 
 
 CTrackInfo* CEcsDoc::GetTrackInfoNew(CString strTrackNo)
@@ -1275,7 +1318,9 @@ _RecordsetPtr CEcsDoc::GetSelectQryRecordsetPtr_DLG(CString pStrSql, int& pnRowC
 		pStrMessage = _T("DB 연결이 끊어져 있습니다.");
 		return FALSE;
 	};
+	
 	return m_pDlgUrmDBAccess->m_pAdoDB->SelectSqlForThread_RecordSet(pStrSql, pnRowCnt, pStrMessage);
+
 }
 
 
@@ -1884,4 +1929,81 @@ BOOL CEcsDoc::EquipStatusCheck()
 	//HOST 통신 상태 확인 준비 완료
 	m_blConnectStatus = TRUE;
 	return TRUE;
+}
+
+void CEcsDoc::UpdateScJob(UINT nID)
+{
+	CString strSUSPEND = _T("");
+	CString strLOG_MSG = _T("");
+
+	CString strSql = _T("");
+	CString CRLF = _T("\r\n");
+
+	if (ID_SC_STOP == nID)
+	{
+		if (AfxMessageBox(GetMsgLangDef(_T("SC작업을 중지하시겠습니까?")), MB_YESNO) != IDYES)
+			return;
+
+		strSUSPEND = _T("3");
+		strLOG_MSG = _T("SC 작업중지");
+	}
+	if (ID_SC_START == nID)
+	{
+		if (AfxMessageBox(GetMsgLangDef(_T("SC작업을 재개하시겠습니까?")), MB_YESNO) != IDYES)
+			return;
+
+		strSUSPEND = _T("0");
+		strLOG_MSG = _T("SC 작업재개");
+	}
+	//case ID_SC_STOP:
+	//{
+	//	if (AfxMessageBox(GetMsgLangDef(_T("SC작업을 중지하시겠습니까?")), MB_YESNO) != IDYES)
+	//		break;
+
+	//	strSUSPEND = _T("3");
+	//	strLOG_MSG = _T("SC 작업중지");
+	//	break;
+	//}
+	//case ID_SC_START:
+	//{
+	//	if (AfxMessageBox(GetMsgLangDef(_T("SC작업을 재개하시겠습니까?")), MB_YESNO) != IDYES)
+	//		break;
+
+	//	strSUSPEND = _T("0");
+	//	strLOG_MSG = _T("SC 작업재개");
+	//	break;
+	//}
+
+	BeginTrans_DLG();
+
+	strSql.Format(_T(" UPDATE SC_DATA									\n")
+		_T("				  SET SUSPEND	= '%s'							\n")
+		_T("					 ,WRITE_UPD_DT = ") + SYSDATE + _T("\n")
+		_T("				WHERE WH_TYP = '%s'								\n"), strSUSPEND, m_WH_TYP);
+
+	BOOL isSuccess = ExcuteQueryString_DLG(strSql);
+
+	if (isSuccess == TRUE)
+	{
+
+
+		if (!GetQueryInsertClientLog(_T("CEcsDoc"), _T(""), _T(""), strLOG_MSG))
+		{
+			RollbackTrans_DLG();
+			return;
+		}
+		else
+		{
+			CommitTrans_DLG();
+			AfxMessageBox(GetMsgLangDef(_T("SC 데이터 쓰기 성공")));
+			return;
+		}
+	}
+
+	RollbackTrans_DLG();
+	AfxMessageBox(GetMsgLangDef(_T("SC 데이터 쓰기 실패")));
+
+	return;
+
+	
 }

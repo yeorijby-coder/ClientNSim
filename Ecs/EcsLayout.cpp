@@ -7,6 +7,7 @@
 #include "XmlDom.h"
 #include "DciStaticCtrl.h"
 #include "CV_DATA.h"
+#include "RecordSetWrap.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -518,8 +519,17 @@ void CEcsLayout::OnKeyDown(CWnd* pWnd, UINT nChar, UINT nRepCnt, UINT nFlags)
 
 }
 
-void CEcsLayout::OnViewLayoutInfo(CWnd* pWnd)
+LRESULT CEcsLayout::OnViewLayoutInfo(CWnd* pWnd, WPARAM wParam, LPARAM lParam)
 {
+
+	CEcsDoc* pDoc = (CEcsDoc*)wParam;
+
+	CString strLuggNo = _T("");
+	CString strldctnNo = _T("");
+
+	if (pDoc == NULL)
+		return 0;
+
 	CDciControl* pDciControl = NULL;
 	for (POSITION pos=m_pDciCtrls->GetHeadPosition(); pos!=NULL; )
 	{
@@ -531,8 +541,28 @@ void CEcsLayout::OnViewLayoutInfo(CWnd* pWnd)
 
 		if (CConvert::ToInt(pDciControl->m_strCID.Mid(3,2)) == enCV && pDciControl->m_strCID.GetLength() > 1 && pDciControl->m_strCID.Left(1) == _T("1"))
 		{
-			if (pDciControl->m_strText.IsEmpty())
-				pDciControl->m_strText.Format(_T("%d"), /*1000*(CConvert::ToInt(pDciControl->m_strCID.Mid(1,1))-1) + */CConvert::ToInt(pDciControl->m_strCID.Right(3)));
+  			if (pDciControl->m_strText.IsEmpty())
+			{
+				switch (lParam)
+				{
+				case 1:				// 트랙번호
+					pDciControl->m_strText.Format(_T("%d"), /*1000*(CConvert::ToInt(pDciControl->m_strCID.Mid(1,1))-1) + */CConvert::ToInt(pDciControl->m_strCID.Right(3)));
+					break;
+
+				case 2:				// 작업번호
+					strLuggNo = SetLuggNo(pDoc, pDciControl->m_strCID.Right(3));
+					pDciControl->m_strText.Format(_T("%s"), strLuggNo);
+					break;
+
+				case 3:				// 적재용기
+					strldctnNo = SetLdCtnNo(pDoc, pDciControl->m_strCID.Right(3));
+					pDciControl->m_strText.Format(_T("%s"), strldctnNo);
+					break;
+;
+				}
+
+			}
+
 			else
 				pDciControl->m_strText.Empty();
 		}
@@ -542,6 +572,8 @@ void CEcsLayout::OnViewLayoutInfo(CWnd* pWnd)
 	}
 
 	pWnd->Invalidate();
+
+	return 0;
 }
 
 BOOL CEcsLayout::LoadXml(LPCTSTR lpszFullPath, CString strKioskNo)
@@ -760,4 +792,73 @@ BOOL CEcsLayout::Test(CWnd* pWnd, int nLeft, int nRight, int nTop, int nBottom)
 
 	//OnZoomIn(pWnd);
 	return true;
+}
+
+CString CEcsLayout::SetLuggNo(CEcsDoc* pDoc, CString p_strMC_NO)
+{
+	CString CRLF = _T("\r\n");
+	CString strSql = _T("");
+
+	CString strLugg_No = _T("");
+	CString strMessage;
+	int nRowCnt = -1;
+
+	strSql += CRLF + _T("SELECT lugg_no_od as lugg_no	");
+	strSql += CRLF + _T("  FROM CV_DATA		");
+	strSql += CRLF + _T(" WHERE MC_NO = '") + p_strMC_NO + _T("'	");
+
+	_RecordsetPtr ptr = pDoc->GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
+
+	CRecordSetWrap* pRsw = new CRecordSetWrap(ptr);
+
+	pRsw->MoveFirst();
+
+	for (int i = 0; i < nRowCnt; i++)
+	{
+
+		strLugg_No = pRsw->GetItem(_T("lugg_no"));
+		strLugg_No = (strLugg_No == _T("0000") ? _T("") : strLugg_No);
+
+		pRsw->MoveNext();
+	}
+
+	delete pRsw;
+
+	return strLugg_No;
+
+}
+
+CString CEcsLayout::SetLdCtnNo(CEcsDoc* pDoc, CString p_strMC_NO)
+{
+	CString CRLF = _T("\r\n");
+	CString strSql = _T("");
+
+	CString strldctnno = _T("");
+	CString strMessage;
+	int nRowCnt = -1;
+
+	strSql += CRLF + _T("SELECT jm.bcr_bottom		");
+	strSql += CRLF + _T("  FROM CV_DATA cd			");
+	strSql += CRLF + _T("LEFT OUTER JOIN JOB_MST jm		");
+	strSql += CRLF + _T("			  ON cd.lugg_no_od	= jm.lugg_no	");
+	strSql += CRLF + _T(" WHERE cd.MC_NO = '") + p_strMC_NO + _T("'	");
+
+	_RecordsetPtr ptr = pDoc->GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
+
+	CRecordSetWrap* pRsw = new CRecordSetWrap(ptr);
+
+	pRsw->MoveFirst();
+
+	for (int i = 0; i < nRowCnt; i++)
+	{
+
+		strldctnno = pRsw->GetItem(_T("bcr_bottom"));
+		//strldctnno = (strldctnno == _T("0000") ? _T("") : strldctnno);
+
+		pRsw->MoveNext();
+	}
+
+	delete pRsw;
+
+	return strldctnno;
 }

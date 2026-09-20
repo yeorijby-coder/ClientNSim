@@ -95,8 +95,8 @@ BOOL CManualJob::OnInitDialog()
 	InitializeFontManager(this);
 	SetFontNation((int)pEn, 0);
 
-	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobStartPos, m_pDoc);
-	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobDestPos, m_pDoc);
+	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobStartPos, m_pDoc, _T("Y"), _T(""));
+	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobDestPos, m_pDoc, _T(""), _T("Y"));
 
 	CLib::BindCombo(m_cbxManualJobWhTyp, _T("WH_TYP"), m_pDoc,(int)pEn, FALSE);
 	CLib::BindCombo(m_cbxManualJobJobTyp, _T("MANUAL_JOB_TYP"), m_pDoc,(int)pEn, TRUE);
@@ -733,8 +733,8 @@ void CManualJob::OnSelchangeComboManualJobEditJobTyp()
 
 	strJobTyp = m_cbxManualJobJobTyp.GetItemKey(m_cbxManualJobJobTyp.GetCurSel());
 
-	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobStartPos, m_pDoc);
-	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobDestPos, m_pDoc);
+	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobStartPos, m_pDoc, _T("Y"), _T(""));
+	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobDestPos, m_pDoc, _T("N"), _T(""));
 
 	if (strJobTyp == _T("10"))
 	{
