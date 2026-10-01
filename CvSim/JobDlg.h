@@ -49,6 +49,8 @@ public:
 	BOOL		m_bCrossDest;
 	CComboBox	m_cbxDestFloor;
 	BOOL		m_bTwinCheck;
+	BOOL		m_bMagazine;
+	BOOL		m_bDispenser;
 	//}}AFX_DATA
 
 //	CDestinationArray* m_pDestinations;
@@ -93,6 +95,8 @@ protected:
 	afx_msg void OnBtnAdd3();
 	afx_msg void OnEditchangeComboDestFloor();
 	afx_msg void OnCheckCrossDest();
+	afx_msg void OnBtnMagazine();
+	afx_msg void OnBtnDispenser();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -106,6 +110,10 @@ public:
 //	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 //	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 //	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+	// @.파렛트 매거진/디스펜서 - 설정트랙에 빈 파렛트를 올리거나 걷어낸다.
+	void SupplyEmptyPallet();
+	void RemovePallet();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnBnClickedBtnRetry2();
 };

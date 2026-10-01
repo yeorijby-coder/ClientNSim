@@ -121,6 +121,7 @@ public:
 	void MoveNextTrackForKindDiverter_2(CCv* pCv, CTrackInfo* pTrack, CStationInfo* pStation);
 	void LoadMG(CCv* pCv, CTrackInfo* pTrack, int nNextPlcNum, int nNextTrNum);
 	void UnLoadDP(CCv* pCv, CTrackInfo* pTrack, int nNextPlcNum, int nNextTrNum);
+	void RunPalletMagazineDispenser(CCv* pCv, CTrackInfo* pTrack);
 
 public:
 	void InvokeArvStation(CCv* pCv, CTrackInfo* pTrack, CStationInfo* pStation);

@@ -56,6 +56,22 @@ CTrackInfo::CTrackInfo(CEquipment* pEquipment)
 	m_nTrayPicker = 0;
 	m_bStartFlag = FALSE;
 	m_nEtcCount = 0;
+
+	// @.여기 없던 것들이 초기화가 안 돼 작업정보 창에 -842150451(0xCDCDCDCD)
+	//   같은 쓰레기 값이 그대로 보였다.
+	m_bCenter		= FALSE;
+	m_nCenterNextPlcNum = 0;
+	m_nCenterNext	= 0;
+	m_nCenterDest	= 0;
+	m_bCross		= FALSE;
+	m_nCrossTrack	= 0;
+	m_nCrossPlcNum	= 0;
+	m_bTwinCheck	= FALSE;
+
+	m_bMagazine	= FALSE;
+	m_bDispenserRole = FALSE;
+	m_bPalletWait	= FALSE;
+	m_tPallet		= COleDateTime::GetCurrentTime();
 	Initialize();
 }
 
@@ -834,6 +850,10 @@ BOOL CTrackInfo::LoadXML()
 		m_bTwinCheck = _ttoi(strValue);
 		dom.GetChildElmtValue(_T("HSTrack"),	strValue);
 		m_nHSTrack = _ttoi(strValue);
+		dom.GetChildElmtValue(_T("MagazineRole"),	strValue);
+		m_bMagazine = _ttoi(strValue);
+		dom.GetChildElmtValue(_T("DispenserRole"),	strValue);
+		m_bDispenserRole = _ttoi(strValue);
 
 		if (dom.MoveXPath(_T("./Dests"), FALSE))	//Equipment/Tracks
 		{
@@ -910,6 +930,10 @@ BOOL CTrackInfo::SaveXML()
 		dom.AddChildElement(_T("TwinCheck"), str);
 		str.Format(_T("%d"), m_nHSTrack);
 		dom.AddChildElement(_T("HSTrack"), str);
+		str.Format(_T("%d"), m_bMagazine);
+		dom.AddChildElement(_T("MagazineRole"), str);
+		str.Format(_T("%d"), m_bDispenserRole);
+		dom.AddChildElement(_T("DispenserRole"), str);
 
 		dom.AddChildElement(_T("Dests"));
 		

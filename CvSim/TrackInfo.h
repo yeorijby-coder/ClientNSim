@@ -13,6 +13,10 @@
 //#include <afxtempl.h>
 
 #include "DciTrackCtrl.h"
+
+// @.빈 파렛트의 작업번호. 예전 LoadMG()/UnLoadDP() 가 쓰던 약속값이다.
+//   현장에서 다른 값을 쓰면 이 한 줄만 고치면 된다.
+#define DEF_EMPTY_PALLET_LUGGNO	9999
 //#include "DciOpboxCtrl.h"
 
 class CEquipment;
@@ -125,6 +129,14 @@ public:
 	int				m_nDispenser;
 	int				m_nDPPlcNum;
 	int				m_nTrayPicker;
+
+	// @.파렛트 매거진 / 디스펜서 역할 (시뮬레이터 전용)
+	//   매거진   : 비어 있으면 빈 파렛트를 한 장 올려놓는다.
+	//   디스펜서 : 올라온 파렛트를 걷어낸다.
+	BOOL			m_bMagazine;
+	BOOL			m_bDispenserRole;
+	COleDateTime	m_tPallet;	// 매거진/디스펜서 동작 간격용
+	BOOL			m_bPalletWait;
 
 	CWordArray		m_nStationArray;
 	CWordArray		m_nNextTrArray;

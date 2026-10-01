@@ -678,12 +678,17 @@
 
 // Next default values for new objects
 // 
+#define IDC_CHECK_MAGAZINE              1715
+#define IDC_BTN_MAGAZINE                1716
+#define IDC_CHECK_DISPENSER             1717
+#define IDC_BTN_DISPENSER               1718
+
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        385
 #define _APS_NEXT_COMMAND_VALUE         33066
-#define _APS_NEXT_CONTROL_VALUE         1715
+#define _APS_NEXT_CONTROL_VALUE         1719
 #define _APS_NEXT_SYMED_VALUE           111
 #endif
 #endif

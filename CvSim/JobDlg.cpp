@@ -30,6 +30,8 @@ CJobDlg::CJobDlg(CEcsDoc* pDoc, CTrackInfo* pTrack, CWnd* pParent /* = NULL */)
 	m_bNextCv = FALSE;
 	m_bNextCv2 = FALSE;
 	m_bTwinCheck = FALSE;
+	m_bMagazine = FALSE;
+	m_bDispenser = FALSE;
 	//}}AFX_DATA_INIT
 	m_itemindex = 0;
 //	m_pDestinations = NULL;
@@ -56,6 +58,8 @@ void CJobDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_CROSS_DEST, m_bCrossDest);
 	DDX_Control(pDX, IDC_COMBO_DEST_FLOOR, m_cbxDestFloor);
 	DDX_Check(pDX, IDC_CHECK_TWIN, m_bTwinCheck);
+	DDX_Check(pDX, IDC_CHECK_MAGAZINE, m_bMagazine);
+	DDX_Check(pDX, IDC_CHECK_DISPENSER, m_bDispenser);
 	//}}AFX_DATA_MAP
 }
 
@@ -87,6 +91,8 @@ BEGIN_MESSAGE_MAP(CJobDlg, CDialog)
 //	ON_WM_KEYDOWN()
 //ON_WM_KEYDOWN()
 ON_BN_CLICKED(IDC_BTN_RETRY2, &CJobDlg::OnBnClickedBtnRetry2)
+ON_BN_CLICKED(IDC_BTN_MAGAZINE, &CJobDlg::OnBtnMagazine)
+ON_BN_CLICKED(IDC_BTN_DISPENSER, &CJobDlg::OnBtnDispenser)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -147,6 +153,8 @@ BOOL CJobDlg::OnInitDialog()
 		m_bCenter = m_pTrack->m_bCenter;
 		m_bCross = m_pTrack->m_bCross;
 		m_bTwinCheck = m_pTrack->m_bTwinCheck;
+		m_bMagazine = m_pTrack->m_bMagazine;
+		m_bDispenser = m_pTrack->m_bDispenserRole;
 		m_pDoc->m_nCenterNextPlcNum = m_pTrack->m_nCenterNextPlcNum;
 		m_pDoc->m_nCrossPlcNum = m_pTrack->m_nCrossPlcNum;
 	//	m_pDoc->m_nHSTrack = m_pTrack->m_nHSTrack;
@@ -406,6 +414,20 @@ void CJobDlg::OnBtnSave()
 	m_pTrack->m_nCrossTrack = nCrossTrack;
 	m_pTrack->m_nCrossDest = nCrossDest;
 	m_pTrack->m_nCrossPlcNum = nCrossPlcNum;
+
+	// @.TwinCheck 와 HS 트랙이 저장에서 빠져 있어 창을 닫으면 사라졌다.
+	m_pTrack->m_bTwinCheck = m_bTwinCheck;
+	if (m_bTwinCheck)
+	{
+		CString strHSTrack;
+		GET(IDC_EDIT_HS_TRACK, strHSTrack);
+		m_pTrack->m_nHSTrack = _ttoi(strHSTrack);
+	}
+	else
+		m_pTrack->m_nHSTrack = 0;
+
+	m_pTrack->m_bMagazine = m_bMagazine;
+	m_pTrack->m_bDispenserRole = m_bDispenser;
 
 	m_pTrack->SaveXML();
 
@@ -806,4 +828,71 @@ void CJobDlg::OnBnClickedBtnRetry2()
 	}
 
 	UpdateList();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.파렛트 매거진 / 디스펜서
+//   매거진   : 빈 파렛트를 한 장 공급한다 (작업번호 9999, 화물감지 ON).
+//   디스펜서 : 트랙에 올라온 파렛트를 걷어낸다 (작업번호/목적지 0, 화물감지 OFF).
+//   둘 다 설정트랙(창 왼쪽 위 '설정트랙')에 대해 동작한다.
+
+void CJobDlg::SupplyEmptyPallet()
+{
+	if (m_pTrack == NULL || m_pDoc == NULL)
+		return;
+
+	int nPlcIdx = m_pTrack->m_nCvPlcNum - 1;
+	if (nPlcIdx < 0 || nPlcIdx >= CV_PLC_CNT)
+		return;
+
+	int nDevNum = (m_pTrack->m_nNumber - m_pDoc->m_nStTrNum[nPlcIdx] + 1) * m_pDoc->m_nWordCnt;
+
+	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"), (WORD)DEF_EMPTY_PALLET_LUGGNO, 0);
+	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("JobType"), 0, 0);
+	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("DestPos"), 0, 0);
+	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 1);	// ON
+
+	CString strLog;
+	strLog.Format(_T("[매거진] 트랙 %d 에 빈 파렛트를 올렸습니다 (작업번호 %d)"),
+		m_pTrack->m_nNumber, DEF_EMPTY_PALLET_LUGGNO);
+	m_pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CJobDlg::SupplyEmptyPallet"));
+
+	m_pTrack->m_bModified = TRUE;
+}
+
+void CJobDlg::RemovePallet()
+{
+	if (m_pTrack == NULL || m_pDoc == NULL)
+		return;
+
+	int nPlcIdx = m_pTrack->m_nCvPlcNum - 1;
+	if (nPlcIdx < 0 || nPlcIdx >= CV_PLC_CNT)
+		return;
+
+	int nDevNum = (m_pTrack->m_nNumber - m_pDoc->m_nStTrNum[nPlcIdx] + 1) * m_pDoc->m_nWordCnt;
+
+	int nLuggNo = m_pDoc->GetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"));
+
+	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"), 0, 0);
+	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("JobType"), 0, 0);
+	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("DestPos"), 0, 0);
+	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 4);	// OFF
+
+	CString strLog;
+	strLog.Format(_T("[디스펜서] 트랙 %d 의 파렛트를 걷어냈습니다 (작업번호 %d)"),
+		m_pTrack->m_nNumber, nLuggNo);
+	m_pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CJobDlg::RemovePallet"));
+
+	m_pTrack->m_bModified = TRUE;
+}
+
+void CJobDlg::OnBtnMagazine()
+{
+	SupplyEmptyPallet();
+}
+
+void CJobDlg::OnBtnDispenser()
+{
+	RemovePallet();
 }
