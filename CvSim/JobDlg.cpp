@@ -12,6 +12,10 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// @.출발조건 칸이 비었을 때 보여 주는 안내문. 값이 아니다.
+//   칸을 누르면 지워지고, 아무것도 안 적고 나가면 다시 보인다.
+#define DEF_START_COND_HINT	_T("TrNo, TrNo...")
+
 /////////////////////////////////////////////////////////////////////////////
 // CJobDlg dialog
 
@@ -95,6 +99,8 @@ BEGIN_MESSAGE_MAP(CJobDlg, CDialog)
 //	ON_WM_KEYDOWN()
 //ON_WM_KEYDOWN()
 ON_BN_CLICKED(IDC_BTN_RETRY2, &CJobDlg::OnBnClickedBtnRetry2)
+ON_EN_SETFOCUS(IDC_EDIT_START_COND, &CJobDlg::OnSetFocusStartCond)
+ON_EN_KILLFOCUS(IDC_EDIT_START_COND, &CJobDlg::OnKillFocusStartCond)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -205,6 +211,7 @@ BOOL CJobDlg::OnInitDialog()
 	GetDlgItem(IDC_CHECK_MG_FULL)->EnableWindow(m_bMagazine);
 	GetDlgItem(IDC_CHECK_DP_EMPTY)->EnableWindow(m_bDispenser);
 
+	SET(IDC_EDIT_START_COND, DEF_START_COND_HINT);
 	InvalidatePalletCount();
 	SetTimer(2, 500, NULL);	// 매거진/디스펜서 잔량 표시용
 
@@ -351,6 +358,8 @@ void CJobDlg::OnBtnAddOfflineJob()
 	{
 		GET(IDC_EDIT_START_COND, strWait);
 		strWait.Trim();
+		if (strWait == DEF_START_COND_HINT)
+			strWait.Empty();
 	}
 	m_pTrack->SetWaitTracks(nDestPos, strWait);
 
@@ -899,7 +908,30 @@ void CJobDlg::InvalidateStartCond(int nDestPos)
 
 	CString strWait = m_pTrack->GetWaitTracks(nDestPos);
 
-	SET(IDC_EDIT_START_COND, strWait);
+	SET(IDC_EDIT_START_COND, strWait.IsEmpty() ? DEF_START_COND_HINT : (LPCTSTR)strWait);
 	m_bStartCond = (strWait.IsEmpty() == FALSE);
 	UpdateData(FALSE);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.출발조건 칸의 안내문 - 누르면 비우고, 빈 채로 나가면 다시 보여 준다.
+
+void CJobDlg::OnSetFocusStartCond()
+{
+	CString strWait;
+	GET(IDC_EDIT_START_COND, strWait);
+
+	if (strWait == DEF_START_COND_HINT)
+		SET(IDC_EDIT_START_COND, _T(""));
+}
+
+void CJobDlg::OnKillFocusStartCond()
+{
+	CString strWait;
+	GET(IDC_EDIT_START_COND, strWait);
+	strWait.Trim();
+
+	if (strWait.IsEmpty())
+		SET(IDC_EDIT_START_COND, DEF_START_COND_HINT);
 }

@@ -116,6 +116,8 @@ public:
 	void InvalidatePalletCount();
 	// @.목적지별 출발조건 - 목록에서 고른 목적지의 값을 칸에 보여준다.
 	void InvalidateStartCond(int nDestPos);
+	afx_msg void OnSetFocusStartCond();
+	afx_msg void OnKillFocusStartCond();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnBnClickedBtnRetry2();
 };
