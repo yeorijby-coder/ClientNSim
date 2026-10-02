@@ -436,10 +436,9 @@
 			</actions>
 		</Logic>
 		<Logic id="2" desc="출고대 신호 3 초 뒤 - 신호를 내리고 화물을 매거진 안으로 넣는다">
-			<conditions desc="매거진, 자동, 출고대 ON, 화물 ON, 3초 경과">
+			<conditions desc="매거진, 자동, 화물 ON, 3초 경과 (출고대 비트는 보지 않는다)">
 				<condition CNum="17" CKeyWord="Magazine"/>
 				<condition CNum="1"  CKeyWord="Auto"/>
-				<condition CNum="1"  CKeyWord="RetStation"/>
 				<condition CNum="1"  CKeyWord="ProductSensor"/>
 				<condition CNum="15" CKeyWord="3"/>
 			</conditions>
@@ -487,11 +486,10 @@
 			</actions>
 		</Logic>
 		<Logic id="5" desc="만재 묶음에 입고 작업번호가 기록되었다 - 입고대를 내리고 묶음을 내보낸다">
-			<conditions desc="매거진, 만재, 작업번호 有, 입고대 ON">
+			<conditions desc="매거진, 만재, 작업번호 有 (입고대 비트는 보지 않는다)">
 				<condition CNum="17" CKeyWord="Magazine"/>
 				<condition CNum="18" CKeyWord="Magazine"/>
 				<condition CNum="2"  CKeyWord="LuggNum"/>
-				<condition CNum="1"  CKeyWord="StoStation"/>
 			</conditions>
 			<actions desc="입고대 OFF, 화물감지 ON, 장수 0 으로">
 				<action ANum="58" AKeyWord="StoStation"/>
