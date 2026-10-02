@@ -417,7 +417,86 @@
 	<LogicGroup name="LifterDepartHS"/>
 	<LogicGroup name="LifterArriveHS"/>
 
-	<LogicGroup name="Magazine"/>
+	<LogicGroup name="Magazine" desc="파렛트 매거진 - 빈 파렛트를 한 장씩 받아 쌓다가 10 장이면 입고대가 된다">
+		<Logic id="1" desc="빈 파렛트 한 장이 도착했다 - 출고대 신호를 올린다">
+			<conditions desc="매거진, 자동, 화물 ON, 출고대 OFF, 만재 아님">
+				<condition CNum="17" CKeyWord="Magazine"/>
+				<condition CNum="1"  CKeyWord="Auto"/>
+				<condition CNum="1"  CKeyWord="ProductSensor"/>
+				<condition CNum="0"  CKeyWord="RetStation"/>
+				<condition CNum="19" CKeyWord="Magazine"/>
+			</conditions>
+			<actions desc="출고대 ON, 시간 시작(3초)">
+				<action ANum="51" AKeyWord="RetStation"/>
+				<action ANum="54" AKeyWord="StartFlag"/>
+			</actions>
+		</Logic>
+		<Logic id="2" desc="출고대 신호 3 초 뒤 - 신호를 내리고 화물을 매거진 안으로 넣는다">
+			<conditions desc="매거진, 자동, 출고대 ON, 화물 ON, 3초 경과">
+				<condition CNum="17" CKeyWord="Magazine"/>
+				<condition CNum="1"  CKeyWord="Auto"/>
+				<condition CNum="1"  CKeyWord="RetStation"/>
+				<condition CNum="1"  CKeyWord="ProductSensor"/>
+				<condition CNum="15" CKeyWord="3"/>
+			</conditions>
+			<actions desc="출고대 OFF, 화물감지 OFF, 한 장 쌓기, 시간 다시 시작(3초)">
+				<action ANum="58" AKeyWord="RetStation"/>
+				<action ANum="58" AKeyWord="ProductSensor"/>
+				<action ANum="59" AKeyWord="Magazine"/>
+				<action ANum="54" AKeyWord="StartFlag"/>
+			</actions>
+		</Logic>
+		<Logic id="3" desc="화물감지가 꺼지고 3 초 뒤 - 트랙 데이터를 지운다 (아직 만재가 아닐 때)">
+			<conditions desc="매거진, 화물 OFF, 출고대 OFF, 입고대 OFF, 만재 아님, 3초 경과">
+				<condition CNum="17" CKeyWord="Magazine"/>
+				<condition CNum="0"  CKeyWord="ProductSensor"/>
+				<condition CNum="0"  CKeyWord="RetStation"/>
+				<condition CNum="0"  CKeyWord="StoStation"/>
+				<condition CNum="19" CKeyWord="Magazine"/>
+				<condition CNum="15" CKeyWord="3"/>
+			</conditions>
+			<actions desc="트랙 데이터 삭제, 시간 끝">
+				<action ANum="57" AKeyWord="LuggNum"/>
+				<action ANum="57" AKeyWord="DestPos"/>
+				<action ANum="57" AKeyWord="D5n+1"/>
+				<action ANum="57" AKeyWord="ErrorCode"/>
+				<action ANum="57" AKeyWord="D5n+4"/>
+				<action ANum="55" AKeyWord="StartFlag"/>
+			</actions>
+		</Logic>
+		<Logic id="4" desc="만재 - 화물감지가 꺼지고 3 초 뒤 데이터를 지우고 입고대 신호를 올린다">
+			<conditions desc="매거진, 화물 OFF, 입고대 OFF, 만재, 3초 경과">
+				<condition CNum="17" CKeyWord="Magazine"/>
+				<condition CNum="0"  CKeyWord="ProductSensor"/>
+				<condition CNum="0"  CKeyWord="StoStation"/>
+				<condition CNum="18" CKeyWord="Magazine"/>
+				<condition CNum="15" CKeyWord="3"/>
+			</conditions>
+			<actions desc="트랙 데이터 삭제, 입고대 ON, 시간 끝">
+				<action ANum="57" AKeyWord="LuggNum"/>
+				<action ANum="57" AKeyWord="DestPos"/>
+				<action ANum="57" AKeyWord="D5n+1"/>
+				<action ANum="57" AKeyWord="ErrorCode"/>
+				<action ANum="57" AKeyWord="D5n+4"/>
+				<action ANum="51" AKeyWord="StoStation"/>
+				<action ANum="55" AKeyWord="StartFlag"/>
+			</actions>
+		</Logic>
+		<Logic id="5" desc="만재 묶음에 입고 작업번호가 기록되었다 - 입고대를 내리고 묶음을 내보낸다">
+			<conditions desc="매거진, 만재, 작업번호 有, 입고대 ON">
+				<condition CNum="17" CKeyWord="Magazine"/>
+				<condition CNum="18" CKeyWord="Magazine"/>
+				<condition CNum="2"  CKeyWord="LuggNum"/>
+				<condition CNum="1"  CKeyWord="StoStation"/>
+			</conditions>
+			<actions desc="입고대 OFF, 화물감지 ON, 장수 0 으로">
+				<action ANum="58" AKeyWord="StoStation"/>
+				<action ANum="51" AKeyWord="ProductSensor"/>
+				<action ANum="60" AKeyWord="Magazine"/>
+				<action ANum="55" AKeyWord="StartFlag"/>
+			</actions>
+		</Logic>
+	</LogicGroup>
 	<LogicGroup name="Dispenser"/>
 
 </LogicDatas>
@@ -440,6 +519,9 @@
 		<except>14</except>
 		<TimeElapse>15</TimeElapse>
 		<NotScDestNum>16</NotScDestNum>
+		<IsMagazine desc="매거진 트랙이다">17</IsMagazine>
+		<MagazineFull desc="매거진 만재">18</MagazineFull>
+		<MagazineNotFull desc="매거진 만재 아님">19</MagazineNotFull>
 		
 		<BitOn>51</BitOn>
 		<BitOff desc="특정비트만 남기고 다머지는 다 OFF">52</BitOff>
@@ -449,6 +531,8 @@
 		<TimeReset>56</TimeReset>
 		<WORD_Reset>57</WORD_Reset>
 		<BitForceOff desc="특정 비트 강제 OFF">58</BitForceOff>
+		<MagazineCountUp desc="매거진에 한 장 쌓기">59</MagazineCountUp>
+		<MagazineCountClear desc="매거진 장수 0">60</MagazineCountClear>
 	</ConditionContent>
 	-->
 

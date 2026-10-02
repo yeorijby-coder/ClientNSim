@@ -31,7 +31,10 @@ enum EN_CONDITION_TYPE {
 	BT_SIGN_IS_SC_DEST = 13,	// 
 	BT_SIGN_EXCEPT = 14,	// 
 	BT_SIGN_TIME_ELAPSE = 15,	// 
-	BT_SIGN_NOT_SC_DEST = 16	// 
+	BT_SIGN_NOT_SC_DEST = 16,	// 
+	BT_SIGN_IS_MAGAZINE = 17,	// 이 트랙이 매거진이다 (작업정보 창에서 지정)
+	BT_SIGN_MG_FULL = 18,	// 매거진이 만재다
+	BT_SIGN_MG_NOT_FULL = 19	// 매거진이 아직 만재가 아니다
 };
 enum EN_ACTION_TYPE {
 	BT_ACTION_BIT_ON	= 51,		//
@@ -41,7 +44,9 @@ enum EN_ACTION_TYPE {
 	BT_ACTION_SF_OFF	= 55,		// Start Flag
 	BT_ACTION_TIME_RESET= 56,		// 
 	BT_ACTION_WORD_RESET= 57,		// 
-	BT_ACTION_BIT_F_OFF = 58		// 특정 비트만 강제로 끄기
+	BT_ACTION_BIT_F_OFF = 58,		// 특정 비트만 강제로 끄기
+	BT_ACTION_MG_COUNT_UP = 59,		// 매거진에 한 장 쌓는다 ('만재' 체크면 바로 만재)
+	BT_ACTION_MG_COUNT_CLEAR = 60	// 매거진 장수를 0 으로 되돌린다
 };
 
 
