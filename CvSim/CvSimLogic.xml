@@ -423,10 +423,11 @@
 
 	<LogicGroup name="Magazine" desc="파렛트 매거진 - 빈 파렛트를 한 장씩 받아 쌓다가 10 장이면 입고대가 된다">
 		<Logic id="1" desc="빈 파렛트 한 장이 도착했다 - 출고대 신호를 올린다">
-			<conditions desc="매거진, 자동, 화물 ON, 만재 아님, 진행 중인 순서 없음">
+			<conditions desc="매거진, 자동, 화물 ON, 목적지가 매거진, 만재 아님, 진행 중인 순서 없음">
 				<condition CNum="17" CKeyWord="Magazine"/>
 				<condition CNum="1"  CKeyWord="Auto"/>
 				<condition CNum="1"  CKeyWord="ProductSensor"/>
+				<condition CNum="11" CKeyWord="DestPos"/>
 				<condition CNum="19" CKeyWord="Magazine"/>
 				<condition CNum="20" CKeyWord="StartFlag"/>
 			</conditions>
