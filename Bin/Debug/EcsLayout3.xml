@@ -484,7 +484,8 @@
 			<Control id="17110358" l="51" b="28" r="52" t="29" text="358" bgmode="2" fgmode="1" bgcolor="f0f0f0" fgcolor="000000" enable="1" visible="1" fontsize="10" prod="0" prod2="0" row="1" col="1">
 				<Item shape="1" color="808080" gl="20" gt="20" gr="20" gb="20"/>
 			</Control>
-			<Control id="17110301" l="52" b="26" r="53" t="27" text="301" bgmode="2" fgmode="1" bgcolor="f0f0f0" fgcolor="000000" enable="1" visible="1" fontsize="10" prod="0" prod2="0" row="1" col="1">
+			<Control id="17110301" l="52" b="26" r="53" t="27" text="301" bgmode="2" fgmode="1" bgcolor="f0f0f0" fgcolor="000000" enable="1" visible="1" fontsize="10" prod="0" prod2="0" row="1" col="2">
+				<Item shape="1" color="808080" gl="20" gt="20" gr="20" gb="20"/>
 				<Item shape="1" color="808080" gl="20" gt="20" gr="20" gb="20"/>
 			</Control>
 			<Control id="" l="62" b="13" r="65" t="16" text="L/F" bgmode="2" fgmode="1" bgcolor="f0f0f0" fgcolor="000000" enable="1" visible="1" fontsize="10" prod="0" prod2="0" row="0" col="0"/>

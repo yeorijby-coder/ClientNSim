@@ -242,8 +242,10 @@
 		<Tracks plcno="03" cid="17110300" FirstTrack="301">
 			<Track	number="301" tabnumber="3">
 				<Status>
-					<ArvStation name="3F 팔레트 매거진" DestCode="207"/>
+					<RetStation name="3F 팔레트 매거진" DestCode="207"/>
+					<StoStation name="3F 팔레트 매거진" DestCode="207"/>
 				</Status>
+				<Magazine/>
 			</Track>
 			<Track	number="302" tabnumber="3"/>
 			<Track	number="303" tabnumber="3">
@@ -826,11 +828,8 @@
 			</Sc>
 		</Scs>
 	</Equipment>
-	<Equipment class="CDisplay" thread="09" number="9">
-		<Displays>
-			<Display plcno="01" dispno="1"/>
-			<Display plcno="01" dispno="2"/>
-		</Displays>
-	</Equipment>
-
+	<Equipment class="CDisplay" thread="01" number="1">
+		<display	plcno="1" disp_no="1"/>
+		<display	plcno="1" disp_no="2"/>
+	</Equipment>		
 </ECS>

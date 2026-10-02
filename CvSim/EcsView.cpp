@@ -1382,6 +1382,13 @@ void CEcsView::OnTimer(UINT nIDEvent)
 				if (pTrack->IsNotInvokeTrack())
 					continue;
 
+				// @.매거진 트랙은 매거진 그룹만 돈다.
+				//   매거진은 입고대이면서 출고대라 ForkLift/StoStation/RetStation 그룹이
+				//   같이 돌아 신호가 엇갈린다. 특히 ForkLift 1 번은 빈 트랙에 화물을
+				//   올려놓아 버린다. 매거진의 동작은 Magazine 그룹에 다 들어 있다.
+				if (pTrack->m_bMagazine == TRUE && pLogicArray->m_strName != _T("Magazine"))
+					continue;
+
 				InvokeLogic(pCv, pTrack, pLogicArray);
 			}
 #pragma endregion 

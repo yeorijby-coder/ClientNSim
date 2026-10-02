@@ -242,7 +242,8 @@
 		<Tracks plcno="03" cid="17110300" FirstTrack="301">
 			<Track	number="301" tabnumber="3">
 				<Status>
-					<ArvStation name="3F 팔레트 매거진" DestCode="207"/>
+					<RetStation name="3F 팔레트 매거진" DestCode="207"/>
+					<StoStation name="3F 팔레트 매거진" DestCode="207"/>
 				</Status>
 				<Magazine/>
 			</Track>
