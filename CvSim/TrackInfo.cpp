@@ -69,10 +69,9 @@ CTrackInfo::CTrackInfo(CEquipment* pEquipment)
 	m_bTwinCheck	= FALSE;
 
 	m_bMagazine	= FALSE;
-	m_bDispenserRole = FALSE;
 	m_bPalletWait	= FALSE;
 	m_tPallet		= COleDateTime::GetCurrentTime();
-	m_nPalletCount	= 0;
+	m_nPalletMax	= DEF_PALLET_STACK_MAX;
 	m_bForceFull	= FALSE;
 	m_bForceEmpty	= FALSE;
 	Initialize();
@@ -853,12 +852,6 @@ BOOL CTrackInfo::LoadXML()
 		m_bTwinCheck = _ttoi(strValue);
 		dom.GetChildElmtValue(_T("HSTrack"),	strValue);
 		m_nHSTrack = _ttoi(strValue);
-		dom.GetChildElmtValue(_T("MagazineRole"),	strValue);
-		m_bMagazine = _ttoi(strValue);
-		dom.GetChildElmtValue(_T("DispenserRole"),	strValue);
-		m_bDispenserRole = _ttoi(strValue);
-		dom.GetChildElmtValue(_T("PalletCount"),	strValue);
-		m_nPalletCount = _ttoi(strValue);
 
 		if (dom.MoveXPath(_T("./Dests"), FALSE))	//Equipment/Tracks
 		{
@@ -935,12 +928,6 @@ BOOL CTrackInfo::SaveXML()
 		dom.AddChildElement(_T("TwinCheck"), str);
 		str.Format(_T("%d"), m_nHSTrack);
 		dom.AddChildElement(_T("HSTrack"), str);
-		str.Format(_T("%d"), m_bMagazine);
-		dom.AddChildElement(_T("MagazineRole"), str);
-		str.Format(_T("%d"), m_bDispenserRole);
-		dom.AddChildElement(_T("DispenserRole"), str);
-		str.Format(_T("%d"), m_nPalletCount);
-		dom.AddChildElement(_T("PalletCount"), str);
 
 		dom.AddChildElement(_T("Dests"));
 		

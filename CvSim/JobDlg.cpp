@@ -201,6 +201,12 @@ BOOL CJobDlg::OnInitDialog()
 	
 	UpdateData(FALSE);
 
+	// 역할은 EcsDefine.xml 의 <Magazine/> 으로 정해진다. 보여주기만 한다.
+	GetDlgItem(IDC_CHECK_MAGAZINE)->EnableWindow(FALSE);
+	GetDlgItem(IDC_CHECK_DISPENSER)->EnableWindow(FALSE);
+	GetDlgItem(IDC_CHECK_MG_FULL)->EnableWindow(m_bMagazine);
+	GetDlgItem(IDC_CHECK_DP_EMPTY)->EnableWindow(m_bDispenser);
+
 	InvalidatePalletCount();
 	SetTimer(2, 500, NULL);	// 매거진/디스펜서 잔량 표시용
 
@@ -369,8 +375,6 @@ void CJobDlg::OnBtnAdd2()
 
 void CJobDlg::OnBtnSave()
 {
-	BOOL bPrevMagazine = m_pTrack->m_bMagazine;
-	BOOL bPrevDispenser = m_pTrack->m_bDispenserRole;
 
 	m_pTrack->m_nKind = 1;
 	m_pTrack->m_nNextPlcNum = m_pDoc->m_nNextPlcNum;
@@ -436,19 +440,9 @@ void CJobDlg::OnBtnSave()
 	else
 		m_pTrack->m_nHSTrack = 0;
 
-	m_pTrack->m_bMagazine = m_bMagazine;
-	m_pTrack->m_bDispenserRole = m_bDispenser;
-
-	// 역할이 바뀌면 설비를 초기 상태로 둔다.
-	//   매거진은 빈 상태(0장)에서, 디스펜서는 가득 찬 상태(10장)에서 시작한다.
-	if (bPrevMagazine != m_bMagazine || bPrevDispenser != m_bDispenser)
-	{
-		if (m_bDispenser)	m_pTrack->m_nPalletCount = DEF_PALLET_STACK_MAX;
-		else			m_pTrack->m_nPalletCount = 0;
-	}
-
-	m_pTrack->m_bForceFull = m_bMagazine ? m_bMgFull : FALSE;
-	m_pTrack->m_bForceEmpty = m_bDispenser ? m_bDpEmpty : FALSE;
+	// 역할(매거진/디스펜서)은 EcsDefine.xml 이 정한다. 여기서는 바꾸지 않는다.
+	m_pTrack->m_bForceFull = m_pTrack->m_bMagazine ? m_bMgFull : FALSE;
+	m_pTrack->m_bForceEmpty = m_pTrack->m_bDispenserRole ? m_bDpEmpty : FALSE;
 
 	InvalidatePalletCount();
 
@@ -869,7 +863,7 @@ void CJobDlg::InvalidatePalletCount()
 		return;
 
 	CString strCnt;
-	strCnt.Format(_T("%d"), m_pTrack->m_nPalletCount);
+	strCnt.Format(_T("%d/%d"), m_pTrack->m_nPalletCount, m_pTrack->m_nPalletMax);
 
 	SET(IDC_EDIT_MG_CNT, m_pTrack->m_bMagazine ? (LPCTSTR)strCnt : _T(""));
 	SET(IDC_EDIT_DP_CNT, m_pTrack->m_bDispenserRole ? (LPCTSTR)strCnt : _T(""));

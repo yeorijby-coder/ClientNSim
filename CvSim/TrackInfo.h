@@ -141,6 +141,7 @@ public:
 	COleDateTime	m_tPallet;	// 매거진/디스펜서 동작 간격용
 	BOOL			m_bPalletWait;
 	int				m_nPalletCount;	// 매거진 : 쌓인 장수 / 디스펜서 : 남은 장수
+	int				m_nPalletMax;	// 만재 장수. EcsDefine.xml 의 <Magazine size="n"/> (없으면 10)
 	BOOL			m_bForceFull;	// 다음 적재 후 만재로 올린다 (한 번만)
 	BOOL			m_bForceEmpty;	// 다음 배출 후 없음으로 떨군다 (한 번만)
 

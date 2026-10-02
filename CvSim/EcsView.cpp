@@ -1109,8 +1109,10 @@ BOOL CEcsView::InvokeLogic(CCv* pCv, CTrackInfo* pTrack, CLogicArray* pLogicArra
 			case BT_SIGN_TIME_ELAPSE:		bTemp = bTimeElapse;			break;		// TIME ELAPSE(5초)
 			case BT_SIGN_NOT_SC_DEST:		bTemp = !bIsScDest;				break;		// NOT SC DEST NUM
 			case BT_SIGN_IS_MAGAZINE:		bTemp = pTrack->m_bMagazine;	break;		// 매거진 트랙
-			case BT_SIGN_MG_FULL:			bTemp = (pTrack->m_nPalletCount >= DEF_PALLET_STACK_MAX);	break;
-			case BT_SIGN_MG_NOT_FULL:		bTemp = (pTrack->m_nPalletCount <  DEF_PALLET_STACK_MAX);	break;
+			case BT_SIGN_MG_FULL:			bTemp = (pTrack->m_nPalletCount >= pTrack->m_nPalletMax);	break;
+			case BT_SIGN_MG_NOT_FULL:		bTemp = (pTrack->m_nPalletCount <  pTrack->m_nPalletMax);	break;
+			case BT_SIGN_SF_OFF:			bTemp = (pTrack->m_bStartFlag == FALSE);	break;
+			case BT_SIGN_SF_ON:				bTemp = (pTrack->m_bStartFlag == TRUE);		break;
 			default:						bTemp = FALSE;					break;		// 정의되지 않으면 무조건 FALSE
 			}
 			bConditionResult = bConditionResult & bTemp;
@@ -1172,11 +1174,11 @@ BOOL CEcsView::InvokeLogic(CCv* pCv, CTrackInfo* pTrack, CLogicArray* pLogicArra
 					// '만재' 를 체크해 두면 다음 한 장에서 바로 만재가 된다. 한 번만 듣는다.
 					if (pTrack->m_bForceFull == TRUE)
 					{
-						pTrack->m_nPalletCount = DEF_PALLET_STACK_MAX;
+						pTrack->m_nPalletCount = pTrack->m_nPalletMax;
 						pTrack->m_bForceFull = FALSE;
 					}
-					if (pTrack->m_nPalletCount > DEF_PALLET_STACK_MAX)
-						pTrack->m_nPalletCount = DEF_PALLET_STACK_MAX;
+					if (pTrack->m_nPalletCount > pTrack->m_nPalletMax)
+						pTrack->m_nPalletCount = pTrack->m_nPalletMax;
 					bActionRunOK = TRUE;
 				}
 				break;

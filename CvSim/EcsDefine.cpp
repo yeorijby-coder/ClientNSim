@@ -280,6 +280,20 @@ BOOL CEcsDefine::ParseTracks(CEquipment* pEquipment, CTrackInfoArray& pTracks)
 
 				MoveParent();
 			}
+
+			// @.파렛트 매거진. <Magazine/> 한 줄이면 그 트랙이 매거진이 된다.
+			//   만재 장수는 size 속성으로 바꾼다. 없으면 10 장이다.
+			//   동작 순서와 시간은 CvSimLogic.xml 의 <LogicGroup name="Magazine"> 에 있다.
+			if (MoveXPath(_T("./Magazine"), FALSE))	//Equipment/Tracks/Track/Magazine
+			{
+				pTrack->m_bMagazine = TRUE;
+
+				GetAttrValue(_T("size"), strValue);
+				int nStackSize = _ttoi(strValue);
+				pTrack->m_nPalletMax = (nStackSize > 0) ? nStackSize : DEF_PALLET_STACK_MAX;
+
+				MoveParent();
+			}
 			//if (MoveXPath(_T("./Dispenser"), FALSE))	//Equipment/Tracks/Track/Destination
 			//{
 			//	GetAttrValue(_T("uptid"), strValue);

@@ -244,6 +244,7 @@
 				<Status>
 					<ArvStation name="3F 팔레트 매거진" DestCode="207"/>
 				</Status>
+				<Magazine/>
 			</Track>
 			<Track	number="302" tabnumber="3"/>
 			<Track	number="303" tabnumber="3">

@@ -34,7 +34,9 @@ enum EN_CONDITION_TYPE {
 	BT_SIGN_NOT_SC_DEST = 16,	// 
 	BT_SIGN_IS_MAGAZINE = 17,	// 이 트랙이 매거진이다 (작업정보 창에서 지정)
 	BT_SIGN_MG_FULL = 18,	// 매거진이 만재다
-	BT_SIGN_MG_NOT_FULL = 19	// 매거진이 아직 만재가 아니다
+	BT_SIGN_MG_NOT_FULL = 19,	// 매거진이 아직 만재가 아니다
+	BT_SIGN_SF_OFF = 20,	// StartFlag 가 꺼져 있다 (진행 중인 순서가 없다)
+	BT_SIGN_SF_ON = 21	// StartFlag 가 켜져 있다
 };
 enum EN_ACTION_TYPE {
 	BT_ACTION_BIT_ON	= 51,		//
