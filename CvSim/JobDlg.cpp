@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CJobDlg, CDialog)
 //	ON_WM_KEYDOWN()
 //ON_WM_KEYDOWN()
 ON_BN_CLICKED(IDC_BTN_RETRY2, &CJobDlg::OnBnClickedBtnRetry2)
+ON_BN_CLICKED(IDC_CHECK_START_COND, &CJobDlg::OnCheckStartCond)
 ON_EN_SETFOCUS(IDC_EDIT_START_COND, &CJobDlg::OnSetFocusStartCond)
 ON_EN_KILLFOCUS(IDC_EDIT_START_COND, &CJobDlg::OnKillFocusStartCond)
 END_MESSAGE_MAP()
@@ -212,6 +213,7 @@ BOOL CJobDlg::OnInitDialog()
 	GetDlgItem(IDC_CHECK_DP_EMPTY)->EnableWindow(m_bDispenser);
 
 	SET(IDC_EDIT_START_COND, DEF_START_COND_HINT);
+	GetDlgItem(IDC_EDIT_START_COND)->EnableWindow(m_bStartCond);
 	InvalidatePalletCount();
 	SetTimer(2, 500, NULL);	// 매거진/디스펜서 잔량 표시용
 
@@ -911,6 +913,7 @@ void CJobDlg::InvalidateStartCond(int nDestPos)
 	SET(IDC_EDIT_START_COND, strWait.IsEmpty() ? DEF_START_COND_HINT : (LPCTSTR)strWait);
 	m_bStartCond = (strWait.IsEmpty() == FALSE);
 	UpdateData(FALSE);
+	GetDlgItem(IDC_EDIT_START_COND)->EnableWindow(m_bStartCond);
 }
 
 
@@ -933,5 +936,20 @@ void CJobDlg::OnKillFocusStartCond()
 	strWait.Trim();
 
 	if (strWait.IsEmpty())
+		SET(IDC_EDIT_START_COND, DEF_START_COND_HINT);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.조건설정을 켜야 출발조건 칸에 적을 수 있다.
+
+void CJobDlg::OnCheckStartCond()
+{
+	UpdateData(TRUE);
+
+	GetDlgItem(IDC_EDIT_START_COND)->EnableWindow(m_bStartCond);
+
+	// 꺼면 적던 것을 지우고 안내문으로 되돌린다.
+	if (m_bStartCond == FALSE)
 		SET(IDC_EDIT_START_COND, DEF_START_COND_HINT);
 }
