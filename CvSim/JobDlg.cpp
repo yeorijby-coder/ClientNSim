@@ -60,8 +60,6 @@ void CJobDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_CROSS_DEST, m_bCrossDest);
 	DDX_Control(pDX, IDC_COMBO_DEST_FLOOR, m_cbxDestFloor);
 	DDX_Check(pDX, IDC_CHECK_TWIN, m_bTwinCheck);
-	DDX_Check(pDX, IDC_CHECK_MAGAZINE, m_bMagazine);
-	DDX_Check(pDX, IDC_CHECK_DISPENSER, m_bDispenser);
 	DDX_Check(pDX, IDC_CHECK_MG_FULL, m_bMgFull);
 	DDX_Check(pDX, IDC_CHECK_DP_EMPTY, m_bDpEmpty);
 	//}}AFX_DATA_MAP
@@ -201,9 +199,7 @@ BOOL CJobDlg::OnInitDialog()
 	
 	UpdateData(FALSE);
 
-	// 역할은 EcsDefine.xml 의 <Magazine/> 으로 정해진다. 보여주기만 한다.
-	GetDlgItem(IDC_CHECK_MAGAZINE)->EnableWindow(FALSE);
-	GetDlgItem(IDC_CHECK_DISPENSER)->EnableWindow(FALSE);
+	// 역할은 EcsDefine.xml 의 <Magazine/> 이 정한다. 그 트랙에서만 칸이 열린다.
 	GetDlgItem(IDC_CHECK_MG_FULL)->EnableWindow(m_bMagazine);
 	GetDlgItem(IDC_CHECK_DP_EMPTY)->EnableWindow(m_bDispenser);
 

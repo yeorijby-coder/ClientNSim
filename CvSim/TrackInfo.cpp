@@ -70,8 +70,10 @@ CTrackInfo::CTrackInfo(CEquipment* pEquipment)
 
 	m_bForkLift	= FALSE;
 	m_bMagazine	= FALSE;
+	m_bDispenserRole = FALSE;
 	m_bPalletWait	= FALSE;
 	m_tPallet		= COleDateTime::GetCurrentTime();
+	m_nPalletCount	= 0;
 	m_nPalletMax	= DEF_PALLET_STACK_MAX;
 	m_bForceFull	= FALSE;
 	m_bForceEmpty	= FALSE;
