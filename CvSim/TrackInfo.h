@@ -136,6 +136,10 @@ public:
 	// @.파렛트 매거진 / 디스펜서 역할 (시뮬레이터 전용)
 	//   매거진   : 비어 있으면 빈 파렛트를 한 장 올려놓는다.
 	//   디스펜서 : 올라온 파렛트를 걷어낸다.
+	// @.EcsDefine.xml 의 <ForkLift/> 태그. 지게차가 화물을 올려놓고 걷어 가는 트랙이다.
+	//   태그가 붙은 트랙에서만 ForkLift 로직 그룹이 돈다.
+	BOOL			m_bForkLift;
+
 	BOOL			m_bMagazine;
 	BOOL			m_bDispenserRole;
 	COleDateTime	m_tPallet;	// 매거진/디스펜서 동작 간격용

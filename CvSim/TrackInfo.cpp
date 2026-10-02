@@ -68,6 +68,7 @@ CTrackInfo::CTrackInfo(CEquipment* pEquipment)
 	m_nCrossPlcNum	= 0;
 	m_bTwinCheck	= FALSE;
 
+	m_bForkLift	= FALSE;
 	m_bMagazine	= FALSE;
 	m_bPalletWait	= FALSE;
 	m_tPallet		= COleDateTime::GetCurrentTime();

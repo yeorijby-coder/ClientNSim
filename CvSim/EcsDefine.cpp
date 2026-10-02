@@ -235,6 +235,10 @@ BOOL CEcsDefine::ParseTracks(CEquipment* pEquipment, CTrackInfoArray& pTracks)
 			{
 				//GetAttrValue(_T("tid"), strValue);
 				//pTrack->m_nDestination = _ttoi(strValue);
+				// @.태그가 붙은 트랙에서만 ForkLift 로직이 돈다.
+				//   예전에는 이 태그를 읽어만 두고 로직은 입고대/출고대면 무조건 돌았다.
+				pTrack->m_bForkLift = TRUE;
+
 				m_pDoc->m_sEcsDefineLoad[pTrack->m_nNumber][0] = _T("ForkLift");
 				nTemp = 1;
 

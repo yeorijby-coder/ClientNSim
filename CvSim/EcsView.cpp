@@ -1113,6 +1113,7 @@ BOOL CEcsView::InvokeLogic(CCv* pCv, CTrackInfo* pTrack, CLogicArray* pLogicArra
 			case BT_SIGN_MG_NOT_FULL:		bTemp = (pTrack->m_nPalletCount <  pTrack->m_nPalletMax);	break;
 			case BT_SIGN_SF_OFF:			bTemp = (pTrack->m_bStartFlag == FALSE);	break;
 			case BT_SIGN_SF_ON:				bTemp = (pTrack->m_bStartFlag == TRUE);		break;
+			case BT_SIGN_IS_FORKLIFT:		bTemp = pTrack->m_bForkLift;				break;
 			default:						bTemp = FALSE;					break;		// 정의되지 않으면 무조건 FALSE
 			}
 			bConditionResult = bConditionResult & bTemp;

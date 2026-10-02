@@ -3,6 +3,7 @@
 	<LogicGroup name="ForkLift">
 		<Logic id="1" desc="지게차가 화물을 올려놓은 경우">
 			<conditions desc="NoLugg, NoDest, 화물 OFF, 입고대 OFF">
+				<condition CNum="22" CKeyWord="ForkLift"/>
 				<condition CNum="3"  CKeyWord="LuggNum"/>
 				<condition CNum="3"  CKeyWord="DestPos"/>
 				<condition CNum="0"  CKeyWord="StoStation"/>
@@ -17,6 +18,7 @@
 		</Logic>
 		<Logic id="2" desc="지게차가 화물을 올려놓고 특정시간 지난 경우">
 			<conditions desc="NoLugg, NoDest, 화물 ON, 입고대 OFF">
+				<condition CNum="22" CKeyWord="ForkLift"/>
 				<condition CNum="3"  CKeyWord="LuggNum"/>
 				<condition CNum="3"  CKeyWord="DestPos"/>
 				<condition CNum="0"  CKeyWord="StoStation"/>
@@ -33,6 +35,7 @@
 		
 		<Logic id="4" desc="지게차가 화물 들어낸 경우(출고대)">
 			<conditions desc="목적지 자기자신, 시간경과">
+				<condition CNum="22" CKeyWord="ForkLift"/>
 				<condition CNum="11" CKeyWord="DestPos"/>
 				<condition CNum="1"  CKeyWord="ProductSensor"/>
 				<condition CNum="1"  CKeyWord="RetStation"/>
@@ -45,6 +48,7 @@
 		</Logic>
 		<Logic id="5" desc="지게차가 화물을 떠가고 난후">
 			<conditions desc="작번 有, Dest Self, 화물 OFF">
+				<condition CNum="22" CKeyWord="ForkLift"/>
 				<condition CNum="2"  CKeyWord="LuggNum"/>
 				<condition CNum="11" CKeyWord="DestPos"/>
 				<condition CNum="0"  CKeyWord="ProductSensor"/>
@@ -524,6 +528,7 @@
 		<MagazineNotFull desc="매거진 만재 아님">19</MagazineNotFull>
 		<StartFlagIsOff desc="StartFlag OFF">20</StartFlagIsOff>
 		<StartFlagIsOn desc="StartFlag ON">21</StartFlagIsOn>
+		<IsForkLift desc="EcsDefine.xml 에 &lt;ForkLift/&gt; 가 붙은 트랙">22</IsForkLift>
 		
 		<BitOn>51</BitOn>
 		<BitOff desc="특정비트만 남기고 다머지는 다 OFF">52</BitOff>
