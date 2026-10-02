@@ -51,6 +51,8 @@ public:
 	BOOL		m_bTwinCheck;
 	BOOL		m_bMagazine;
 	BOOL		m_bDispenser;
+	BOOL		m_bMgFull;
+	BOOL		m_bDpEmpty;
 	//}}AFX_DATA
 
 //	CDestinationArray* m_pDestinations;
@@ -95,8 +97,6 @@ protected:
 	afx_msg void OnBtnAdd3();
 	afx_msg void OnEditchangeComboDestFloor();
 	afx_msg void OnCheckCrossDest();
-	afx_msg void OnBtnMagazine();
-	afx_msg void OnBtnDispenser();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -112,8 +112,7 @@ public:
 //	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	// @.파렛트 매거진/디스펜서 - 설정트랙에 빈 파렛트를 올리거나 걷어낸다.
-	void SupplyEmptyPallet();
-	void RemovePallet();
+	void InvalidatePalletCount();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnBnClickedBtnRetry2();
 };

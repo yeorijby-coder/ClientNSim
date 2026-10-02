@@ -17,6 +17,9 @@
 // @.빈 파렛트의 작업번호. 예전 LoadMG()/UnLoadDP() 가 쓰던 약속값이다.
 //   현장에서 다른 값을 쓰면 이 한 줄만 고치면 된다.
 #define DEF_EMPTY_PALLET_LUGGNO	9999
+
+// @.매거진/디스펜서 한 묶음의 장수. 10 장을 채우면 만재, 다 나가면 없음이다.
+#define DEF_PALLET_STACK_MAX		10
 //#include "DciOpboxCtrl.h"
 
 class CEquipment;
@@ -137,6 +140,9 @@ public:
 	BOOL			m_bDispenserRole;
 	COleDateTime	m_tPallet;	// 매거진/디스펜서 동작 간격용
 	BOOL			m_bPalletWait;
+	int				m_nPalletCount;	// 매거진 : 쌓인 장수 / 디스펜서 : 남은 장수
+	BOOL			m_bForceFull;	// 다음 적재 후 만재로 올린다 (한 번만)
+	BOOL			m_bForceEmpty;	// 다음 배출 후 없음으로 떨군다 (한 번만)
 
 	CWordArray		m_nStationArray;
 	CWordArray		m_nNextTrArray;

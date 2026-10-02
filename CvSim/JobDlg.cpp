@@ -32,6 +32,8 @@ CJobDlg::CJobDlg(CEcsDoc* pDoc, CTrackInfo* pTrack, CWnd* pParent /* = NULL */)
 	m_bTwinCheck = FALSE;
 	m_bMagazine = FALSE;
 	m_bDispenser = FALSE;
+	m_bMgFull = FALSE;
+	m_bDpEmpty = FALSE;
 	//}}AFX_DATA_INIT
 	m_itemindex = 0;
 //	m_pDestinations = NULL;
@@ -60,6 +62,8 @@ void CJobDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_TWIN, m_bTwinCheck);
 	DDX_Check(pDX, IDC_CHECK_MAGAZINE, m_bMagazine);
 	DDX_Check(pDX, IDC_CHECK_DISPENSER, m_bDispenser);
+	DDX_Check(pDX, IDC_CHECK_MG_FULL, m_bMgFull);
+	DDX_Check(pDX, IDC_CHECK_DP_EMPTY, m_bDpEmpty);
 	//}}AFX_DATA_MAP
 }
 
@@ -91,8 +95,6 @@ BEGIN_MESSAGE_MAP(CJobDlg, CDialog)
 //	ON_WM_KEYDOWN()
 //ON_WM_KEYDOWN()
 ON_BN_CLICKED(IDC_BTN_RETRY2, &CJobDlg::OnBnClickedBtnRetry2)
-ON_BN_CLICKED(IDC_BTN_MAGAZINE, &CJobDlg::OnBtnMagazine)
-ON_BN_CLICKED(IDC_BTN_DISPENSER, &CJobDlg::OnBtnDispenser)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -155,6 +157,8 @@ BOOL CJobDlg::OnInitDialog()
 		m_bTwinCheck = m_pTrack->m_bTwinCheck;
 		m_bMagazine = m_pTrack->m_bMagazine;
 		m_bDispenser = m_pTrack->m_bDispenserRole;
+		m_bMgFull = m_pTrack->m_bForceFull;
+		m_bDpEmpty = m_pTrack->m_bForceEmpty;
 		m_pDoc->m_nCenterNextPlcNum = m_pTrack->m_nCenterNextPlcNum;
 		m_pDoc->m_nCrossPlcNum = m_pTrack->m_nCrossPlcNum;
 	//	m_pDoc->m_nHSTrack = m_pTrack->m_nHSTrack;
@@ -196,6 +200,9 @@ BOOL CJobDlg::OnInitDialog()
 
 	
 	UpdateData(FALSE);
+
+	InvalidatePalletCount();
+	SetTimer(2, 500, NULL);	// 매거진/디스펜서 잔량 표시용
 
 	UpdateList();
 
@@ -362,6 +369,9 @@ void CJobDlg::OnBtnAdd2()
 
 void CJobDlg::OnBtnSave()
 {
+	BOOL bPrevMagazine = m_pTrack->m_bMagazine;
+	BOOL bPrevDispenser = m_pTrack->m_bDispenserRole;
+
 	m_pTrack->m_nKind = 1;
 	m_pTrack->m_nNextPlcNum = m_pDoc->m_nNextPlcNum;
 	m_pTrack->m_nNextPlcNum2 = m_pDoc->m_nNextPlcNum2;
@@ -429,6 +439,19 @@ void CJobDlg::OnBtnSave()
 	m_pTrack->m_bMagazine = m_bMagazine;
 	m_pTrack->m_bDispenserRole = m_bDispenser;
 
+	// 역할이 바뀌면 설비를 초기 상태로 둔다.
+	//   매거진은 빈 상태(0장)에서, 디스펜서는 가득 찬 상태(10장)에서 시작한다.
+	if (bPrevMagazine != m_bMagazine || bPrevDispenser != m_bDispenser)
+	{
+		if (m_bDispenser)	m_pTrack->m_nPalletCount = DEF_PALLET_STACK_MAX;
+		else			m_pTrack->m_nPalletCount = 0;
+	}
+
+	m_pTrack->m_bForceFull = m_bMagazine ? m_bMgFull : FALSE;
+	m_pTrack->m_bForceEmpty = m_bDispenser ? m_bDpEmpty : FALSE;
+
+	InvalidatePalletCount();
+
 	m_pTrack->SaveXML();
 
 	m_pTrack->m_bModified = TRUE;
@@ -445,6 +468,9 @@ void CJobDlg::OnTimer(UINT nIDEvent)
 {
 	if (nIDEvent == 1)
 		UpdateList();
+	else if (nIDEvent == 2)
+		InvalidatePalletCount();
+
 	
 	CDialog::OnTimer(nIDEvent);
 }
@@ -460,6 +486,7 @@ void CJobDlg::PostNcDestroy()
 
 void CJobDlg::OnClose() 
 {
+	KillTimer(2);
 	DestroyWindow();
 //	CDialog::OnClose();
 }
@@ -831,68 +858,27 @@ void CJobDlg::OnBnClickedBtnRetry2()
 }
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
-// @.파렛트 매거진 / 디스펜서
-//   매거진   : 빈 파렛트를 한 장 공급한다 (작업번호 9999, 화물감지 ON).
-//   디스펜서 : 트랙에 올라온 파렛트를 걷어낸다 (작업번호/목적지 0, 화물감지 OFF).
-//   둘 다 설정트랙(창 왼쪽 위 '설정트랙')에 대해 동작한다.
+// @.매거진/디스펜서 잔량을 칸에 보여준다.
+//   매거진은 쌓인 장수, 디스펜서는 남은 장수다.
 
-void CJobDlg::SupplyEmptyPallet()
+void CJobDlg::InvalidatePalletCount()
 {
-	if (m_pTrack == NULL || m_pDoc == NULL)
+	if (m_pTrack == NULL)
 		return;
 
-	int nPlcIdx = m_pTrack->m_nCvPlcNum - 1;
-	if (nPlcIdx < 0 || nPlcIdx >= CV_PLC_CNT)
-		return;
+	CString strCnt;
+	strCnt.Format(_T("%d"), m_pTrack->m_nPalletCount);
 
-	int nDevNum = (m_pTrack->m_nNumber - m_pDoc->m_nStTrNum[nPlcIdx] + 1) * m_pDoc->m_nWordCnt;
+	SET(IDC_EDIT_MG_CNT, m_pTrack->m_bMagazine ? (LPCTSTR)strCnt : _T(""));
+	SET(IDC_EDIT_DP_CNT, m_pTrack->m_bDispenserRole ? (LPCTSTR)strCnt : _T(""));
 
-	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"), (WORD)DEF_EMPTY_PALLET_LUGGNO, 0);
-	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("JobType"), 0, 0);
-	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("DestPos"), 0, 0);
-	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 1);	// ON
-
-	CString strLog;
-	strLog.Format(_T("[매거진] 트랙 %d 에 빈 파렛트를 올렸습니다 (작업번호 %d)"),
-		m_pTrack->m_nNumber, DEF_EMPTY_PALLET_LUGGNO);
-	m_pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CJobDlg::SupplyEmptyPallet"));
-
-	m_pTrack->m_bModified = TRUE;
-}
-
-void CJobDlg::RemovePallet()
-{
-	if (m_pTrack == NULL || m_pDoc == NULL)
-		return;
-
-	int nPlcIdx = m_pTrack->m_nCvPlcNum - 1;
-	if (nPlcIdx < 0 || nPlcIdx >= CV_PLC_CNT)
-		return;
-
-	int nDevNum = (m_pTrack->m_nNumber - m_pDoc->m_nStTrNum[nPlcIdx] + 1) * m_pDoc->m_nWordCnt;
-
-	int nLuggNo = m_pDoc->GetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"));
-
-	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"), 0, 0);
-	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("JobType"), 0, 0);
-	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("DestPos"), 0, 0);
-	m_pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 4);	// OFF
-
-	CString strLog;
-	strLog.Format(_T("[디스펜서] 트랙 %d 의 파렛트를 걷어냈습니다 (작업번호 %d)"),
-		m_pTrack->m_nNumber, nLuggNo);
-	m_pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CJobDlg::RemovePallet"));
-
-	m_pTrack->m_bModified = TRUE;
-}
-
-void CJobDlg::OnBtnMagazine()
-{
-	SupplyEmptyPallet();
-}
-
-void CJobDlg::OnBtnDispenser()
-{
-	RemovePallet();
+	// 한 번 쓰고 나면 체크는 설비가 스스로 내린다. 화면도 따라간다.
+	if (m_bMgFull != m_pTrack->m_bForceFull || m_bDpEmpty != m_pTrack->m_bForceEmpty)
+	{
+		m_bMgFull = m_pTrack->m_bForceFull;
+		m_bDpEmpty = m_pTrack->m_bForceEmpty;
+		UpdateData(FALSE);
+	}
 }

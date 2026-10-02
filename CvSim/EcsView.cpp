@@ -4244,10 +4244,19 @@ void CEcsView::UnLoadDP(CCv* pCv, CTrackInfo* pTrack, int nNextPlcNum, int nNext
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // @.파렛트 매거진 / 디스펜서 (작업정보 창에서 트랙별로 지정한다)
-//   매거진   : 트랙이 비면 빈 파렛트를 한 장 올려놓는다.
-//   디스펜서 : 트랙에 파렛트가 올라오면 걷어낸다.
-//   실제 설비처럼 자동(Auto)일 때만 돌고, 한 번 동작한 뒤에는 잠깐 쉰다.
-//   쉬지 않으면 한 스캔에 공급-회수가 반복돼 화물감지가 깜빡인다.
+//
+//   매거진   : 빈 파렛트가 한 장씩 올라오면 삼켜서 쌓는다.
+//              10 장을 채우면 만재가 되고, 그때부터 입고대가 된다(StoStation ON).
+//              입고 작업이 그 묶음을 가져가면 다시 0 장부터 쌓는다.
+//   디스펜서 : 10 단 묶음을 물고 있다가 빈 파렛트를 한 장씩 내보낸다.
+//              마지막 한 장이 나가면 묶음이 없어지고 출고를 요구한다(RetStation ON).
+//              출고로 새 묶음이 들어오면 다시 10 장을 문다.
+//
+//   10 장을 매번 채우거나 비울 수는 없으니, 작업정보 창의 '만재'/'없음' 체크로
+//   다음 한 번의 동작 뒤에 바로 그 상태가 되게 할 수 있다. 쓰고 나면 체크는 내려간다.
+//
+//   실제 설비처럼 자동(Auto)일 때만 돌고, 한 번 움직인 뒤에는 1 초 쉰다.
+//   쉬지 않으면 한 스캔에 공급과 회수가 맞물려 화물감지가 깜빡인다.
 
 void CEcsView::RunPalletMagazineDispenser(CCv* pCv, CTrackInfo* pTrack)
 {
@@ -4266,67 +4275,172 @@ void CEcsView::RunPalletMagazineDispenser(CCv* pCv, CTrackInfo* pTrack)
 
 	BOOL bSensorOn = IsBitOnOffByKeyWord(nPlcIdx, nDevNum, _T("ProductSensor"), TRUE, FALSE);
 	int  nLuggNo   = pDoc->GetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"));
-
-	BOOL bDoWork = FALSE;
-
-	if (pTrack->m_bMagazine == TRUE)
-	{
-		// 비어 있을 때만 한 장 올린다.
-		if (bSensorOn == FALSE && nLuggNo == 0)
-			bDoWork = TRUE;
-	}
-	else if (pTrack->m_bDispenserRole == TRUE)
-	{
-		// 올라와 있을 때만 걷어낸다.
-		if (bSensorOn == TRUE || nLuggNo != 0)
-			bDoWork = TRUE;
-	}
-
-	if (bDoWork == FALSE)
-	{
-		pTrack->m_bPalletWait = FALSE;
-		return;
-	}
-
-	// 설비 동작 시간(1초) 흉내
-	if (pTrack->m_bPalletWait == FALSE)
-	{
-		pTrack->m_bPalletWait = TRUE;
-		pTrack->m_tPallet = COleDateTime::GetCurrentTime();
-		return;
-	}
-
-	COleDateTimeSpan tElapse = COleDateTime::GetCurrentTime() - pTrack->m_tPallet;
-	if (tElapse.GetTotalSeconds() < 1)
-		return;
-
-	pTrack->m_bPalletWait = FALSE;
+	BOOL bOnTrack  = (bSensorOn == TRUE || nLuggNo != 0);
 
 	CString strLog;
 
 	if (pTrack->m_bMagazine == TRUE)
 	{
-		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"), (WORD)DEF_EMPTY_PALLET_LUGGNO, 0);
-		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("JobType"), 0, 0);
-		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("DestPos"), 0, 0);
-		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 1);	// ON
+		if (pTrack->m_nPalletCount >= DEF_PALLET_STACK_MAX)
+		{
+			// 만재 묶음이 입고로 빠져나갔으면 다시 처음부터 쌓는다.
+			if (bOnTrack == FALSE)
+			{
+				pTrack->m_nPalletCount = 0;
+				pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("StoStation"), 0, 4);	// OFF
 
-		strLog.Format(_T("[매거진] 트랙 %d 에 빈 파렛트를 공급했습니다 (작업번호 %d)"),
-			pTrack->m_nNumber, DEF_EMPTY_PALLET_LUGGNO);
-	}
-	else
-	{
+				strLog.Format(_T("[매거진] 트랙 %d 묶음이 빠져나갔습니다 - 다시 쌓습니다"), pTrack->m_nNumber);
+				pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CEcsView::RunPalletMagazineDispenser"));
+				pTrack->m_bModified = TRUE;
+			}
+			pTrack->m_bPalletWait = FALSE;
+			return;
+		}
+
+		// 받을 파렛트가 없으면 기다린다.
+		if (bOnTrack == FALSE)
+		{
+			pTrack->m_bPalletWait = FALSE;
+			return;
+		}
+
+		if (IsPalletWorkReady(pTrack) == FALSE)
+			return;
+
+		// 한 장 삼킨다.
 		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"), 0, 0);
 		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("JobType"), 0, 0);
 		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("DestPos"), 0, 0);
 		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 4);	// OFF
 
-		strLog.Format(_T("[디스펜서] 트랙 %d 의 파렛트를 회수했습니다 (작업번호 %d)"),
-			pTrack->m_nNumber, nLuggNo);
+		++pTrack->m_nPalletCount;
+
+		if (pTrack->m_bForceFull == TRUE)
+		{
+			pTrack->m_nPalletCount = DEF_PALLET_STACK_MAX;
+			pTrack->m_bForceFull = FALSE;	// 한 번만 듣는다
+		}
+
+		if (pTrack->m_nPalletCount >= DEF_PALLET_STACK_MAX)
+		{
+			// 만재 - 이제 입고대다. 묶음이 트랙에 올라와 있는 모양으로 둔다.
+			// 작업번호는 비워 둬야 상위에서 입고 작업번호를 받아 간다.
+			pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 1);	// ON
+			pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("StoStation"), 0, 1);		// ON
+
+			strLog.Format(_T("[매거진] 트랙 %d 만재(%d장) - 입고대로 바꿉니다"),
+				pTrack->m_nNumber, pTrack->m_nPalletCount);
+		}
+		else
+		{
+			strLog.Format(_T("[매거진] 트랙 %d 에 빈 파렛트를 쌓았습니다 (%d/%d장)"),
+				pTrack->m_nNumber, pTrack->m_nPalletCount, DEF_PALLET_STACK_MAX);
+		}
 	}
+	else if (pTrack->m_bDispenserRole == TRUE)
+	{
+		if (pTrack->m_nPalletCount <= 0)
+		{
+			// 묶음이 없다. 출고로 새 묶음이 들어오면 다시 문다.
+			if (bOnTrack == TRUE && nLuggNo != DEF_EMPTY_PALLET_LUGGNO && nLuggNo != 0)
+			{
+				if (IsPalletWorkReady(pTrack) == FALSE)
+					return;
+
+				pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"), 0, 0);
+				pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("JobType"), 0, 0);
+				pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("DestPos"), 0, 0);
+				pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 4);	// OFF
+				pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("RetStation"), 0, 4);		// OFF
+
+				pTrack->m_nPalletCount = DEF_PALLET_STACK_MAX;
+
+				strLog.Format(_T("[디스펜서] 트랙 %d 에 묶음(%d장)이 들어왔습니다 (작업번호 %d)"),
+					pTrack->m_nNumber, pTrack->m_nPalletCount, nLuggNo);
+				pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CEcsView::RunPalletMagazineDispenser"));
+				pTrack->m_bModified = TRUE;
+			}
+			else
+			{
+				// 비어 있는 동안은 출고를 계속 요구한다.
+				if (IsBitOnOffByKeyWord(nPlcIdx, nDevNum, _T("RetStation"), TRUE, FALSE) == FALSE)
+				{
+					pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("RetStation"), 0, 1);	// ON
+
+					strLog.Format(_T("[디스펜서] 트랙 %d 가 비었습니다 - 출고를 요구합니다"), pTrack->m_nNumber);
+					pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CEcsView::RunPalletMagazineDispenser"));
+					pTrack->m_bModified = TRUE;
+				}
+			}
+
+			pTrack->m_bPalletWait = FALSE;
+			return;
+		}
+
+		// 앞 장이 아직 안 나갔으면 기다린다.
+		if (bOnTrack == TRUE)
+		{
+			pTrack->m_bPalletWait = FALSE;
+			return;
+		}
+
+		if (IsPalletWorkReady(pTrack) == FALSE)
+			return;
+
+		// 한 장 내보낸다.
+		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"), (WORD)DEF_EMPTY_PALLET_LUGGNO, 0);
+		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("JobType"), 0, 0);
+		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("DestPos"), 0, 0);
+		pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"), 0, 1);	// ON
+
+		--pTrack->m_nPalletCount;
+
+		if (pTrack->m_bForceEmpty == TRUE)
+		{
+			pTrack->m_nPalletCount = 0;
+			pTrack->m_bForceEmpty = FALSE;	// 한 번만 듣는다
+		}
+
+		if (pTrack->m_nPalletCount <= 0)
+		{
+			// 마지막 한 장이 나갔다. 묶음 데이터는 여기서 없어진다.
+			pDoc->SetAddrByName(nPlcIdx, nDevNum, _T("RetStation"), 0, 1);	// ON
+
+			strLog.Format(_T("[디스펜서] 트랙 %d 마지막 파렛트가 나갔습니다 - 출고를 요구합니다"),
+				pTrack->m_nNumber);
+		}
+		else
+		{
+			strLog.Format(_T("[디스펜서] 트랙 %d 가 빈 파렛트를 내보냈습니다 (%d/%d장 남음)"),
+				pTrack->m_nNumber, pTrack->m_nPalletCount, DEF_PALLET_STACK_MAX);
+		}
+	}
+	else
+		return;
 
 	pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CEcsView::RunPalletMagazineDispenser"));
 	pTrack->m_bModified = TRUE;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.설비가 한 번 움직이는 데 걸리는 시간(1초)을 흉내 낸다.
+//   처음 불리면 시각만 적어 두고 FALSE, 1 초가 지나면 TRUE 다.
+
+BOOL CEcsView::IsPalletWorkReady(CTrackInfo* pTrack)
+{
+	if (pTrack->m_bPalletWait == FALSE)
+	{
+		pTrack->m_bPalletWait = TRUE;
+		pTrack->m_tPallet = COleDateTime::GetCurrentTime();
+		return FALSE;
+	}
+
+	COleDateTimeSpan tElapse = COleDateTime::GetCurrentTime() - pTrack->m_tPallet;
+	if (tElapse.GetTotalSeconds() < 1)
+		return FALSE;
+
+	pTrack->m_bPalletWait = FALSE;
+	return TRUE;
 }
 
 void CEcsView::OnCheckNextNor()
