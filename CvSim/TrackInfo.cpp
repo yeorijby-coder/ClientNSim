@@ -871,6 +871,8 @@ BOOL CTrackInfo::LoadXML()
 				dom.GetAttrValue(_T("NextTrack"), strValue);
 				nNextTrack = _ttoi(strValue);
 				SetStation(nDestPos, nNextPlc, nNextTrack, nDestPos);
+				dom.GetAttrValue(_T("WaitTracks"), strValue);
+				SetWaitTracks(nDestPos, strValue);
 
 				dom.MoveParent();	//Config/Dests
 			}
@@ -953,6 +955,8 @@ BOOL CTrackInfo::SaveXML()
 				//dom.AddChildAttribute(_T("DestPos"),	strDestPos);
 				dom.AddChildAttribute(_T("NextPlcNum"),	strNextPlc);
 				dom.AddChildAttribute(_T("NextTrack"),	strNextTrack);
+				if (m_strWaitTrArray.GetSize() > i && m_strWaitTrArray[i].IsEmpty() == FALSE)
+					dom.AddChildAttribute(_T("WaitTracks"), m_strWaitTrArray[i]);
 				dom.MoveParent();
 			}
 		}
@@ -993,6 +997,7 @@ void CTrackInfo::LoadStation()
 	m_nNextPlcArray.SetSize(nLen);
 	m_nNextTrArray.SetSize(nLen);
 	m_nDestPosArray.SetSize(nLen);
+	m_strWaitTrArray.SetSize(nLen);
 		
 	CStationInfo* pStation = NULL;
 	for (int i=0; i<pDoc->m_pStationInfos.GetSize(); ++i)
@@ -1069,6 +1074,37 @@ void CTrackInfo::LoadStation()
 			//m_cbxDestTrack.SetItemData(m_cbxDestTrack.GetCount()-1, nTemp);
 			break;
 		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.목적지별 출발조건 - 여기 적힌 트랙들이 다 비어야 그 목적지로 출발한다.
+
+CString CTrackInfo::GetWaitTracks(int nDestPos)
+{
+	int nLen = m_nStationArray.GetSize();
+	if (m_strWaitTrArray.GetSize() != nLen)
+		return _T("");
+
+	for (int i = 0; i < nLen; ++i)
+	{
+		if (m_nStationArray[i] == nDestPos || m_nDestPosArray[i] == nDestPos)
+			return m_strWaitTrArray[i];
+	}
+
+	return _T("");
+}
+
+void CTrackInfo::SetWaitTracks(int nDestPos, LPCTSTR lpszTracks)
+{
+	int nLen = m_nStationArray.GetSize();
+	if (m_strWaitTrArray.GetSize() != nLen)
+		m_strWaitTrArray.SetSize(nLen);
+
+	for (int i = 0; i < nLen; ++i)
+	{
+		if (m_nStationArray[i] == nDestPos || m_nDestPosArray[i] == nDestPos)
+			m_strWaitTrArray[i] = lpszTracks;
 	}
 }
 

@@ -34,6 +34,7 @@ CJobDlg::CJobDlg(CEcsDoc* pDoc, CTrackInfo* pTrack, CWnd* pParent /* = NULL */)
 	m_bDispenser = FALSE;
 	m_bMgFull = FALSE;
 	m_bDpEmpty = FALSE;
+	m_bStartCond = FALSE;
 	//}}AFX_DATA_INIT
 	m_itemindex = 0;
 //	m_pDestinations = NULL;
@@ -62,6 +63,7 @@ void CJobDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_TWIN, m_bTwinCheck);
 	DDX_Check(pDX, IDC_CHECK_MG_FULL, m_bMgFull);
 	DDX_Check(pDX, IDC_CHECK_DP_EMPTY, m_bDpEmpty);
+	DDX_Check(pDX, IDC_CHECK_START_COND, m_bStartCond);
 	//}}AFX_DATA_MAP
 }
 
@@ -340,6 +342,17 @@ void CJobDlg::OnBtnAddOfflineJob()
 			}
 		}
 	}
+
+	// @.조건설정이 켜져 있으면 출발조건도 그 목적지에 같이 넣는다.
+	//   꺼져 있으면 그 목적지의 출발조건을 지운다.
+	UpdateData(TRUE);
+	CString strWait;
+	if (m_bStartCond)
+	{
+		GET(IDC_EDIT_START_COND, strWait);
+		strWait.Trim();
+	}
+	m_pTrack->SetWaitTracks(nDestPos, strWait);
 
 	UpdateList();
 }
@@ -782,6 +795,7 @@ void CJobDlg::OnNMClickListJob(NMHDR *pNMHDR, LRESULT *pResult)
 					CString strDest;
 					strDest.Format(_T("%d"), nDestPos);
 					SET(IDC_EDT_DEST_POS, strDest);
+					InvalidateStartCond(nDestPos);
 				}
 			}
 		}
@@ -871,4 +885,21 @@ void CJobDlg::InvalidatePalletCount()
 		m_bDpEmpty = m_pTrack->m_bForceEmpty;
 		UpdateData(FALSE);
 	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.고른 목적지에 걸린 출발조건을 칸에 보여준다.
+//   적혀 있으면 조건설정이 켜지고, 비어 있으면 꺼진다.
+
+void CJobDlg::InvalidateStartCond(int nDestPos)
+{
+	if (m_pTrack == NULL)
+		return;
+
+	CString strWait = m_pTrack->GetWaitTracks(nDestPos);
+
+	SET(IDC_EDIT_START_COND, strWait);
+	m_bStartCond = (strWait.IsEmpty() == FALSE);
+	UpdateData(FALSE);
 }

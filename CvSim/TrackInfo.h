@@ -156,6 +156,10 @@ public:
 
 	CWordArray		m_nDestPosArray; //20.03.20 jhs추가
 
+	// @.목적지별 출발조건. 여기 적힌 트랙들이 다 비어야 그 목적지로 출발한다.
+	//   화면에서 콤마로 끊어 적는다. 예) 301,302
+	CStringArray	m_strWaitTrArray;
+
 	BOOL			m_bStartFlag;
 	COleDateTime	m_tTime;
 	int				m_nDestCode;		// 목적지 코드
@@ -206,6 +210,8 @@ public:
 	BOOL SaveXML();
 	void LoadStation();
 	void SetStation(int nStation, int nNextPlc, int nNextTrack, int nDestPos);
+	CString GetWaitTracks(int nDestPos);
+	void	SetWaitTracks(int nDestPos, LPCTSTR lpszTracks);
 
 public:
 	void StatusReport(BOOL bManual = FALSE);

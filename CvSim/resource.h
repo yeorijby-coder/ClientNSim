@@ -681,6 +681,8 @@
 #define IDC_CHECK_DP_EMPTY              1718
 #define IDC_EDIT_MG_CNT                 1719
 #define IDC_EDIT_DP_CNT                 1720
+#define IDC_CHECK_START_COND            1715
+#define IDC_EDIT_START_COND             1717
 #define IDC_CHECK_MG_FULL               1716
 
 #ifdef APSTUDIO_INVOKED

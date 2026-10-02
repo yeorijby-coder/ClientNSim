@@ -1390,15 +1390,22 @@ void CEcsView::OnTimer(UINT nIDEvent)
 			int nTemp2 = GET_REG_INFO(strCheckKeyWord);
 
 			/////////////////////////////////////////////////////////////////////////////////////////////
+#pragma region 출발조건
+			// @.목적지별 출발조건. 적어 둔 트랙이 다 빌 때까지 이 트랙은 출발하지 않는다.
+			//   예) 359 의 목적지 207(매거진)에 '301,302' 를 걸어 두면
+			//       301 과 302 가 모두 비어야 359 가 출발한다.
+			//   다른 목적지로 가는 화물은 막지 않는다.
+			BOOL bStartBlocked = IsStartBlocked(pTrack, nDestNo);
+#pragma endregion 
 #pragma region 일반트랙일때하는작업
-			if (pTrack->m_nKind == 0)
+			if (pTrack->m_nKind == 0 && bStartBlocked == FALSE)
 			{
 				MoveNextTrackForKindNormal_1(pCv, pTrack, pStation);
 				MoveNextTrackForKindNormal_2(pCv, pTrack, pStation);
 			}
 #pragma endregion 
 #pragma region 디버터일때하는작업
-			if (pTrack->m_nKind == 1)
+			if (pTrack->m_nKind == 1 && bStartBlocked == FALSE)
 			{
 				MoveNextTrackForKindDiverter_1(pCv, pTrack, pStation);
 				MoveNextTrackForKindDiverter_2(pCv, pTrack, pStation);
@@ -4038,6 +4045,57 @@ void CEcsView::MoveNextTrackForKindNormal_2(CCv* pCv, CTrackInfo* pTrack, CStati
 			}
 		}
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.목적지별 출발조건
+//   작업정보 창에서 목적지마다 '여기가 다 빌 때까지 기다려라' 하고 트랙을 적어 둔다.
+//   콤마로 끊어 여러 개를 적을 수 있다. 하나라도 차 있으면 출발하지 않는다.
+//   현장 PLC 가 매거진行 화물을 그렇게 잡아 두는 것을 흉내 낸 것이다.
+
+BOOL CEcsView::IsStartBlocked(CTrackInfo* pTrack, int nDestNo)
+{
+	if (pTrack == NULL || nDestNo <= 0)
+		return FALSE;
+
+	CEcsDoc* pDoc = GetDocument();
+	DEBUGER_ASSERT_VALID(pDoc != NULL);
+
+	CString strWait = pTrack->GetWaitTracks(nDestNo);
+	if (strWait.IsEmpty())
+		return FALSE;
+
+	int nPos = 0;
+	CString strOne = strWait.Tokenize(_T(","), nPos);
+
+	while (strOne.IsEmpty() == FALSE)
+	{
+		strOne.Trim();
+		int nWaitTr = _ttoi(strOne);
+
+		if (nWaitTr > 0 && nWaitTr != pTrack->m_nNumber)
+		{
+			CTrackInfo* pWait = pDoc->GetTrackInfo(nWaitTr);
+			if (pWait != NULL)
+			{
+				int nIdx = pWait->m_nCvPlcNum - 1;
+				if (nIdx >= 0 && nIdx < CV_PLC_CNT)
+				{
+					int nDev = (pWait->m_nNumber - pDoc->m_nStTrNum[nIdx] + 1) * pDoc->m_nWordCnt;
+
+					int  nLugg    = pDoc->GetAddrByName(nIdx, nDev, _T("LuggNum"));
+					BOOL bSensing = IsBitOnOffByKeyWord(nIdx, nDev, _T("ProductSensor"), TRUE, FALSE);
+
+					if (nLugg != 0 || bSensing == TRUE)
+						return TRUE;	// 아직 차 있다
+				}
+			}
+		}
+
+		strOne = strWait.Tokenize(_T(","), nPos);
+	}
+
+	return FALSE;
 }
 
 void CEcsView::MoveNextTrackForKindDiverter_2(CCv* pCv, CTrackInfo* pTrack, CStationInfo* pStation)

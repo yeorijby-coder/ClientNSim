@@ -53,6 +53,7 @@ public:
 	BOOL		m_bDispenser;
 	BOOL		m_bMgFull;
 	BOOL		m_bDpEmpty;
+	BOOL		m_bStartCond;
 	//}}AFX_DATA
 
 //	CDestinationArray* m_pDestinations;
@@ -113,6 +114,8 @@ public:
 
 	// @.파렛트 매거진/디스펜서 - 설정트랙에 빈 파렛트를 올리거나 걷어낸다.
 	void InvalidatePalletCount();
+	// @.목적지별 출발조건 - 목록에서 고른 목적지의 값을 칸에 보여준다.
+	void InvalidateStartCond(int nDestPos);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnBnClickedBtnRetry2();
 };
