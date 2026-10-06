@@ -671,12 +671,8 @@ void CEcsControl::Refresh()
 			strTemp.Format(_T("%05d"), m_nTrackNum);
 			m_pDoc->m_pJobDlg->SET(IDC_EDIT_CROSS_DEST, strTemp);
 		}
-		else if (m_pDoc->m_pJobDlg->m_bTwinCheck == TRUE)
-		{
-			CString strTemp;
-			strTemp.Format(_T("%05d"), m_nTrackNum);
-			m_pDoc->m_pJobDlg->SET(IDC_EDIT_HS_TRACK, strTemp);
-		}
+		// @.TwinCheck 는 트랙을 클릭해 찍지 않는다. 짝 트랙 번호를 직접 적는다.
+		//   위 관문에 m_bTwinCheck 가 없어서 어차피 여기까지 오지도 못했다.
 	}
 	else
 	{

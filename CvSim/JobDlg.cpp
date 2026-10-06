@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CJobDlg, CDialog)
 //	ON_WM_KEYDOWN()
 //ON_WM_KEYDOWN()
 ON_BN_CLICKED(IDC_BTN_RETRY2, &CJobDlg::OnBnClickedBtnRetry2)
+ON_BN_CLICKED(IDC_CHECK_TWIN, &CJobDlg::OnCheckTwin)
 ON_BN_CLICKED(IDC_CHECK_START_COND, &CJobDlg::OnCheckStartCond)
 ON_EN_SETFOCUS(IDC_EDIT_START_COND, &CJobDlg::OnSetFocusStartCond)
 ON_EN_KILLFOCUS(IDC_EDIT_START_COND, &CJobDlg::OnKillFocusStartCond)
@@ -162,6 +163,8 @@ BOOL CJobDlg::OnInitDialog()
 		m_bCenter = m_pTrack->m_bCenter;
 		m_bCross = m_pTrack->m_bCross;
 		m_bTwinCheck = m_pTrack->m_bTwinCheck;
+		strTemp.Format(_T("%d"), m_pTrack->m_nHSTrack);
+		SET(IDC_EDIT_HS_TRACK, m_pTrack->m_nHSTrack > 0 ? (LPCTSTR)strTemp : _T(""));
 		m_bMagazine = m_pTrack->m_bMagazine;
 		m_bDispenser = m_pTrack->m_bDispenserRole;
 		m_bMgFull = m_pTrack->m_bForceFull;
@@ -212,6 +215,7 @@ BOOL CJobDlg::OnInitDialog()
 	GetDlgItem(IDC_CHECK_MG_FULL)->EnableWindow(m_bMagazine);
 	GetDlgItem(IDC_CHECK_DP_EMPTY)->EnableWindow(m_bDispenser);
 
+	GetDlgItem(IDC_EDIT_HS_TRACK)->EnableWindow(m_bTwinCheck);
 	SET(IDC_EDIT_START_COND, DEF_START_COND_HINT);
 	GetDlgItem(IDC_EDIT_START_COND)->EnableWindow(m_bStartCond);
 	InvalidatePalletCount();
@@ -952,4 +956,20 @@ void CJobDlg::OnCheckStartCond()
 	// 꺼면 적던 것을 지우고 안내문으로 되돌린다.
 	if (m_bStartCond == FALSE)
 		SET(IDC_EDIT_START_COND, DEF_START_COND_HINT);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.TwinCheck - 짝 트랙 번호를 적는 칸을 연다.
+//   트랙을 클릭해서 찍는 방식이 아니다. 다음트랙/목적지 집게와 겹치지 않도록
+//   번호를 직접 적게 했다.
+
+void CJobDlg::OnCheckTwin()
+{
+	UpdateData(TRUE);
+
+	GetDlgItem(IDC_EDIT_HS_TRACK)->EnableWindow(m_bTwinCheck);
+
+	if (m_bTwinCheck == FALSE)
+		SET(IDC_EDIT_HS_TRACK, _T(""));
 }
