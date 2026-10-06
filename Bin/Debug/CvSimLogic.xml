@@ -462,6 +462,7 @@
 			<actions desc="트랙 데이터 삭제, 시간 끝">
 				<action ANum="57" AKeyWord="LuggNum"/>
 				<action ANum="57" AKeyWord="DestPos"/>
+				<action ANum="57" AKeyWord="JobType"/>
 				<action ANum="57" AKeyWord="D5n+1"/>
 				<action ANum="57" AKeyWord="ErrorCode"/>
 				<action ANum="57" AKeyWord="D5n+4"/>
@@ -479,6 +480,7 @@
 			<actions desc="트랙 데이터 삭제, 입고대 ON, 시간 끝">
 				<action ANum="57" AKeyWord="LuggNum"/>
 				<action ANum="57" AKeyWord="DestPos"/>
+				<action ANum="57" AKeyWord="JobType"/>
 				<action ANum="57" AKeyWord="D5n+1"/>
 				<action ANum="57" AKeyWord="ErrorCode"/>
 				<action ANum="57" AKeyWord="D5n+4"/>

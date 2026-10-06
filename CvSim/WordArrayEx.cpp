@@ -107,6 +107,12 @@ void CWordArrayEx::SetByte(int nWordAddr, EN_BYTE enByte, WORD wByte)
 	int nIndex = GetIndex(nWordAddr);
 	if (enByte == enByteH) ucShift = 8;
 
+	// @.넘겨받은 값을 한 바이트로 자르지 않고 그대로 밀어 넣고 있었다.
+	//   255 를 넘는 값을 ByteL 에 쓰면 윗자리가 옆 바이트로 흘러넘친다.
+	//   예) DestPos(ByteL) 에 646(0x0286) -> 윗바이트에 0x02 가 섞여
+	//       JobType 이 깨지고, 다시 읽으면 DestPos 는 0x86(134)이 된다.
+	wByte &= 0x00FF;
+
 	WORD wApplyData		= (wByte << ucShift);
 	WORD wNotApplyData	= m_pData[nIndex] & ~enByte;
 
