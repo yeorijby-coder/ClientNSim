@@ -856,6 +856,24 @@ BOOL CTrackInfo::LoadXML()
 		dom.GetChildElmtValue(_T("HSTrack"),	strValue);
 		m_nHSTrack = _ttoi(strValue);
 
+		// @.옛 TRACK xml 에는 초기화되지 않은 -842150451(0xCDCDCDCD)이 그대로
+		//   적혀 있다. 그대로 읽으면 m_bCross 가 참이 되어 m_nCrossTrack 으로
+		//   엉뚱한 주소를 뒤진다. 음수는 없는 값으로 본다.
+		if (m_nCenterNextPlcNum < 0)	m_nCenterNextPlcNum = 0;
+		if (m_nCenterNext < 0)		m_nCenterNext = 0;
+		if (m_nCenterDest < 0)		m_nCenterDest = 0;
+		if (m_nCrossTrack < 0)		m_nCrossTrack = 0;
+		if (m_nCrossDest < 0)		m_nCrossDest = 0;
+		if (m_nCrossPlcNum < 0)		m_nCrossPlcNum = 0;
+		if (m_nHSTrack < 0)		m_nHSTrack = 0;
+		if (m_bCenter < 0)		m_bCenter = FALSE;
+		if (m_bCross < 0)		m_bCross = FALSE;
+		if (m_bTwinCheck < 0)		m_bTwinCheck = FALSE;
+
+		// 짝 트랙이 없으면 트윈이 아니다.
+		if (m_nHSTrack == 0)
+			m_bTwinCheck = FALSE;
+
 		if (dom.MoveXPath(_T("./Dests"), FALSE))	//Equipment/Tracks
 		{
 			int i, nCount = dom.GetChildElmtCount();

@@ -415,6 +415,21 @@ BOOL CEcsDoc::IsDestination(CString strArgName, int nValue, int nTrNo, int nMeth
 		// 자기 목적지로 본다. (EcsView 의 화물 이동 판정과 같은 규칙)
 		BOOL bIsSelfDest = ((nTrNo != 0)        && (nValue == nTrNo))
 		                || ((nTrDestCode != 0)  && (nValue == nTrDestCode));
+		// @.트윈 H/S : 포크 두 개가 한 자리를 나눠 쓰는 경우다.
+		//   짝 트랙이 목적지여도 자기 자리로 본다.
+		//   예) 419 와 420 은 트윈이다. 2 번 포크 자리인 419 는 목적지가
+		//       420(또는 420 의 DestCode 222)이어도 출고대를 올려야 한다.
+		//   작업정보 창의 TwinCheck 에 짝 트랙을 적어 두면 걸린다.
+		if (bIsSelfDest == FALSE && pTrack != NULL &&
+		    pTrack->m_bTwinCheck != FALSE && pTrack->m_nHSTrack > 0)
+		{
+			CTrackInfo* pTwin = GetTrackInfo(pTrack->m_nHSTrack);
+			int nTwinDestCode = (pTwin != NULL) ? pTwin->m_nDestCode : 0;
+
+			bIsSelfDest = (nValue == pTrack->m_nHSTrack)
+			           || ((nTwinDestCode != 0) && (nValue == nTwinDestCode));
+		}
+
 		BOOL bIsScDest1 = (nValue > m_nScDestFrom && nValue < m_nScDestTo);
 		BOOL bIsScDest2 = (m_strDestList.Find(CConvert::ToString(nValue)) != -1);
 		BOOL bIsScDest = bIsScDest1 || bIsScDest2;
