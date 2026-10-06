@@ -1395,7 +1395,9 @@ void CEcsView::OnTimer(UINT nIDEvent)
 			//   예) 359 의 목적지 207(매거진)에 '301,302' 를 걸어 두면
 			//       301 과 302 가 모두 비어야 359 가 출발한다.
 			//   다른 목적지로 가는 화물은 막지 않는다.
-			BOOL bStartBlocked = IsStartBlocked(pTrack, nDestNo);
+			//   목적지는 IsStartBlocked 가 직접 읽는다. 바로 위의 nDestNo 는
+			//   nDevNum 을 *10 으로 잡아 구한 값이라 트랙당 5 워드인 맵에서는 엉뚱하다.
+			BOOL bStartBlocked = IsStartBlocked(pTrack);
 #pragma endregion 
 #pragma region 일반트랙일때하는작업
 			if (pTrack->m_nKind == 0 && bStartBlocked == FALSE)
@@ -4053,13 +4055,27 @@ void CEcsView::MoveNextTrackForKindNormal_2(CCv* pCv, CTrackInfo* pTrack, CStati
 //   콤마로 끊어 여러 개를 적을 수 있다. 하나라도 차 있으면 출발하지 않는다.
 //   현장 PLC 가 매거진行 화물을 그렇게 잡아 두는 것을 흉내 낸 것이다.
 
-BOOL CEcsView::IsStartBlocked(CTrackInfo* pTrack, int nDestNo)
+BOOL CEcsView::IsStartBlocked(CTrackInfo* pTrack)
 {
-	if (pTrack == NULL || nDestNo <= 0)
+	if (pTrack == NULL)
 		return FALSE;
 
 	CEcsDoc* pDoc = GetDocument();
 	DEBUGER_ASSERT_VALID(pDoc != NULL);
+
+	int nPlcIdx = pTrack->m_nCvPlcNum - 1;
+	if (nPlcIdx < 0 || nPlcIdx >= CV_PLC_CNT)
+		return FALSE;
+
+	// @.목적지는 여기서 직접 읽는다.
+	//   예전에는 부르는 쪽에서 받아 썼는데, 그 값이 nDevNum 을 *10 으로 잡아
+	//   구한 것이라 트랙당 5 워드인 맵에서는 엉뚱한 자리를 읽었다. 늘 0 이 나와
+	//   출발조건이 아예 걸리지 않았다.
+	int nDevNum = (pTrack->m_nNumber - pDoc->m_nStTrNum[nPlcIdx] + 1) * pDoc->m_nWordCnt;
+	int nDestNo = pDoc->GetAddrByName(nPlcIdx, nDevNum, _T("DestPos"));
+
+	if (nDestNo <= 0)
+		return FALSE;
 
 	CString strWait = pTrack->GetWaitTracks(nDestNo);
 	if (strWait.IsEmpty())
