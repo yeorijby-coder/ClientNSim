@@ -23,6 +23,9 @@ CScSkinDlg::CScSkinDlg(CEcsDoc* pDoc, CWnd* pParent /*=NULL*/)
 	m_pSC_DATA = NULL;
 	m_pDB = NULL;
 	m_pScManualRet = NULL;
+
+	m_pManualSc = NULL;
+	m_pDlgUrmDBAccess = NULL;
 }
 CScSkinDlg::CScSkinDlg(CWnd* pParent /*=NULL*/)
 	: CSkinDialog(CScSkinDlg::IDD, pParent)
@@ -32,10 +35,16 @@ CScSkinDlg::CScSkinDlg(CWnd* pParent /*=NULL*/)
 	m_pSC_DATA = NULL;
 	m_pDB = NULL;
 	m_pScManualRet = NULL;
+
+	m_pManualSc = NULL;
+	m_pDlgUrmDBAccess = NULL;
 }
 
 CScSkinDlg::~CScSkinDlg()
 {
+	if (m_pDlgUrmDBAccess != NULL) { delete m_pDlgUrmDBAccess; }
+	//if (m_pManualSc != NULL) { delete m_pManualSc; }
+
 	m_pDoc->m_pScSkinDlg = NULL;
 	CSkinDialog::OnClose();
 	this->DestroyWindow();
@@ -727,8 +736,7 @@ void CScSkinDlg::InvalidateScData(EN_LANG pLang)
 		// @.이중입고 에러일 때만 도착 로케이션 칸을 열어 재지정 입력란으로 쓴다.
 		//   구 ECS 는 재지정 전용 창(CRedirectionDlg)을 띄웠는데, 신규에는 그 창이 없다.
 		CString strErrCodeRd = m_pSC_DATA->V_ERR_CODE_RD;
-		BOOL bDualStoreErr = (strErrCodeRd == _T("0060") || strErrCodeRd == _T("0061") ||
-							  strErrCodeRd == _T("0062") || strErrCodeRd == _T("0063"));
+		BOOL bDualStoreErr = (strErrCodeRd == _T("0054") || strErrCodeRd == _T("0055"));
 		m_edtScDestLocFork1.SetReadOnly(!bDualStoreErr);
 		m_edtScJobNoFork2.SetWindowText(pRsw->GetItem(_T("LUGG_NO_FK2")));
 		m_edtScJobTypFork2.SetWindowText(pRsw->GetItem(_T("JOB_TYP_FK2")));
@@ -1090,6 +1098,30 @@ void CScSkinDlg::UpdateScData(int nBtnJob)
 	{
 		if (!PrepareDualStore(strDualLugg, nDualBank, nDualBay, nDualLevel))
 			return;
+	}
+	if (strCmdId == _T("MOD"))
+	{
+		if (m_pManualSc == NULL)
+		{
+			m_pManualSc = new CManualSc(m_pDoc, m_pDlgUrmDBAccess);
+			this->m_pManualSc->Create(IDD_MANAUL_SC);
+			CRect MainRect;
+			CRect Rect;
+			CRect PosRect;
+			::AfxGetApp()->GetMainWnd()->GetWindowRect(&MainRect);
+			this->m_pManualSc->GetWindowRect(&Rect);
+
+			PosRect.left = ((MainRect.right - MainRect.left) - Rect.Width()) / 2;
+			PosRect.top = ((MainRect.bottom - MainRect.top) - Rect.Height()) / 2;
+			this->m_pManualSc->SetWindowPos(&m_pManualSc->wndTop, PosRect.left, PosRect.top,
+				Rect.Width(), Rect.Height(),
+				SWP_SHOWWINDOW);
+
+		}
+		::SetWindowPos(m_pManualSc->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		::SetWindowPos(m_pManualSc->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		//ShowWindow(m_pManualSc->m_hWnd, SW_SHOWNORMAL);
+		return;
 	}
 	else
 	{
@@ -1821,7 +1853,7 @@ CString CScSkinDlg::GetQrySelectSC_STATUS_CCD(CSC_DATA* pSC_DATA)
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(CCD_JOB_TYP.CCD_NM_KOR, SD.JOB_TYP_RD) AS JOB_TYP_FK1 ");						//작업구분FK1
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.START_BANK_FK1_RD || '-' || SD.START_BAY_FK1_RD || '-' || SD.START_LEVEL_FK1_RD) AS START_LOC_FK1 ");		//출발위치FK1
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.DEST_BANK_FK1_RD || '-' || SD.DEST_BAY_FK1_RD || '-' || SD.DEST_LEVEL_FK1_RD) AS DEST_LOC_FK1 ");			//도착위치FK1
-	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.LUGG_NO_FK1_RD) AS LUGG_NO_FK2	");								//작업번호FK2
+	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.LUGG_NO_FK2_RD) AS LUGG_NO_FK2	");								//작업번호FK2
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(CCD_JOB_TYP.CCD_NM_KOR, SD.JOB_TYP_RD) AS JOB_TYP_FK2 ");						//작업구분FK2
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.START_BANK_FK2_RD || '-' || SD.START_BAY_FK2_RD || '-' || SD.START_LEVEL_FK2_RD) AS START_LOC_FK2 ");		//출발위치FK2
 	strSql += CRLF + _T("	   ,") + m_pDoc->NVL + _T("(SD.DEST_BANK_FK2_RD || '-' || SD.DEST_BAY_FK2_RD || '-' || SD.DEST_LEVEL_FK2_RD) AS DEST_LOC_FK2 ");			//도착위치FK2
@@ -2318,8 +2350,7 @@ BOOL CScSkinDlg::PrepareDualStore(CString& strLuggNo, int& nBank, int& nBay, int
 {
 	CString strErrCode = m_pSC_DATA->V_ERR_CODE_RD;
 
-	if (strErrCode != _T("0060") && strErrCode != _T("0061") &&
-		strErrCode != _T("0062") && strErrCode != _T("0063"))
+	if (strErrCode != _T("0054") && strErrCode != _T("0055"))
 	{
 		CString strMsg;
 		strMsg.Format(_T("이중입고 에러일 때만 쓸 수 있습니다.\n현재 에러코드 : [%s]"), (LPCTSTR)strErrCode);

@@ -86,6 +86,7 @@ public:
 
 	void refresh_Chk();
 	CString GetQrySelectCELLMST(CString strBANK, CString strBAY, CString strLEV, CString& strSC_NO, CString& strCELL_USE_YN, int& strRowCnt);
+	bool ChkCELL_NO(CString strBANK, CString strBAY, CString strLEV, CString& strSC_NO, CString& strRtnMsg);
 
 
 	afx_msg void OnCommandRangeButtonEvent(UINT nID);

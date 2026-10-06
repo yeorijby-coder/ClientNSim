@@ -803,7 +803,7 @@ CString CEcsLayout::SetLuggNo(CEcsDoc* pDoc, CString p_strMC_NO)
 	CString strMessage;
 	int nRowCnt = -1;
 
-	strSql += CRLF + _T("SELECT lugg_no_od as lugg_no	");
+	strSql += CRLF + _T("SELECT lugg_no_rd as lugg_no	");
 	strSql += CRLF + _T("  FROM CV_DATA		");
 	strSql += CRLF + _T(" WHERE MC_NO = '") + p_strMC_NO + _T("'	");
 
@@ -840,7 +840,7 @@ CString CEcsLayout::SetLdCtnNo(CEcsDoc* pDoc, CString p_strMC_NO)
 	strSql += CRLF + _T("SELECT jm.bcr_bottom		");
 	strSql += CRLF + _T("  FROM CV_DATA cd			");
 	strSql += CRLF + _T("LEFT OUTER JOIN JOB_MST jm		");
-	strSql += CRLF + _T("			  ON cd.lugg_no_od	= jm.lugg_no	");
+	strSql += CRLF + _T("			  ON cd.lugg_no_rd	= jm.lugg_no	");
 	strSql += CRLF + _T(" WHERE cd.MC_NO = '") + p_strMC_NO + _T("'	");
 
 	_RecordsetPtr ptr = pDoc->GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);

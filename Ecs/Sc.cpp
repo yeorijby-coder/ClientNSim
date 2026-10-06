@@ -84,6 +84,9 @@ CString CSc::GetSelectQry() //kdh20190521
 				  _T("    ") + m_pDoc->NVL + _T("(SD.JOB_TYP_RD,'0') AS JOB_TYP,\n")
 				  _T("    CASE WHEN ") + m_pDoc->NVL + _T("(SD.LUGG_NO_FK1_RD,'0') IN ('','0','0000')\n")
 				  _T("              THEN '0' ELSE SD.LUGG_NO_FK1_RD END AS LUGG_NO,\n")
+				  // @.2번 포크의 작업번호. 이것이 없어 2번 포크를 1번 색으로 칠하고 있었다.
+				  _T("    CASE WHEN ") + m_pDoc->NVL + _T("(SD.LUGG_NO_FK2_RD,'0') IN ('','0','0000')\n")
+				  _T("              THEN '0' ELSE SD.LUGG_NO_FK2_RD END AS LUGG_NO_FK2,\n")
 				  _T("    CASE WHEN ") + m_pDoc->NVL + _T("(SD.ITN_LUGG_FK1,'0') IN ('','0','0000')\n")
 				  _T("              THEN '0' ELSE SD.ITN_LUGG_FK1 END AS ITN_LUGG,\n")
 				  _T("    ") + m_pDoc->NVL + _T("(SD.START_BANK_FK1_RD,'0') AS START_BANK,\n")

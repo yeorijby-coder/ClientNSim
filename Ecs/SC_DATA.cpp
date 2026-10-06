@@ -389,6 +389,15 @@ void CSC_DATA::SetJOB_TYP(CString pstrJOB_TYP)
 	m_bModified = true;
 }
 
+void CSC_DATA::SetLUGG_NO_FK2(CString pstrLUGG_NO_FK2)
+{
+	if (V_LUGG_NO_FK2 == pstrLUGG_NO_FK2)
+		return;
+
+	V_LUGG_NO_FK2 = pstrLUGG_NO_FK2;
+	m_bModified = TRUE;
+}
+
 void CSC_DATA::SetLUGG_NO(CString pstrLUGG_NO)
 {
 	if (V_LUGG_NO == pstrLUGG_NO)

@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Ecs.h"
 #include "EcsDoc.h"
+#include "JobPriorityDlg.h"
 #include "EcsView.h"
 #include "MainFrm.h"
 //#include "UserManagerDlg.h"
@@ -39,6 +40,7 @@ BEGIN_MESSAGE_MAP(CEcsDoc, CDocument)
 	ON_COMMAND(ID_JOB_OFFLINE2, OnJobOffline2)
 	ON_COMMAND(ID_JOB_MANAGER, OnJobManager)
 	ON_COMMAND(ID_JOB_RESET_LUGG, OnJobResetLugg)
+	ON_COMMAND(ID_JOB_PRIORITY, OnJobPriority)
 	ON_COMMAND(ID_LOG_ALL, OnLogAll)
 	ON_COMMAND(ID_RACK_CONFIG, OnRackConfig)
 	ON_COMMAND_EX(ID_COM_HOST_CLIENT, OnComStatusHost)
@@ -1498,4 +1500,15 @@ void CEcsDoc::OnSysUserManager()
 	// TODO: Add your command handler code here
 	//CUserManagerDlg dlg;
 	//dlg.DoModal();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.작업 우선순위 변경(P) 전문을 손으로 보낸다.
+//   HOST 타스크의 ParseP() 를 태워 보려면 이것이 있어야 한다.
+
+void CEcsDoc::OnJobPriority()
+{
+	CJobPriorityDlg dlg(this, NULL);
+	dlg.DoModal();
 }

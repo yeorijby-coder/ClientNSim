@@ -1112,6 +1112,20 @@ void CHostCl::Parsing(char *pFrame)
 		// @.받아들여졌으면 그 슬롯의 연속 거절 횟수를 0 으로 되돌린다.
 			m_pDoc->ClearOrderNak(nLuggNum);
 		break;
+	case	CMD_REQ_PAUSE_ANSWER:
+		// @.우선순위 변경(P) 에 대한 응답.
+		if ((nResultCode != enHostErrorNone) || (ucAckNak != 'A'))
+		{
+			strLog.Format(_T("작업 우선순위 변경 거절 [작업번호:%d] [%d=%s]"),
+				nLuggNum, nResultCode, CLib::GetHostResultSting(nResultCode));
+			m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
+			m_pDoc->WriteDiag(strLog);
+			return;
+		}
+
+			strLog.Format(_T("작업 우선순위가 바뀌었습니다 [작업번호:%d]"), nLuggNum);
+			m_pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CHostCl::Parsing"));
+		break;
 	case	CMD_ALT_LOC_ANSWER:
 		if ((nResultCode != enHostErrorNone) || (ucAckNak != 'A'))
 		{
@@ -1867,6 +1881,38 @@ int CHostCl::JobOrder(int nJobType, int n1stStn, int n2ndStn, BOOL bManual, LPCT
 	}
 	
 	return nLuggNum;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.작업 우선순위 변경(P)
+//   HOST 타스크의 ParseP() 가 받는 자리는 이렇다. (STX 를 0 으로 볼 때)
+//     +1 (1) Message Type 'P'
+//     +2 (4) 작업번호
+//     +6 (3) 우선순위
+
+BOOL CHostCl::JobPriority(int nLuggNum, int nPriority)
+{
+	CString strLog;
+
+	// 몸통은 작업번호 4 + 우선순위 3 = 7 자리, 여기에 STX / 종류 / ETX 세 글자를 더한다.
+	m_nPrioritySize = 7 + 3;
+
+	wsprintf(m_PriorityMsg,                      _T("WMS_MBX   %04d "), m_nPrioritySize);
+	wsprintf(m_PriorityMsg + MSG_LENGTH_HEADER,  _T("%c%c%04d%03d%c"), STX, CMD_REQ_PAUSE, nLuggNum, nPriority, ETX);
+
+	if (SendMsg(m_PriorityMsg, m_nPrioritySize + MSG_LENGTH_HEADER) == TRUE)
+	{
+		strLog.Format(_T("작업 우선순위 변경 지시.. 작업번호=[%d] 우선순위=[%d]"), nLuggNum, nPriority);
+		m_pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CHostCl::JobPriority"));
+		m_pDoc->WriteDiag(strLog);
+		return TRUE;
+	}
+
+	strLog.Format(_T("작업 우선순위 변경 지시 실패.. 작업번호=[%d]"), nLuggNum);
+	m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostCl::JobPriority"));
+	m_pDoc->WriteDiag(strLog);
+	return FALSE;
 }
 
 

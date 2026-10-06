@@ -815,11 +815,11 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strTYPE = _T("CV");
 		nEQP_NUM = 1;
 		nCheckTime = 5;
-
+		break;
 		#pragma endregion
 	case ID_STATUS_CV_2:
 #pragma region ID_STATUS_CV_2
-		pTrackInfo = pDoc->GetTrackInfoNew(_T("102"));
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("201"));
 
 		if (pTrackInfo == NULL)
 			return;
@@ -830,13 +830,13 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("CV");
-		nEQP_NUM = 1;
+		nEQP_NUM = 2;
 		nCheckTime = 5;
-
+		break;
 #pragma endregion
 	case ID_STATUS_CV_3:
 #pragma region ID_STATUS_CV_3
-		pTrackInfo = pDoc->GetTrackInfoNew(_T("103"));
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("301"));
 
 		if (pTrackInfo == NULL)
 			return;
@@ -847,13 +847,13 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("CV");
-		nEQP_NUM = 1;
+		nEQP_NUM = 3;
 		nCheckTime = 5;
-
+		break;
 #pragma endregion
 	case ID_STATUS_CV_4:
 #pragma region ID_STATUS_CV_4
-		pTrackInfo = pDoc->GetTrackInfoNew(_T("104"));
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("401"));
 
 		if (pTrackInfo == NULL)
 			return;
@@ -864,13 +864,13 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("CV");
-		nEQP_NUM = 1;
+		nEQP_NUM = 4;
 		nCheckTime = 5;
-
+		break;
 #pragma endregion
 	case ID_STATUS_CV_5:
 #pragma region ID_STATUS_CV_5
-		pTrackInfo = pDoc->GetTrackInfoNew(_T("105"));
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("501"));
 
 		if (pTrackInfo == NULL)
 			return;
@@ -881,13 +881,13 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("CV");
-		nEQP_NUM = 1;
+		nEQP_NUM = 5;
 		nCheckTime = 5;
-
+		break;
 #pragma endregion
 	case ID_STATUS_CV_6:
 #pragma region ID_STATUS_CV_6
-		pTrackInfo = pDoc->GetTrackInfoNew(_T("106"));
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("601"));
 
 		if (pTrackInfo == NULL)
 			return;
@@ -898,13 +898,13 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("CV");
-		nEQP_NUM = 1;
+		nEQP_NUM = 6;
 		nCheckTime = 5;
-
+		break;
 #pragma endregion
 	case ID_STATUS_CV_7:
 #pragma region ID_STATUS_CV_7
-		pTrackInfo = pDoc->GetTrackInfoNew(_T("107"));
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("701"));
 
 		if (pTrackInfo == NULL)
 			return;
@@ -915,13 +915,13 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("CV");
-		nEQP_NUM = 1;
+		nEQP_NUM = 7;
 		nCheckTime = 5;
-
+		break;
 #pragma endregion
 	case ID_STATUS_CV_8:
 #pragma region ID_STATUS_CV_8
-		pTrackInfo = pDoc->GetTrackInfoNew(_T("108"));
+		pTrackInfo = pDoc->GetTrackInfoNew(_T("801"));
 
 		if (pTrackInfo == NULL)
 			return;
@@ -932,9 +932,9 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pTrackInfo->m_pCV_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("CV");
-		nEQP_NUM = 1;
+		nEQP_NUM = 8;
 		nCheckTime = 5;
-
+		break;
 #pragma endregion
 		break;
 	case ID_STATUS_SC_1:
@@ -986,7 +986,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 1;
+		nEQP_NUM = 3;
 		nCheckTime = 5;
 
 #pragma endregion
@@ -1004,7 +1004,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 2;
+		nEQP_NUM = 4;
 		nCheckTime = 5;
 
 #pragma endregion
@@ -1022,7 +1022,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 1;
+		nEQP_NUM = 5;
 		nCheckTime = 5;
 
 #pragma endregion
@@ -1040,7 +1040,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 2;
+		nEQP_NUM = 6;
 		nCheckTime = 5;
 
 #pragma endregion
@@ -1058,7 +1058,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 1;
+		nEQP_NUM = 7;
 		nCheckTime = 5;
 
 #pragma endregion
@@ -1076,7 +1076,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 2;
+		nEQP_NUM = 8;
 		nCheckTime = 5;
 
 #pragma endregion
@@ -1094,7 +1094,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 1;
+		nEQP_NUM = 9;
 		nCheckTime = 5;
 
 #pragma endregion
@@ -1112,7 +1112,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 2;
+		nEQP_NUM = 10;
 		nCheckTime = 5;
 
 #pragma endregion
@@ -1130,7 +1130,7 @@ void CMainFrame::OnButtonComm(UINT nID)
 		strEQP_TIME = pSC_DATA->V_EQP_TIME;
 		nEQP_TIME = CConvert::ToInt(strEQP_TIME);
 		strTYPE = _T("SC");
-		nEQP_NUM = 2;
+		nEQP_NUM = 11;
 		nCheckTime = 5;
 
 #pragma endregion

@@ -56,6 +56,9 @@ public:
 
 	CString m_strScFork;
 
+	CManualSc* m_pManualSc;
+	CURMDBAccess* m_pDlgUrmDBAccess;
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 

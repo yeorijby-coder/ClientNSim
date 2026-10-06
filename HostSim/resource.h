@@ -1331,12 +1331,18 @@
 
 // Next default values for new objects
 // 
+#define IDD_JOB_PRIORITY                374
+#define IDC_EDIT_PRIO_LUGGNO            1596
+#define IDC_EDIT_PRIO_VALUE             1597
+#define ID_JOB_PRIORITY                 32920
+
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        374
-#define _APS_NEXT_COMMAND_VALUE         32920
-#define _APS_NEXT_CONTROL_VALUE         1596
+
+#define _APS_NEXT_RESOURCE_VALUE 375
+#define _APS_NEXT_COMMAND_VALUE  32921
+#define _APS_NEXT_CONTROL_VALUE  1598
 #define _APS_NEXT_SYMED_VALUE           111
 #endif
 #endif

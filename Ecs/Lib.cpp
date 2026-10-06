@@ -1682,7 +1682,7 @@ bool CLib::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CEcsDoc *pDoc, CStri
            strSql += _T("ORDER BY GROUP_NO, TRACK_NO");
 
 	_RecordsetPtr pRsptr = pDoc->GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
-	CRecordSetWrap* pRsw = new CRecordSetWrap(pRsptr);
+ 	CRecordSetWrap* pRsw = new CRecordSetWrap(pRsptr);
 	
 	cbx.SetItemDataEx(0, _T("ALL"));
 	cbx.AddString(_T("ALL"));

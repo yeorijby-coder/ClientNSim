@@ -162,6 +162,8 @@ public:
 
 public:
 	int JobOrder(int nJobType, int n1stStn, int n2ndStn = 0, BOOL bManual = FALSE, LPCTSTR lpszLocation = NULL, CStringArray* pScList = NULL);
+	// @.작업 우선순위 변경(P) 전문. 이미 내린 작업의 우선순위를 바꾼다.
+	BOOL JobPriority(int nLuggNum, int nPriority);
 	int AlterLocation(BOOL bManual = FALSE);
 
 	BOOL CalcurateLocation(BOOL bSto = TRUE, CStringArray* pScList = NULL);
@@ -187,12 +189,14 @@ public:
 	int m_nCurScNum;
 
 	TCHAR m_JobOrderMsg[1024];
+	TCHAR m_PriorityMsg[256];
 
 	// @.JobOrder 가 0 을 돌려줌 때 그 사유. 부르는 쪽이 화면에 보여 준다.
 	//   전에는 파일 로그(EcsLog.exe 로만 열린다)에만 있어 아무도 못 봤다.
 	CString m_strLastOrderFail;
 	TCHAR m_AlterLocMsg[1024];
 	int m_nJobOrderSize;
+	int m_nPrioritySize;
 	int m_nAlterLocSize;
 
 	// ClassWizard generated virtual function overrides

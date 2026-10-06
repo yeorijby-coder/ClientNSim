@@ -8,6 +8,7 @@
 #include "afxdialogex.h"
 #include "RecordSetWrap.h"
 #include "afxwin.h"
+#include <string>
 
 
 // CManualJob 대화 상자입니다.
@@ -422,12 +423,17 @@ void CManualJob::OnBnClickedBtnManulJobInsert()
 			strStartLocLevFork1 = _T("0");
 
 			//로케이션에 따른 SC 구하기.
-			GetQrySelectCELLMST(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strCellUseYn, nCnt);
-			if (strCellUseYn == "N" || nCnt == 0)
+			if (!ChkCELL_NO(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strMessage))
 			{
-				AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 도착 로케이션 입니다.")));
-				return ;
+				AfxMessageBox(strMessage);
+				return;
 			}
+			//GetQrySelectCELLMST(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strCellUseYn, nCnt);
+			//if (strCellUseYn == "N" || nCnt == 0)
+			//{
+			//	AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 도착 로케이션 입니다.")));
+			//	return ;
+			//}
 			strDestPos = strScNo;
 			strJobStatus = "10";
 		}
@@ -454,12 +460,17 @@ void CManualJob::OnBnClickedBtnManulJobInsert()
 			strDestLocLevFork1 = _T("0");
 
 			//로케이션에 따른 SC 구하기.
-			GetQrySelectCELLMST(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strCellUseYn, nCnt);
-			if (strCellUseYn == "N" || nCnt == 0)
+			if (!ChkCELL_NO(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strMessage))
 			{
-				AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 출발 로케이션 입니다.")));
-				return ;
+				AfxMessageBox(strMessage);
+				return;
 			}
+			//GetQrySelectCELLMST(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strCellUseYn, nCnt);
+			//if (strCellUseYn == "N" || nCnt == 0)
+			//{
+			//	AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 출발 로케이션 입니다.")));
+			//	return ;
+			//}
 			strStartPos = strScNo;
 			strJobStatus = "20";
 		}
@@ -493,21 +504,30 @@ void CManualJob::OnBnClickedBtnManulJobInsert()
 			}
 
 			//출발, 도착 로케이션 확인
-			GetQrySelectCELLMST(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strCellUseYn, nCnt);
-			if (strCellUseYn == "N" || nCnt == 0)
+			if (!ChkCELL_NO(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strMessage))
 			{
-				AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 출발 로케이션 입니다.")));
-				return ;
+				AfxMessageBox(strMessage);
+				return;
 			}
-
+			//GetQrySelectCELLMST(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strCellUseYn, nCnt);
+			//if (strCellUseYn == "N" || nCnt == 0)
+			//{
+			//	AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 출발 로케이션 입니다.")));
+			//	return ;
+			//}
 			strStartPos = strScNo;
 
-			GetQrySelectCELLMST(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strCellUseYn, nCnt);
-			if (strCellUseYn == "N" || nCnt == 0)
+			if (!ChkCELL_NO(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strMessage))
 			{
-				AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 도착 로케이션 입니다.")));
-				return ;
+				AfxMessageBox(strMessage);
+				return;
 			}
+			//GetQrySelectCELLMST(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strCellUseYn, nCnt);
+			//if (strCellUseYn == "N" || nCnt == 0)
+			//{
+			//	AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 도착 로케이션 입니다.")));
+			//	return ;
+			//}
 
 			strDestPos = strScNo;
 
@@ -538,21 +558,30 @@ void CManualJob::OnBnClickedBtnManulJobInsert()
 			}
 
 			//출발, 도착 로케이션 확인
-			GetQrySelectCELLMST(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strCellUseYn, nCnt);
-			if (strCellUseYn == "N" || nCnt == 0)
+			if (!ChkCELL_NO(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strMessage))
 			{
-				AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 출발 로케이션 입니다.")));
-				return ;
+				AfxMessageBox(strMessage);
+				return;
 			}
-
+			//GetQrySelectCELLMST(strStartLocBankFork1, strStartLocBayFork1, strStartLocLevFork1, strScNo, strCellUseYn, nCnt);
+			//if (strCellUseYn == "N" || nCnt == 0)
+			//{
+			//	AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 출발 로케이션 입니다.")));
+			//	return ;
+			//}
 			strStartPos = strScNo;
 
-			GetQrySelectCELLMST(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strCellUseYn, nCnt);
-			if (strCellUseYn == "N" || nCnt == 0)
+			if (!ChkCELL_NO(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strMessage))
 			{
-				AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 도착 로케이션 입니다.")));
-				return ;
+				AfxMessageBox(strMessage);
+				return;
 			}
+			//GetQrySelectCELLMST(strDestLocBankFork1, strDestLocBayFork1, strDestLocLevFork1, strScNo, strCellUseYn, nCnt);
+			//if (strCellUseYn == "N" || nCnt == 0)
+			//{
+			//	AfxMessageBox(m_pDoc->GetMsgLangDef(_T("사용할 수 없는 도착 로케이션 입니다.")));
+			//	return ;
+			//}
 
 			strDestPos = strScNo;
 
@@ -734,14 +763,14 @@ void CManualJob::OnSelchangeComboManualJobEditJobTyp()
 	strJobTyp = m_cbxManualJobJobTyp.GetItemKey(m_cbxManualJobJobTyp.GetCurSel());
 
 	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobStartPos, m_pDoc, _T("Y"), _T(""));
-	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobDestPos, m_pDoc, _T("N"), _T(""));
+	CLib::SetBindCombo_DEST_POS_DEF(m_cbxManualJobDestPos, m_pDoc, _T(""), _T("Y"));
 
 	if (strJobTyp == _T("10"))
 	{
-		m_cbxManualJobStartPos.DeleteString(3);
-		m_cbxManualJobStartPos.DeleteString(3);
-		m_cbxManualJobDestPos.DeleteString(3);
-		m_cbxManualJobDestPos.DeleteString(3);
+		//m_cbxManualJobStartPos.DeleteString(3);
+		//m_cbxManualJobStartPos.DeleteString(3);
+		//m_cbxManualJobDestPos.DeleteString(3);
+		//m_cbxManualJobDestPos.DeleteString(3);
 		m_maskedtManualJobLocationFr.EnableWindow(FALSE);
 		m_maskedtManualJobLocationTo.EnableWindow(FALSE);
 		m_cbxManualJobStartPos.EnableWindow(TRUE);
@@ -749,8 +778,8 @@ void CManualJob::OnSelchangeComboManualJobEditJobTyp()
 	}
 	else if (strJobTyp == _T("11"))
 	{
-		m_cbxManualJobStartPos.DeleteString(3);
-		m_cbxManualJobStartPos.DeleteString(3);
+		//m_cbxManualJobStartPos.DeleteString(3);
+		//m_cbxManualJobStartPos.DeleteString(3);
 		m_maskedtManualJobLocationFr.EnableWindow(FALSE);
 		m_maskedtManualJobLocationTo.EnableWindow(TRUE);
 		m_cbxManualJobStartPos.EnableWindow(TRUE);
@@ -758,8 +787,8 @@ void CManualJob::OnSelchangeComboManualJobEditJobTyp()
 	}
 	else if (strJobTyp == _T("12"))
 	{
-		m_cbxManualJobDestPos.DeleteString(3);
-		m_cbxManualJobDestPos.DeleteString(3);
+		//m_cbxManualJobDestPos.DeleteString(3);
+		//m_cbxManualJobDestPos.DeleteString(3);
 		m_maskedtManualJobLocationFr.EnableWindow(TRUE);
 		m_maskedtManualJobLocationTo.EnableWindow(FALSE);
 		m_cbxManualJobStartPos.EnableWindow(FALSE);
@@ -767,8 +796,8 @@ void CManualJob::OnSelchangeComboManualJobEditJobTyp()
 	}
 	else if (strJobTyp == _T("13"))
 	{
-		m_cbxManualJobDestPos.DeleteString(1);
-		m_cbxManualJobDestPos.DeleteString(1);
+		//m_cbxManualJobDestPos.DeleteString(1);
+		//m_cbxManualJobDestPos.DeleteString(1);
 		m_maskedtManualJobLocationFr.EnableWindow(TRUE);
 		m_maskedtManualJobLocationTo.EnableWindow(FALSE);
 		m_cbxManualJobStartPos.EnableWindow(FALSE);
@@ -800,6 +829,71 @@ void CManualJob::OnSelchangeComboManualJobEditJobTyp()
 
 void CManualJob::OnCbnSelchangeComboManualJobWhtype()
 {
+}
+
+bool CManualJob::ChkCELL_NO(CString strBANK, CString strBAY, CString strLEV, CString& strSC_NO, CString& strRtnMsg)
+{
+	int bankNum = _tstoi(strBANK);
+	int bayNum = _tstoi(strBAY);
+	int levNum = _tstoi(strLEV);
+
+	if (bankNum < 1 || bankNum > 22) {
+		strRtnMsg =  "BANK 값은 1 ~ 22까지 처리 가능합니다.";
+		return false;
+	}
+	
+	if (bankNum < 21)
+	{
+		if (bayNum < 1 || bayNum > 46) {
+			strRtnMsg = "BAY 값은 1 ~ 46까지 처리 가능합니다.";
+			return false;
+		}
+
+		if (levNum < 1 || levNum > 17) {
+			strRtnMsg = "LEV 값은 1 ~ 17까지 처리 가능합니다.";
+			return false;
+		}
+	}
+	else
+	{
+		if (bayNum < 1 || bayNum > 100) {
+			strRtnMsg = "BAY 값은 1 ~ 100까지 처리 가능합니다.";
+			return false;
+		}
+
+		if (levNum < 1 || levNum > 24) {
+			strRtnMsg = "LEV 값은 1 ~ 24까지 처리 가능합니다.";
+			return false;
+		}
+	}
+
+
+	if (strBANK == "01" || strBANK == "02")
+		strSC_NO = "901";
+	else if (strBANK == "03" || strBANK == "04")
+		strSC_NO = "902";
+	else if (strBANK == "05" || strBANK == "06")
+		strSC_NO = "903";
+	else if (strBANK == "07" || strBANK == "08")
+		strSC_NO = "904";
+	else if (strBANK == "09" || strBANK == "10")
+		strSC_NO = "905";
+	else if (strBANK == "11" || strBANK == "12")
+		strSC_NO = "906";
+	else if (strBANK == "13" || strBANK == "14")
+		strSC_NO = "907";
+	else if (strBANK == "15" || strBANK == "16")
+		strSC_NO = "908";
+	else if (strBANK == "17" || strBANK == "18")
+		strSC_NO = "909";
+	else if (strBANK == "19" || strBANK == "20")
+		strSC_NO = "910";
+	else if (strBANK == "21" || strBANK == "22")
+		strSC_NO = "911";
+
+	strRtnMsg = "";
+	return true;
+
 }
 
 CString CManualJob::GetQrySelectCELLMST(CString strBANK, CString strBAY, CString strLEV, CString& strSC_NO, CString& strCELL_USE_YN, int& nCnt)

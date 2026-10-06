@@ -40,6 +40,7 @@ public:
 	CString V_ORDER_CHECK_RD;
 	CString V_JOB_TYP;
 	CString V_LUGG_NO;
+	CString V_LUGG_NO_FK2;	// @.2번 포크의 작업번호 (트윈 크레인)
 	CString V_ITN_LUGG;
 	CString V_START_BANK;
 	CString V_START_BAY;
@@ -118,6 +119,7 @@ public:
 	void SetORDER_CHECK_RD(CString V_ORDER_CHECK_RD);
 	void SetJOB_TYP(CString V_JOB_TYP);
 	void SetLUGG_NO(CString V_LUGG_NO);
+	void SetLUGG_NO_FK2(CString V_LUGG_NO_FK2);
 	void SetITN_LUGG(CString V_ITN_LUGG);
 	void SetSTART_BANK(CString V_START_BANK);
 	void SetSTART_BAY(CString V_START_BAY);

@@ -194,6 +194,7 @@ private:
 public:
 
 	afx_msg void OnJobResetLugg();		// @.메뉴 [작업]-[로직 작업번호 초기화]
+	afx_msg void OnJobPriority();
 
 	int m_nScRetFrontRemainJobCnt[SC1_PLC_CNT];
 	int m_nScRetRearRemainJobCnt[SC_PLC_TOT_CNT];

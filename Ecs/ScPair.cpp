@@ -94,6 +94,7 @@ void CScPair::AutoRunProc()
 		pSC_DATA->SetERR_STA_FK2_RD(m_pRsw->GetItem(_T("ERR_STA_FK2_RD")));
 		pSC_DATA->SetJOB_TYP(m_pRsw->GetItem(_T("JOB_TYP")));
 		pSC_DATA->SetLUGG_NO(m_pRsw->GetItem(_T("LUGG_NO")));
+		pSC_DATA->SetLUGG_NO_FK2(m_pRsw->GetItem(_T("LUGG_NO_FK2")));
 		pSC_DATA->SetITN_LUGG(m_pRsw->GetItem(_T("ITN_LUGG")));
 		pSC_DATA->SetSTART_BANK(m_pRsw->GetItem(_T("START_BANK")));
 		pSC_DATA->SetSTART_BAY(m_pRsw->GetItem(_T("START_BAY")));

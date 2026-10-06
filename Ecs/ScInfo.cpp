@@ -110,15 +110,28 @@ COLORREF CScInfo::GetForkColor2()
 
 COLORREF CScInfo::GetForkColor2(CSC_DATA* pSC_DATA)
 {
+	// @.1번 포크(GetForkColor1)와 같은 규칙으로 보되, 2번 포크의 값을 쓴다.
+	//   예전에는 2번 포크의 작업번호를 보지 않아, 작업이 하나뿐인데도
+	//   작업구분만 맞으면 두 포크가 똑같이 칠해졌다.
 	CConfig* pConfig = m_pEquipment->m_pDoc->m_pConfig;
 	DEBUGER_ASSERT_VALID(pConfig != NULL);
 
-	if (m_pSC_DATA->V_IS_ERROR_RD != _T("0"))
+	if (pSC_DATA->V_ERR_CODE_RD != _T("0") && pSC_DATA->V_ERR_CODE_RD != _T("0000") && !pSC_DATA->V_ERR_CODE_RD.IsEmpty())
 		return pConfig->m_clrUSER_COLOR_ERROR;
 
-	//if (pSC_DATA->V_ONLINE_MODE_RD == _T("0") || pSC_DATA->V_AUTO_MODE_RD == _T("0") || pSC_DATA->V_ACTIVE_MODE_RD == _T("0"))
-	if (m_pSC_DATA->V_CRANE_ONLINE_RD == _T("0") || m_pSC_DATA->V_CRANE_REQUEST_RD == _T("0"))
+	if (pSC_DATA->V_ERR_STA_FK2_RD != _T("0") && !pSC_DATA->V_ERR_STA_FK2_RD.IsEmpty())
+		return pConfig->m_clrUSER_COLOR_ERROR;
+
+	if (pSC_DATA->V_ONLINE_MODE_RD == _T("0") ||
+		pSC_DATA->V_AUTO_MODE_RD   == _T("0") ||
+		pSC_DATA->V_ACTIVE_MODE_RD == _T("0"))
 		return DARK_GRAY;
+
+	// @.2번 포크에 실린 작업이 없으면 칠하지 않는다.
+	if (pSC_DATA->V_LUGG_NO_FK2.IsEmpty() ||
+		pSC_DATA->V_LUGG_NO_FK2 == _T("0") ||
+		pSC_DATA->V_LUGG_NO_FK2 == _T("0000"))
+		return LIGHT_GRAY;
 
 	int nJobTypTmp = CConvert::ToInt(pSC_DATA->V_JOB_TYP);
 	switch (nJobTypTmp)
@@ -126,8 +139,9 @@ COLORREF CScInfo::GetForkColor2(CSC_DATA* pSC_DATA)
 	case enJobTypeAutoSto: return pConfig->m_clrUSER_COLOR_STO;
 	case enJobTypeAutoRet: return pConfig->m_clrUSER_COLOR_RET;
 	case enJobTypeAutoR2R: return pConfig->m_clrUSER_COLOR_RTR;
-	case enJobTypeAutoA2A: return pConfig->m_clrUSER_COLOR_ATA;
+	case enJobTypeDuplicate: return pConfig->m_clrUSER_COLOR_RTR;
 	case enJobTypeAutoMove: return pConfig->m_clrUSER_COLOR_MOVE;
+	case enJobTypeAutoA2A: return pConfig->m_clrUSER_COLOR_ATA;
 	case enJobTypeAutoPR: return pConfig->m_clrUSER_COLOR_RET;
 	case enJobTypeSemiSto: return pConfig->m_clrUSER_COLOR_STO;
 	case enJobTypeSemiRet: return pConfig->m_clrUSER_COLOR_RET;
@@ -137,13 +151,7 @@ COLORREF CScInfo::GetForkColor2(CSC_DATA* pSC_DATA)
 	case enJobTypeManual: return pConfig->m_clrUSER_COLOR_MANUAL;
 	}
 
-	//if (pSC_DATA->V_ONLINE_MODE_RD == _T("1") &&	pSC_DATA->V_AUTO_MODE_RD == _T("1") &&	pSC_DATA->V_ACTIVE_MODE_RD == _T("1"))
-	if (m_pSC_DATA->V_CRANE_ONLINE_RD == _T("1") && m_pSC_DATA->V_CRANE_REQUEST_RD == _T("1") && m_pSC_DATA->V_ORDER_CHECK_RD == _T("0"))
-		return LIGHT_GRAY;
-	else
-		return DARK_GRAY;
-
-	return BLACK;
+	return LIGHT_GRAY;
 }
 
 
@@ -273,7 +281,10 @@ void CScInfo::InvokeControl(CSC_DATA* pSC_DATA)
 			continue;
 
 		pCtrl->m_clrFork = GetForkColor1(pSC_DATA);
-		pCtrl->m_clrFork2 = GetForkColor1(pSC_DATA);
+		// @.2번 포크는 2번 포크의 작업번호로 칠한다.
+		//   예전에는 GetForkColor1 을 두 번 불러, 작업이 하나뿐일 때도
+		//   포크 두 개가 같이 칠해졌다.
+		pCtrl->m_clrFork2 = GetForkColor2(pSC_DATA);
 		pCtrl->m_nForkPos = nForkPos;
 		bErase = TRUE;
 		pCtrl->m_nProd = nProd;

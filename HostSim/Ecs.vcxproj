@@ -322,6 +322,7 @@ copy "%PathName%\*.pdb" "%PathName%\EcsSv\mapfile\%DirName%"</Command>
     <ClCompile Include="JobItem.cpp" />
     <ClCompile Include="JobItemDlg.cpp" />
     <ClCompile Include="JobOfflineDlg.cpp" />
+    <ClCompile Include="JobPriorityDlg.cpp" />
     <ClCompile Include="JobTestDlg.cpp" />
     <ClCompile Include="Lgv.cpp" />
     <ClCompile Include="LgvcDlg.cpp" />
@@ -409,6 +410,7 @@ copy "%PathName%\*.pdb" "%PathName%\EcsSv\mapfile\%DirName%"</Command>
     <ClInclude Include="JobItem.h" />
     <ClInclude Include="JobItemDlg.h" />
     <ClInclude Include="JobOfflineDlg.h" />
+    <ClInclude Include="JobPriorityDlg.h" />
     <ClInclude Include="JobTestDlg.h" />
     <ClInclude Include="Lgv.h" />
     <ClInclude Include="LgvcDlg.h" />
