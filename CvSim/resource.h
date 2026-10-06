@@ -181,6 +181,7 @@
 #define IDD_ECS_CONTROL1                530
 #define IDD_TRACK_DATA                  531
 #define IDD_LOGIC_VALIDATION            532
+#define IDD_TRACKING_ERROR              385
 #define IDC_LIST_LOG                    1009
 #define IDC_COMBO_POSITION              1014
 #define IDC_COMBO_JOB_TYPE              1015
@@ -675,6 +676,7 @@
 #define ID_RELOAD_LOGIC                 33063
 #define ID_33064                        33064
 #define ID_LOGIC_VALIDATION             33065
+#define ID_TRACKING_ERROR               33066
 
 // Next default values for new objects
 // 
@@ -683,14 +685,17 @@
 #define IDC_EDIT_DP_CNT                 1720
 #define IDC_CHECK_START_COND            1715
 #define IDC_EDIT_START_COND             1717
+#define IDC_LIST_TRACKING_ERROR         1721
+#define IDC_CHECK_ONLY_BLOCKED          1722
+#define IDC_BTN_TRACKING_REFRESH        1723
 #define IDC_CHECK_MG_FULL               1716
 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        385
-#define _APS_NEXT_COMMAND_VALUE         33066
-#define _APS_NEXT_CONTROL_VALUE         1721
+#define _APS_NEXT_RESOURCE_VALUE        386
+#define _APS_NEXT_COMMAND_VALUE         33067
+#define _APS_NEXT_CONTROL_VALUE         1724
 #define _APS_NEXT_SYMED_VALUE           111
 #endif
 #endif

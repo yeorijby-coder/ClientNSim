@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CEcsDoc, CDocument)
 	ON_COMMAND(ID_LOG_ALL, OnLogAll)
 	ON_COMMAND(ID_WARNING, OnWarning)
 	ON_COMMAND(ID_LOGIC_VALIDATION, OnLogicValid)
+	ON_COMMAND(ID_TRACKING_ERROR, OnTrackingError)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -54,6 +55,7 @@ CEcsDoc::CEcsDoc()
 	m_pWarningDlg	= NULL;
 	m_pTrackDataDlg = NULL;
 	m_pLogicValidationDlg = NULL;
+	m_pTrackingErrorDlg = NULL;
 	m_pDataSettingDlg = NULL;
 
 	m_bTesting		= FALSE;
@@ -93,6 +95,7 @@ CEcsDoc::~CEcsDoc()
 	if (m_pWarningDlg != NULL) delete m_pWarningDlg;
 	if (m_pTrackDataDlg != NULL) delete m_pTrackDataDlg;
 	if (m_pLogicValidationDlg != NULL) delete m_pLogicValidationDlg;
+	if (m_pTrackingErrorDlg != NULL) delete m_pTrackingErrorDlg;
 	if (m_pDataSettingDlg != NULL) delete m_pDataSettingDlg;
 	//	if (m_pLogDlg != NULL) delete m_pLogDlg;
 	if (m_pJobDlg != NULL) delete m_pJobDlg;
@@ -1836,5 +1839,24 @@ void CEcsDoc::OnLogicValid()
 		m_pLogicValidationDlg = new CLogicValidationDlg(this, NULL);
 		m_pLogicValidationDlg->Create(IDD_LOGIC_VALIDATION);
 		m_pLogicValidationDlg->ShowWindow(SW_SHOW);
+	}
+}
+
+//==============================================================================
+//	Desc	: 트랙킹 오류 사유 보기
+//	Date	: 2026.10.06
+//==============================================================================
+void CEcsDoc::OnTrackingError()
+{
+	if (m_pTrackingErrorDlg != NULL)
+	{
+		m_pTrackingErrorDlg->ShowWindow(SW_SHOWNORMAL);
+		m_pTrackingErrorDlg->BringWindowToTop();
+	}
+	else
+	{
+		m_pTrackingErrorDlg = new CTrackingErrorDlg(this, NULL);
+		m_pTrackingErrorDlg->Create(IDD_TRACKING_ERROR);
+		m_pTrackingErrorDlg->ShowWindow(SW_SHOW);
 	}
 }

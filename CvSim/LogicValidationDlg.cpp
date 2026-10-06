@@ -142,6 +142,27 @@ void CLogicValidationDlg::PostNcDestroy()
 	CDialogResize::PostNcDestroy();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.트랙번호 칸에서 엔터를 치면 창이 닫혔다. 대화상자의 기본 동작(IDOK)이다.
+//   엔터는 다시 훑어보라는 뜻이지 닫으라는 뜻이 아니다. ESC 도 마찬가지로 막는다.
+
+BOOL CLogicValidationDlg::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->wParam == VK_RETURN)
+		{
+			OnEnChangeTrackNumber();	// 다시 훑는다
+			return TRUE;
+		}
+
+		if (pMsg->wParam == VK_ESCAPE)
+			return TRUE;
+	}
+
+	return CDialogResize::PreTranslateMessage(pMsg);
+}
+
 void CLogicValidationDlg::OnOK()
 {
 	ShowWindow(false);

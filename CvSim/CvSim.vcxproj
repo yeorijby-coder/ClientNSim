@@ -193,6 +193,7 @@ copy "%PathName%\*.pdb" "$(OutDir)\mapfile\%DirName%"
     <ClCompile Include="LogDlg.cpp" />
     <ClCompile Include="Logic.cpp" />
     <ClCompile Include="LogicValidationDlg.cpp" />
+    <ClCompile Include="TrackingErrorDlg.cpp" />
     <ClCompile Include="Login.cpp" />
     <ClCompile Include="LogPlayback.cpp" />
     <ClCompile Include="MainFrm.cpp" />
@@ -275,6 +276,7 @@ copy "%PathName%\*.pdb" "$(OutDir)\mapfile\%DirName%"
     <ClInclude Include="LogDlg.h" />
     <ClInclude Include="Logic.h" />
     <ClInclude Include="LogicValidationDlg.h" />
+    <ClInclude Include="TrackingErrorDlg.h" />
     <ClInclude Include="Login.h" />
     <ClInclude Include="LogPlayback.h" />
     <ClInclude Include="MainFrm.h" />

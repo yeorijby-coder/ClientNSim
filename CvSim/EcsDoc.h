@@ -50,6 +50,7 @@
 #include "WordArrayEx.h"
 #include "TrackDataDlg.h"
 #include "LogicValidationDlg.h"
+#include "TrackingErrorDlg.h"
 #include "DataSettingDlg.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +143,7 @@ public:
 	CDataSettingDlg* m_pDataSettingDlg;
 
 	CLogicValidationDlg* m_pLogicValidationDlg;
+	CTrackingErrorDlg* m_pTrackingErrorDlg;
 
 	CCvDlg			m_oCvDlg;
 
@@ -334,6 +336,7 @@ public:
 	afx_msg void OnButton22();
 	afx_msg void OnButton33();
 	afx_msg void OnLogicValid();
+	afx_msg void OnTrackingError();
 
 	afx_msg void OnReLoadKeyWord();
 	afx_msg void OnReLoadDeviceMap();
