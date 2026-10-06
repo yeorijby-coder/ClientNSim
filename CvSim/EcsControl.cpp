@@ -879,12 +879,16 @@ void CEcsControl::OnButton18()
 
 	m_pDoc->m_arrRegData[nPlcNo - 1][nDeviceNo] = nDecimal;
 
-	GET(IDC_EDIT_REGNUM, strDeviceNo);
+	// @.쓰기는 고른 레지스터 주소에 하고, 화면 갱신은 트랙의 첫 워드로 해야 한다.
+	//   예전에는 레지스터 주소를 그대로 넘겨서, D5n+1 을 고른 채 값을 넣으면
+	//   트랙정보 목록이 한 워드씩 밀려 보였다. 적은 값이 LuggNum 칸에 뜨고
+	//   DestPos 칸에는 옆 워드가 떴다. 값이 바뀐 것처럼 보이던 까닭이다.
+	int nTrackBase = (m_nTrackNum % 100) * m_pDoc->m_nWordCnt;
 
-	UpdateList(nPlcNo, nDeviceNo);
-	UpdateBits(nPlcNo, nDeviceNo);
-	UpdateTrackData(nPlcNo, nDeviceNo);
-	UpdateTrack(nPlcNo, nTrackNum);
+	UpdateList(nPlcNo, nTrackBase);
+	UpdateBits(nPlcNo, nTrackBase);
+	UpdateTrackData(nPlcNo, nTrackBase);
+	UpdateTrack(nPlcNo, m_nTrackNum);
 }
 
 void CEcsControl::OnButton13()
@@ -895,11 +899,14 @@ void CEcsControl::OnButton13()
 	GET(IDC_COMBO_PLC, strPlcNo);
 	nPlcNo = _ttoi(strPlcNo);
 
-	GET(IDC_TRACK_NO2, strDeviceNo);
+	// @.D(10진) 과 X(16진) 은 같은 레지스터에 넣는 칸이다. 주소도 같이 가져온다.
+	//   예전에는 TR301 을 읽어 301 % 1000 * 10 = 3010 번 워드에 썼다.
+	//   트랙 자리와 아무 상관없는 주소였고, 트랙당 워드수도 10 으로 박혀 있었다.
+	GET(IDC_REG_NAME, strDeviceNo);
 	if (strDeviceNo.IsEmpty()) return;
 
 	nTrackNum = _ttoi(strDeviceNo.Mid(2, 5));
-	nDeviceNo = nTrackNum % 1000 * 10;
+	nDeviceNo = nTrackNum;
 	if (nDeviceNo < 0 || nDeviceNo > 9990)	return;
 
 	CString strHexa;
@@ -920,12 +927,16 @@ void CEcsControl::OnButton13()
 
 	m_pDoc->m_arrRegData[nPlcNo - 1][nDeviceNo] = CLib::HexStrToWORD(szHexa);
 
-	GET(IDC_EDIT_REGNUM, strDeviceNo);
+	// @.쓰기는 고른 레지스터 주소에 하고, 화면 갱신은 트랙의 첫 워드로 해야 한다.
+	//   예전에는 레지스터 주소를 그대로 넘겨서, D5n+1 을 고른 채 값을 넣으면
+	//   트랙정보 목록이 한 워드씩 밀려 보였다. 적은 값이 LuggNum 칸에 뜨고
+	//   DestPos 칸에는 옆 워드가 떴다. 값이 바뀐 것처럼 보이던 까닭이다.
+	int nTrackBase = (m_nTrackNum % 100) * m_pDoc->m_nWordCnt;
 
-	UpdateList(nPlcNo, nDeviceNo);
-	UpdateBits(nPlcNo, nDeviceNo);
-	UpdateTrackData(nPlcNo, nDeviceNo);
-	UpdateTrack(nPlcNo, nTrackNum);
+	UpdateList(nPlcNo, nTrackBase);
+	UpdateBits(nPlcNo, nTrackBase);
+	UpdateTrackData(nPlcNo, nTrackBase);
+	UpdateTrack(nPlcNo, m_nTrackNum);
 }
 
 void CEcsControl::OnButton12()
