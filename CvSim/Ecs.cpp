@@ -85,6 +85,26 @@ static CString GetBuildStamp()
 	strStamp.Format(_T("   [빌드 %04d-%02d-%02d %02d:%02d]"),
 					stLocal.wYear, stLocal.wMonth, stLocal.wDay,
 					stLocal.wHour, stLocal.wMinute);
+
+	// @.돌고 있는 실행파일이 어느 폴더 것인지도 같이 보여 준다.
+	//   같은 프로그램을 Bin\Debug 와 Deploy\Debug 양쪽에 두고 쓰기 때문에,
+	//   빌드 시각만으로는 어느 쪽을 띄웠는지 알 수 없었다.
+	//   설정과 XML 은 현재 폴더에서 읽으므로, 그 둘이 다르면 함께 적는다.
+	CString strFolder(szPath);
+	int nSlash = strFolder.ReverseFind(_T('\\'));
+	if (nSlash > 0)
+		strFolder = strFolder.Left(nSlash);
+
+	strStamp += _T("   [") + strFolder + _T("]");
+
+	TCHAR szCurDir[_MAX_PATH] = { 0 };
+	if (::GetCurrentDirectory(_MAX_PATH, szCurDir) > 0)
+	{
+		CString strCurDir(szCurDir);
+		if (strCurDir.CompareNoCase(strFolder) != 0)
+			strStamp += _T("   [현재폴더 ") + strCurDir + _T("]");
+	}
+
 	return strStamp;
 }
 BOOL CEcsApp::InitInstance()

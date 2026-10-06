@@ -49,6 +49,63 @@ CEcsApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CEcsApp initialization
 
+
+/*
+ * GetBuildStamp :: 돌고 있는 실행파일의 최종 수정 시각과 그 폴더
+ *
+ *   제목표시줄에 붙여, 어느 빌드가 어느 폴더에서 도는지 창만 보고 알 수 있게 한다.
+ *   HostSim 은 Bin\Debug 와 Deploy\Debug\HostSim 두 군데에 있어
+ *   어느 쪽을 띄웠는지 헷갈리기 쉽다. (HostSimLogic.xml 도 폴더마다 다르다)
+ *
+ *   __DATE__ / __TIME__ 은 그 소스가 다시 컴파일될 때만 갱신되어
+ *   다른 파일만 고친 빌드에서는 옛 시각이 남는다. 그래서 파일 시각을 쓴다.
+ */
+static CString GetBuildStamp()
+{
+	TCHAR szPath[_MAX_PATH] = { 0 };
+	if (::GetModuleFileName(NULL, szPath, _MAX_PATH) == 0)
+		return _T("");
+
+	WIN32_FILE_ATTRIBUTE_DATA fad;
+	::ZeroMemory(&fad, sizeof(fad));
+	if (!::GetFileAttributesEx(szPath, GetFileExInfoStandard, &fad))
+		return _T("");
+
+	SYSTEMTIME stUtc, stLocal;
+	::ZeroMemory(&stUtc, sizeof(stUtc));
+	::ZeroMemory(&stLocal, sizeof(stLocal));
+	if (!::FileTimeToSystemTime(&fad.ftLastWriteTime, &stUtc))
+		return _T("");
+	if (!::SystemTimeToTzSpecificLocalTime(NULL, &stUtc, &stLocal))
+		stLocal = stUtc;
+
+	CString strStamp;
+	strStamp.Format(_T("   [빌드 %04d-%02d-%02d %02d:%02d]"),
+				stLocal.wYear, stLocal.wMonth, stLocal.wDay,
+				stLocal.wHour, stLocal.wMinute);
+
+	// @.돌고 있는 실행파일이 어느 폴더 것인지도 같이 보여 준다.
+	//   같은 프로그램을 Bin\Debug 와 Deploy\Debug 양쪽에 두고 쓰기 때문에,
+	//   빌드 시각만으로는 어느 쪽을 띄웠는지 알 수 없었다.
+	//   설정과 XML 은 현재 폴더에서 읽으므로, 그 둘이 다르면 함께 적는다.
+	CString strFolder(szPath);
+	int nSlash = strFolder.ReverseFind(_T('\\'));
+	if (nSlash > 0)
+		strFolder = strFolder.Left(nSlash);
+
+	strStamp += _T("   [") + strFolder + _T("]");
+
+	TCHAR szCurDir[_MAX_PATH] = { 0 };
+	if (::GetCurrentDirectory(_MAX_PATH, szCurDir) > 0)
+	{
+		CString strCurDir(szCurDir);
+		if (strCurDir.CompareNoCase(strFolder) != 0)
+			strStamp += _T("   [현재폴더 ") + strCurDir + _T("]");
+	}
+
+	return strStamp;
+}
+
 BOOL CEcsApp::InitInstance()
 {
 	HANDLE hMutex = ::CreateMutex(NULL, TRUE, _T("CARGILL_ECS_SERVER"));
@@ -117,7 +174,7 @@ BOOL CEcsApp::InitInstance()
 		return FALSE;
 	
 	// The one and only window has been initialized, so show and update it.
-	m_pMainWnd->SetWindowText(_T("Equipment Control System"));
+	m_pMainWnd->SetWindowText(_T("Equipment Control System") + GetBuildStamp());
 	m_pMainWnd->ShowWindow(SW_SHOWMAXIMIZED);
 	m_pMainWnd->UpdateWindow();
 
