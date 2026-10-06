@@ -435,6 +435,9 @@
 					<ScStoHS/>
 					<ArvStation name="3F 자동입고 대기대 #2" DestCode="222"/>
 				</Status>
+				<!-- 트윈 H/S : 419 와 짝이다. 420 이 대표라 혼자 도착하면 30초를 기다렸다가
+				     출고대를 올린다. 419 에도 화물이 있으면 기다리지 않고 바로 올린다. -->
+				<TwinHS pair="419" master="1" wait="30"/>
 			</Track>
 			<Track	number="421" tabnumber="3"/>
 			<Track	number="422" tabnumber="3"/>

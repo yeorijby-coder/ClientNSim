@@ -149,6 +149,16 @@ public:
 	BOOL			m_bForceFull;	// 다음 적재 후 만재로 올린다 (한 번만)
 	BOOL			m_bForceEmpty;	// 다음 배출 후 없음으로 떨군다 (한 번만)
 
+	// @.트윈 H/S (포크 두 개가 한 쌍으로 움직이는 크레인의 대기대)
+	//   EcsDefine.xml 의 <TwinHS pair="419" master="1" wait="30"/> 로 정한다.
+	//   대표(master) 트랙에만 화물이 있으면 짝이 올 때까지 wait 초를 기다렸다가
+	//   출고대를 올린다. 둘 다 있으면 기다리지 않는다.
+	int				m_nTwinPair;	// 짝 트랙번호 (0 이면 트윈 아님)
+	BOOL			m_bTwinMaster;	// 대표 H/S 인가
+	int				m_nTwinWaitSec;	// 짝을 기다리는 시간(초)
+	BOOL			m_bTwinWaiting;
+	COleDateTime	m_tTwinWait;
+
 	CWordArray		m_nStationArray;
 	CWordArray		m_nNextTrArray;
 	CWordArray		m_nNextPlcArray;

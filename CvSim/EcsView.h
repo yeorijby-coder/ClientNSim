@@ -120,6 +120,7 @@ public:
 	void MoveNextTrackForKindNormal_2(CCv* pCv, CTrackInfo* pTrack, CStationInfo* pStation);
 	void MoveNextTrackForKindDiverter_2(CCv* pCv, CTrackInfo* pTrack, CStationInfo* pStation);
 	BOOL IsStartBlocked(CTrackInfo* pTrack);
+	BOOL IsTwinRetReady(CTrackInfo* pTrack);
 	void LoadMG(CCv* pCv, CTrackInfo* pTrack, int nNextPlcNum, int nNextTrNum);
 	void UnLoadDP(CCv* pCv, CTrackInfo* pTrack, int nNextPlcNum, int nNextTrNum);
 

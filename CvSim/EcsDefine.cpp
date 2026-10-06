@@ -298,6 +298,24 @@ BOOL CEcsDefine::ParseTracks(CEquipment* pEquipment, CTrackInfoArray& pTracks)
 
 				MoveParent();
 			}
+
+			// @.트윈 H/S. 포크 두 개가 한 쌍으로 움직이는 크레인의 대기대다.
+			//   <TwinHS pair="419" master="1" wait="30"/>
+			//   대표(master) 트랙에만 화물이 있으면 짝이 올 때까지 wait 초를 기다린다.
+			if (MoveXPath(_T("./TwinHS"), FALSE))	//Equipment/Tracks/Track/TwinHS
+			{
+				GetAttrValue(_T("pair"), strValue);
+				pTrack->m_nTwinPair = _ttoi(strValue);
+
+				GetAttrValue(_T("master"), strValue);
+				pTrack->m_bTwinMaster = (_ttoi(strValue) != 0);
+
+				GetAttrValue(_T("wait"), strValue);
+				int nWait = _ttoi(strValue);
+				pTrack->m_nTwinWaitSec = (nWait > 0) ? nWait : 30;
+
+				MoveParent();
+			}
 			//if (MoveXPath(_T("./Dispenser"), FALSE))	//Equipment/Tracks/Track/Destination
 			//{
 			//	GetAttrValue(_T("uptid"), strValue);

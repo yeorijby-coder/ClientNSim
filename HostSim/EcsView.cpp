@@ -354,6 +354,36 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 
 	static int nCount = 1;
 
+	// @.HostSim.ini [LOGIC_CONTROL] AutoStart=1 이면 사람이 시작을 누르지 않아도
+	//   잠시 뒤 로직을 스스로 시작한다. 무인으로 돌려 둘 때 쓴다.
+	//   소켓이 붙고 설비 상태전문(S)을 한 번 받을 틈을 주려고 조금 기다렸다 켠다.
+	static BOOL bAutoStarted = FALSE;
+	if (bAutoStarted == FALSE && nCount > 10)
+	{
+		bAutoStarted = TRUE;
+
+		if (::GetPrivateProfileInt(_T("LOGIC_CONTROL"), _T("AutoStart"), 0, ECS_INI_FILE) != 0)
+		{
+			int nGrpCnt = (int)pDoc->m_pLogicGorupInfos.GetSize();
+			for (int nIdxGrp = 0; nIdxGrp < nGrpCnt; ++nIdxGrp)
+			{
+				if (pDoc->m_pLogicGorupInfos[nIdxGrp] == NULL)
+					continue;
+
+				pDoc->m_pLogicGorupInfos[nIdxGrp]->m_bStart = TRUE;
+				pDoc->ClearGroupNak(nIdxGrp);
+			}
+
+			ENABLE_WND(IDC_BTN_START, FALSE);
+			ENABLE_WND(IDC_BTN_END, TRUE);
+
+			CString strLog;
+			strLog.Format(_T("AutoStart : 로직그룹 %d개를 스스로 시작했습니다."), nGrpCnt);
+			pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CEcsView::OnTimer"));
+			pDoc->WriteDiag(strLog);
+		}
+	}
+
 	//TEST
 //	static int nTemp = 0;
 //

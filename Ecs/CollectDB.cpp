@@ -191,6 +191,16 @@ void CCollectDB::Collect_EQUIPMENT(CEquipment* pEquipment)
 	}
 	CRecordSetWrap* pRsw = new CRecordSetWrap(pRsptr);
 	pEquipment->SetVar(pRsw);
+
+	// @.SetVar 를 덮어쓴 설비(CV/SC/RTV/BCR/Display)만 이 레코드셋을 받아 m_pRsw 에 넣고,
+	//   다 쓰고 나서 제 스레드에서 지운다. 덮어쓰지 않은 종류는 아무도 받아가지 않아
+	//   수집 주기마다 하나씩 샜다. m_pRsw 가 NULL 로 남으니 다음 주기에 또 수집하고
+	//   또 새는 악순환이었다. 받아가지 않았으면 여기서 지운다.
+	if (pEquipment->m_pRsw != pRsw)
+	{
+		delete pRsw;
+		pRsw = NULL;
+	}
 }
 
 void CCollectDB::ConnectStatus(CConnectStatus* pConnectStatus, CString strHostNum)

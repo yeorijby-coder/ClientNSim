@@ -1114,6 +1114,7 @@ BOOL CEcsView::InvokeLogic(CCv* pCv, CTrackInfo* pTrack, CLogicArray* pLogicArra
 			case BT_SIGN_SF_OFF:			bTemp = (pTrack->m_bStartFlag == FALSE);	break;
 			case BT_SIGN_SF_ON:				bTemp = (pTrack->m_bStartFlag == TRUE);		break;
 			case BT_SIGN_IS_FORKLIFT:		bTemp = pTrack->m_bForkLift;				break;
+			case BT_SIGN_TWIN_RET_OK:		bTemp = IsTwinRetReady(pTrack);				break;
 			default:						bTemp = FALSE;					break;		// 정의되지 않으면 무조건 FALSE
 			}
 			bConditionResult = bConditionResult & bTemp;
@@ -4047,6 +4048,82 @@ void CEcsView::MoveNextTrackForKindNormal_2(CCv* pCv, CTrackInfo* pTrack, CStati
 			}
 		}
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @.트윈 H/S 가 출고대를 올려도 되는 때인가
+//
+//   포크 두 개가 한 쌍으로 움직이는 크레인은 두 자리를 한 번에 집는 편이 낫다.
+//   그래서 대표 자리에만 화물이 올라오면 짝이 올 때까지 잠깐 기다린다.
+//   둘 다 올라와 있으면 기다리지 않고 바로 올린다.
+//
+//   EcsDefine.xml 의 <TwinHS pair="419" master="1" wait="30"/> 로 정한다.
+//   트윈이 아닌 트랙은 늘 TRUE 라 기존 동작 그대로다.
+
+BOOL CEcsView::IsTwinRetReady(CTrackInfo* pTrack)
+{
+	if (pTrack == NULL)
+		return TRUE;
+
+	// 트윈이 아니거나 대표가 아니면 기다릴 까닭이 없다.
+	if (pTrack->m_bTwinMaster == FALSE || pTrack->m_nTwinPair <= 0)
+	{
+		pTrack->m_bTwinWaiting = FALSE;
+		return TRUE;
+	}
+
+	CEcsDoc* pDoc = GetDocument();
+	DEBUGER_ASSERT_VALID(pDoc != NULL);
+
+	int nPlcIdx = pTrack->m_nCvPlcNum - 1;
+	if (nPlcIdx < 0 || nPlcIdx >= CV_PLC_CNT)
+		return TRUE;
+
+	int nDevNum = (pTrack->m_nNumber - pDoc->m_nStTrNum[nPlcIdx] + 1) * pDoc->m_nWordCnt;
+	int nLuggNo = pDoc->GetAddrByName(nPlcIdx, nDevNum, _T("LuggNum"));
+	int nSensing = pDoc->GetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor"));
+
+	// 내 자리가 비면 기다리던 것을 접는다.
+	if (nLuggNo == 0 && nSensing == 0)
+	{
+		pTrack->m_bTwinWaiting = FALSE;
+		return TRUE;
+	}
+
+	// 짝에도 화물이 있으면 기다리지 않는다. 둘을 한 번에 집어 간다.
+	CTrackInfo* pPair = pDoc->GetTrackInfo(pTrack->m_nTwinPair);
+	if (pPair != NULL)
+	{
+		int nPairIdx = pPair->m_nCvPlcNum - 1;
+		if (nPairIdx >= 0 && nPairIdx < CV_PLC_CNT)
+		{
+			int nPairDev = (pPair->m_nNumber - pDoc->m_nStTrNum[nPairIdx] + 1) * pDoc->m_nWordCnt;
+			int nPairLugg = pDoc->GetAddrByName(nPairIdx, nPairDev, _T("LuggNum"));
+			int nPairSens = pDoc->GetAddrByName(nPairIdx, nPairDev, _T("ProductSensor"));
+
+			if (nPairLugg != 0 || nPairSens != 0)
+			{
+				pTrack->m_bTwinWaiting = FALSE;
+				return TRUE;
+			}
+		}
+	}
+
+	// 나 혼자다. 짝을 기다린다.
+	if (pTrack->m_bTwinWaiting == FALSE)
+	{
+		pTrack->m_bTwinWaiting = TRUE;
+		pTrack->m_tTwinWait = COleDateTime::GetCurrentTime();
+		return FALSE;
+	}
+
+	COleDateTimeSpan tElapse = COleDateTime::GetCurrentTime() - pTrack->m_tTwinWait;
+	if (tElapse.GetTotalSeconds() < pTrack->m_nTwinWaitSec)
+		return FALSE;
+
+	// 다 기다렸다. 혼자라도 보낸다.
+	pTrack->m_bTwinWaiting = FALSE;
+	return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

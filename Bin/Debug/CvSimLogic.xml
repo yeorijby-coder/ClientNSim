@@ -133,6 +133,7 @@
 				<condition CNum="1"  CKeyWord="Auto"/>
 				<condition CNum="1"  CKeyWord="ProductSensor"/>
 				<condition CNum="6"  CKeyWord="ArvStation"/>
+				<condition CNum="23" CKeyWord="TwinHS"/>
 				<condition CNum="0"  CKeyWord="RetStation"/>
 			</conditions>
 			<actions desc ="출고대 ON">
@@ -160,6 +161,7 @@
 				<condition CNum="1"  CKeyWord="ProductSensor"/>
 				<condition CNum="0"  CKeyWord="RetStation"/>
 				<condition CNum="6"  CKeyWord="ArvStation"/>
+				<condition CNum="23" CKeyWord="TwinHS"/>
 			</conditions>
 			<actions desc ="출고대 ON">
 				<action ANum="51" AKeyWord="RetStation"/>
@@ -530,6 +532,7 @@
 		<StartFlagIsOff desc="StartFlag OFF">20</StartFlagIsOff>
 		<StartFlagIsOn desc="StartFlag ON">21</StartFlagIsOn>
 		<IsForkLift desc="EcsDefine.xml 에 &lt;ForkLift/&gt; 가 붙은 트랙">22</IsForkLift>
+		<TwinRetOk desc="트윈 H/S 가 출고대를 올려도 되는 때">23</TwinRetOk>
 		
 		<BitOn>51</BitOn>
 		<BitOff desc="특정비트만 남기고 다머지는 다 OFF">52</BitOff>

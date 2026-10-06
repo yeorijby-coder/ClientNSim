@@ -21,15 +21,15 @@
 
 	<Control>
 		<JobCount>500</JobCount>
-		<ScCount>10</ScCount>
+		<ScCount>11</ScCount>
 		<StoSeperate>1</StoSeperate>
 		<StoViaMatching>1</StoViaMatching>
 		<RetSeperate>0</RetSeperate>
 	</Control>
 
 	<Group>
-		<Use>Y</Use>
-		<Name> 101 -> 107 -> 랙 -> 105 </Name>
+		<Use>N</Use>
+		<Name> 101  -> 105 </Name>
 		<StoStns><Stn>101</Stn></StoStns>
 		<ViaStns><Stn>107</Stn></ViaStns>
 		<RetStns><Stn>105</Stn></RetStns>
@@ -37,8 +37,8 @@
 	</Group>
 
 	<Group>
-		<Use>Y</Use>
-		<Name> 102 -> 108 -> 랙 -> 105 </Name>
+		<Use>N</Use>
+		<Name> 102  -> 105 </Name>
 		<StoStns><Stn>102</Stn></StoStns>
 		<ViaStns><Stn>108</Stn></ViaStns>
 		<RetStns><Stn>105</Stn></RetStns>
@@ -52,6 +52,15 @@
 		<ViaStns><Stn>206</Stn></ViaStns>
 		<RetStns><Stn>203</Stn></RetStns>
 		<Scs><Sc>3</Sc><Sc>4</Sc></Scs>
+	</Group>
+
+	<Group>
+		<Use>N</Use>
+		<Name>옛 정의 (ini LogicGroup=2 라 쓰이지 않던 것)</Name>
+		<StoStns><Stn>201</Stn></StoStns>
+		<ViaStns><Stn>205</Stn></ViaStns>
+		<RetStns><Stn>201</Stn></RetStns>
+		<Scs><Sc>1</Sc><Sc>2</Sc></Scs>
 	</Group>
 
 	<Group>
@@ -81,4 +90,23 @@
 		<Scs><Sc>9</Sc><Sc>10</Sc></Scs>
 	</Group>
 
+	<Group>
+		<Use>Y</Use>
+		<Name> 211  -> 221 -> RACK -> 251 </Name>
+		<StoStns><Stn>211</Stn></StoStns>
+		<ViaStns><Stn>221</Stn></ViaStns>
+		<RetStns><Stn>251</Stn></RetStns>
+		<Scs><Sc>11</Sc></Scs>
+	</Group>
+
+	<Group>
+		<Use>Y</Use>
+		<Name> 251  -> 221 -> RACK -> 251 </Name>
+		<!-- P-Box 순환 : 피킹대(251)에서 꺼낸 화물을 자동입고 대기대(221)로 옮기고,
+		     거기서 BOX 라인 크레인(11호기)이 랙에 넣은 뒤, 다시 251 로 출고한다. -->
+		<StoStns><Stn>251</Stn></StoStns>
+		<ViaStns><Stn>221</Stn></ViaStns>
+		<RetStns><Stn>251</Stn></RetStns>
+		<Scs><Sc>11</Sc></Scs>
+	</Group>
 </Logic>

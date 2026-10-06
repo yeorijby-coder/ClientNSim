@@ -154,7 +154,11 @@ void CEcsView::OnInitialUpdate()
 		SelectLayout(pDoc->GetLayoutIndex());
 
 	pDoc->UpdateRibbonLang();
-	::SetTimer(this->m_hWnd, 1000, NULL, NULL);
+	// @.SetTimer(hWnd, nIDEvent, uElapse, lpTimerFunc) 이다.
+	//   1000 을 두 번째에 넣어 '타이머 ID 1000, 간격 0' 이 되어 있었다.
+	//   간격 0 은 최소값(약 10ms)으로 당겨져 초당 100 번 WM_TIMER 가 들어왔다.
+	//   ID 1, 간격 1000ms 로 바로잡는다.
+	::SetTimer(this->m_hWnd, 1, 1000, NULL);
 	Invalidate(FALSE);	// TRUE 면 배경지우기가 일어나 깜빡인다
 }
 
@@ -230,7 +234,7 @@ void CEcsView::OnTimer(UINT_PTR nIDEvent)
 		CFormView::OnTimer(nIDEvent);
 		return;
 	}
- 	if (nCount % 100 == 0) //HEART BEAT COLLECT DB
+ 	if (nCount % 10 == 0) //HEART BEAT COLLECT DB (타이머가 1초 주기이므로 10초마다)
  	{
 		if(pDoc->IsAlliveCollectDB() == FALSE)
 		{

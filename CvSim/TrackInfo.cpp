@@ -77,6 +77,11 @@ CTrackInfo::CTrackInfo(CEquipment* pEquipment)
 	m_nPalletMax	= DEF_PALLET_STACK_MAX;
 	m_bForceFull	= FALSE;
 	m_bForceEmpty	= FALSE;
+	m_nTwinPair	= 0;
+	m_bTwinMaster	= FALSE;
+	m_nTwinWaitSec	= 30;
+	m_bTwinWaiting	= FALSE;
+	m_tTwinWait	= COleDateTime::GetCurrentTime();
 	Initialize();
 }
 
