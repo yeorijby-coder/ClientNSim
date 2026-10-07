@@ -514,12 +514,20 @@ void CHostSv::Parsing(char *pFrame)
 	// [09]Interface목록서 IV.9 P-BoxRack 입고 요구
 	//   STX Type(1) 작업번호#1(2-5) 작업번호#2(6-9) ETX
 	case	CMD_IN_OUT_REQUEST:
-		{
-			CString strLog;
-			strLog.Format(_T("P-BOX 입고 요구.. #1=[%d] #2=[%d]"),
-				_ttoi(strFrame.Mid(2, 4)), _ttoi(strFrame.Mid(6, 4)));
-			m_pDoc->WriteLog(LOG_TYPE_EVENT, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
-		}
+	{
+		int nLugg1 = _ttoi(strFrame.Mid(2, 4));	// 자동입고 대기대 #1 (221)
+		int nLugg2 = _ttoi(strFrame.Mid(6, 4));	// 자동입고 대기대 #2 (222)
+
+		CString strLog;
+		strLog.Format(_T("P-BOX 입고 요구.. #1=[%d] #2=[%d]"), nLugg1, nLugg2);
+		m_pDoc->WriteLog(LOG_TYPE_EVENT, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
+
+		// @.예전에는 여기서 로그만 적고 응답만 보냈다. 그래서 대기대에 화물이
+		//   올라와 출고대가 서도 입고 작업이 영영 생기지 않았고, ECS 는 같은
+		//   요구를 끝없이 되풀이했다. 요구를 받았으면 작업을 내 준다.
+		BoxStoRequest(DEF_BOX_STN_221, nLugg1);
+		BoxStoRequest(DEF_BOX_STN_222, nLugg2);
+	}
 		Answer(CMD_IN_OUT_REQUEST, 0, RECEIVE_OK);
 		break;
 
@@ -827,6 +835,92 @@ void CHostSv::Answer(TCHAR chType, int nLuggNum, int nJobType, int nResultCode)
 	Answer((BYTE)chType, nLuggNum, nResultCode);
 }
 
+
+///////////////////////////////////////////////
+// @.P-BOX 입고 요구(L) 를 받은 작업대에서 입고 작업을 낸다.
+//
+//   ECS 는 자동입고 대기대(221/222)에 화물이 올라오면 이 전문을 주기적으로
+//   보낸다. 상위에서 입고 지시를 내려 주기를 기다리는 것이다. 예전에는
+//   응답만 보내고 작업을 내지 않아, 420 의 출고대가 선 채로 멈춰 있었다.
+//
+//   같은 화물로 거듭 내지 않도록 작업대마다 마지막으로 낸 화물번호를 들고
+//   있다가 달라졌을 때만 낸다. 작업대가 비면 표시를 지워 다음 화물에 대비한다.
+//
+//   크레인은 그 작업대를 경유지로 삼은 로직그룹의 것을 쓴다. 그래야 P-BOX
+//   라인 화물이 엉뚱한 호기로 가지 않는다.
+
+void CHostSv::BoxStoRequest(int nStation, int nLuggNum)
+{
+	if (m_pDoc == NULL || m_pDoc->m_pHostCl == NULL)
+		return;
+
+	// @.비었으면 표시만 지운다.
+	if (nLuggNum <= 0)
+	{
+		m_mapBoxStoOrdered.RemoveKey(nStation);
+		return;
+	}
+
+	int nOrdered = 0;
+	if (m_mapBoxStoOrdered.Lookup(nStation, nOrdered) && (nOrdered == nLuggNum))
+		return;	// 이 화물로는 이미 냈다
+
+	// @.이 작업대를 경유지로 삼은 로직그룹의 크레인 목록을 찾는다.
+	//
+	//   221 과 222 는 한 크레인의 트윈 대기대다. 로직그룹에는 보통 221 만
+	//   적어 두므로, 222 로 들어온 요구는 짝 작업대의 그룹을 따른다.
+	//   그러지 않으면 크레인이 정해지지 않아 ECS 가 아무 호기나 고른다.
+	//   (실제로 222 요구가 5호기로 잡혀 나갔다)
+	int nLookup[2] = { nStation, 0 };
+	if (nStation == DEF_BOX_STN_222)
+		nLookup[1] = DEF_BOX_STN_221;
+	else if (nStation == DEF_BOX_STN_221)
+		nLookup[1] = DEF_BOX_STN_222;
+
+	CStringArray* pScList = NULL;
+
+	for (int nIdxTry = 0; (nIdxTry < 2) && (pScList == NULL); nIdxTry++)
+	{
+		if (nLookup[nIdxTry] == 0)
+			continue;
+
+		for (int nIdxGrp = 0; (nIdxGrp < m_pDoc->m_pLogicGorupInfos.GetSize()) && (pScList == NULL); nIdxGrp++)
+		{
+			SLogicGorupInfo* pGrp = m_pDoc->m_pLogicGorupInfos[nIdxGrp];
+			if (pGrp == NULL)
+				continue;
+
+			for (int nIdxVia = 0; nIdxVia < pGrp->m_strViaStations.GetSize(); nIdxVia++)
+			{
+				if (_ttoi(pGrp->m_strViaStations[nIdxVia]) != nLookup[nIdxTry])
+					continue;
+
+				if (pGrp->m_strScs.GetSize() > 0)
+					pScList = &pGrp->m_strScs;
+				break;
+			}
+		}
+	}
+
+	// @.입고(1) 를 그 작업대에서 낸다. 랙 자리는 ECS 가 고른다.
+	int nNewLugg = m_pDoc->m_pHostCl->JobOrder(1, nStation, 0, FALSE, NULL, pScList);
+
+	CString strLog;
+	if (nNewLugg > 0)
+	{
+		m_mapBoxStoOrdered.SetAt(nStation, nLuggNum);
+		strLog.Format(_T("P-BOX 입고 지시 [작업대:%d] [올라온 화물:%d] -> [작업번호:%d]"),
+			nStation, nLuggNum, nNewLugg);
+		m_pDoc->WriteLog(LOG_TYPE_JOB, LOG_POS_HOST, strLog, _T("CHostSv::BoxStoRequest"));
+	}
+	else
+	{
+		// @.못 냈으면 표시를 남기지 않는다. 다음 요구 때 다시 해 본다.
+		strLog.Format(_T("P-BOX 입고 지시 실패 [작업대:%d] [올라온 화물:%d] - %s"),
+			nStation, nLuggNum, (LPCTSTR)m_pDoc->m_pHostCl->m_strLastOrderFail);
+		m_pDoc->WriteLog(LOG_TYPE_ERROR, LOG_POS_HOST, strLog, _T("CHostSv::BoxStoRequest"));
+	}
+}
 
 void CHostSv::Answer(BYTE ucMsgType, int nLuggNum, int nReasonCode)
 {

@@ -43,6 +43,11 @@ public:
 protected:
 };
 
+// @.P-BOX 자동입고 대기대의 상위 작업대번호.
+//   EcsDefine.xml 기준 221 = 트랙 419, 222 = 트랙 420 이다.
+#define DEF_BOX_STN_221		221
+#define DEF_BOX_STN_222		222
+
 class CHostSv : public CAsyncSocketEx
 {
 	DECLARE_DYNAMIC(CHostSv);
@@ -69,6 +74,12 @@ public:
 	void WarnStatusRange(LPCTSTR lpszKind, int nDeviceNo, int nMax, LPCTSTR lpszDefine);
 	CMap<int, int, int, int> m_mapWarnedDevice;
 	void Answer(BYTE ucMsgType, int nLuggNum, int nReasonCode);
+
+	// @.P-BOX 입고 요구(L) 를 받으면 그 작업대에서 입고 작업을 낸다.
+	//   같은 화물로 거듭 내지 않도록, 작업대마다 마지막으로 낸 작업번호를
+	//   들고 있다가 달라졌을 때만 낸다. 작업대가 비면(0) 표시를 지운다.
+	void BoxStoRequest(int nStation, int nLuggNum);
+	CMap<int, int, int, int> m_mapBoxStoOrdered;
 	int  GetSeqNum();
 	CString GetStartPos(int nStartPos);
 	CString	GetDestPos(int nDestPos);
