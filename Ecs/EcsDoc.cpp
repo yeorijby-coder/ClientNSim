@@ -1667,6 +1667,10 @@ void CEcsDoc::InitializeErrorMst()
 			pRswError->MoveNext();
 		}
 	}
+	// @.조회 결과를 쥔 래퍼는 반드시 지운다. 안 지우면 이 함수를 지날 때마다
+	//   조회 결과가 통째로 쌓인다. (CEcsDoc::GetHostConnectInfo 와 같은 탈)
+	delete pRswError;
+	pRswError = NULL;
 }
 
 

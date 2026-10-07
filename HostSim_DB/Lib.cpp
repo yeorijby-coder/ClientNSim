@@ -1067,9 +1067,12 @@ bool CLib::BindComboPtr(CComboBoxWrapper& cbx, CString strCDX_CD, CEcsDoc *pDoc,
 
    for(int i = 0; i < nRowCnt; i++)
    {
-      szCCD_CD = new wchar_t;
-
       strCCD_CD = pRsw->GetItem(_T("CCD_CD"));
+
+      // @.여기는 한 글자치만 잡아 놓고 아래 _tcscpy 로 문자열을 통째로
+      //   밀어 넣고 있었다. 잡은 자리 밖을 덮어쓰는 것이라(힙 오버런)
+      //   언제 어디서 터질지 모르는 종류의 탈이다. 널 문자 자리까지 잡는다.
+      szCCD_CD = new wchar_t[strCCD_CD.GetLength() + 1];
       strCCD_NM_KOR = pRsw->GetItem(_T("CCD_NM_KOR"));
       strCCD_NM_ENG = pRsw->GetItem(_T("CCD_NM_ENG"));
       strCCD_NM_HUN = pRsw->GetItem(_T("CCD_NM_HUN"));
