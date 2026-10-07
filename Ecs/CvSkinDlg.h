@@ -247,6 +247,13 @@ public:
 	void InvalidateComboBoxData(EN_LANG enLangTemp, CComboBox* pComboBox, CString pTemp);
 	void UpdateTrackData(int pBtnJob);
 	void SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CString strGroup_No, CString strDEST_POS_RD);
+
+	// @.제목을 목적지 콤보와 같은 모양으로 보인다.
+	//   예) [221]TR#419 3F 자동입고 대기대 #1
+	//   트랙이 바뀔 때만 DEST_POS_DEF 를 본다. 이 대화상자는 주기적으로
+	//   다시 그려지므로, 매번 조회하면 그만큼 DB 와 CPU 를 먹는다.
+	void SetTitleAsDestPos();
+	CString	m_strTitleMcNo;	// 마지막으로 제목을 만든 트랙
 	void SetBindCombo_COMMON_CODE(CComboBox& cbx, CString strCDX_CD, CString strCCD_NM);
 	void GetComBoBoxData(CComboBox& cbx, CString& strVal, int nlength);
 	int GetDP_YN(CString pWH_TYP, CString pTrack);

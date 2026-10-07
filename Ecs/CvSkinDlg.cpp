@@ -299,6 +299,10 @@ void CCvSkinDlg::RenameResource( EN_LANG m_enLang)
 		strValue = _T("CV 상태정보");	// 리소스 ini 부재 시 기본 제목
 	SetWindowText(strValue);
 
+	// @.여기서 제목을 ini 의 기본 이름으로 되돌려 놓는다. 그러면 트랙 이름이
+	//   지워지므로, 다음에 다시 그릴 때 제목을 다시 만들게 표시를 지운다.
+	m_strTitleMcNo.Empty();
+
 	strFullPath = Global.GetConcatPath(strAppPath.Left(strAppPath.ReverseFind('\\')) + _T("\\rc_resource\\dlg_cv\\"), _T("dlg_cv"), strExtension);
 	strValue = CLib::GetIniStringFromPath(strFullPath, _T("write"), (int)m_enLang);
 	SetDlgItemText(IDC_BTN_CV_WRITE, strValue);
@@ -749,6 +753,9 @@ void CCvSkinDlg::InvalidateTrackData(EN_LANG pLang)
 	{
 		m_edtCvTrackNo.SetWindowText(m_pTrackInfo->m_pCV_DATA->V_MC_NO + " (" + m_pTrackInfo->m_pCV_DATA->V_MC_NO_NM + ")");
 	}
+
+	// @.제목도 목적지 콤보와 같은 모양으로 보인다.
+	SetTitleAsDestPos();
 
 	m_cbxCvJobTyp.SetCurSelEx(m_pTrackInfo->m_pCV_DATA->V_JOB_TYP_RD);
 	m_edtCvJobNo.SetWindowText(m_pTrackInfo->m_pCV_DATA->V_LUGG_NO_RD);
@@ -1798,6 +1805,71 @@ int CCvSkinDlg::GetDP_YN(CString pWH_TYP, CString pTrack)
 	delete pRsw;
 
 	return nRowCnt;
+}
+
+///////////////////////////////////////////////
+// @.제목을 목적지 콤보에 보이는 모양 그대로 적는다.
+//
+//     [221]TR#419 3F 자동입고 대기대 #1
+//
+//   콤보를 채우는 SetBindCombo_DEST_POS_DEF 와 같은 규칙으로 만든다.
+//   DEST_POS_DEF 에 없는 트랙(작업대가 아닌 보통 트랙)은 그 자리를 비우고
+//   트랙번호와 설비명만 적는다.
+//
+//   이 대화상자는 주기적으로 다시 그려진다. 그때마다 DB 를 보면 그만큼
+//   느려지므로, 보고 있는 트랙이 바뀌었을 때만 한 번 본다.
+
+void CCvSkinDlg::SetTitleAsDestPos()
+{
+	if ((m_pDoc == NULL) || (m_pTrackInfo == NULL) || (m_pTrackInfo->m_pCV_DATA == NULL))
+		return;
+
+	CString strMcNo = m_pTrackInfo->m_pCV_DATA->V_MC_NO;
+	if (strMcNo.IsEmpty())
+		return;
+
+	// @.같은 트랙이면 다시 만들지 않는다.
+	if (strMcNo == m_strTitleMcNo)
+		return;
+
+	m_strTitleMcNo = strMcNo;
+
+	CString strSql;
+	strSql.Format(_T("  SELECT TRACK_NO, REMARKS FROM DEST_POS_DEF WHERE MC_NO = '%s' "), (LPCTSTR)strMcNo);
+
+	int		nRowCnt = 0;
+	CString	strMessage;
+	_RecordsetPtr pRsptr = m_pDoc->GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
+	CRecordSetWrap* pRsw = new CRecordSetWrap(pRsptr);
+
+	CString strStationNo, strRemarks;
+	if (nRowCnt > 0)
+	{
+		pRsw->MoveFirst();
+		strStationNo = pRsw->GetItem(_T("TRACK_NO"));
+		strRemarks   = pRsw->GetItem(_T("REMARKS"));
+	}
+
+	// @.반드시 지운다. 안 지우면 조회 결과를 통째로 쥔 채 쌓인다.
+	delete pRsw;
+	pRsw = NULL;
+
+	CString strTitle;
+	if (strStationNo.IsEmpty() == FALSE)
+	{
+		// 콤보와 같은 모양
+		strTitle.Format(_T("[%s]TR#%s %s"),
+			(LPCTSTR)strStationNo, (LPCTSTR)strMcNo, (LPCTSTR)strRemarks);
+	}
+	else
+	{
+		// 작업대가 아닌 보통 트랙
+		strTitle.Format(_T("TR#%s %s"),
+			(LPCTSTR)strMcNo, (LPCTSTR)m_pTrackInfo->m_pCV_DATA->V_MC_NO_NM);
+	}
+
+	strTitle.TrimRight();
+	SetWindowText(strTitle);
 }
 
 void CCvSkinDlg::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CString strGroup_No, CString strDEST_POS_RD)
