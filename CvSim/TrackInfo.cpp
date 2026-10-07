@@ -39,6 +39,8 @@ CTrackInfo::CTrackInfo(CEquipment* pEquipment)
 	m_pTrackCtrl5 = NULL;
 	m_bModified		= TRUE;
 	m_nLastDrawSensor = -1;
+	m_bTwinDestWait = FALSE;
+	m_tTwinDestWait = COleDateTime::GetCurrentTime();
 	m_bSuspend		= FALSE;
 	m_bDeadLock		= FALSE;
 	m_bStoRequest	= FALSE;

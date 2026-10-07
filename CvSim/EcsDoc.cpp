@@ -429,8 +429,38 @@ BOOL CEcsDoc::IsDestination(CString strArgName, int nValue, int nTrNo, int nMeth
 			CTrackInfo* pTwin = GetTrackInfo(pTrack->m_nHSTrack);
 			int nTwinDestCode = (pTwin != NULL) ? pTwin->m_nDestCode : 0;
 
-			bIsSelfDest = (nValue == pTrack->m_nHSTrack)
-			           || ((nTwinDestCode != 0) && (nValue == nTwinDestCode));
+			BOOL bTwinMatch = (nValue == pTrack->m_nHSTrack)
+			               || ((nTwinDestCode != 0) && (nValue == nTwinDestCode));
+
+			// @.짝 목적지는 바로 받아들이지 않는다.
+			//   화물이 아직 흐르는 중에 출고대를 올리면 크레인이 헛걸음을 한다.
+			//   그 자리에 화물이 멈춰 선 채로 DEF_TWIN_DEST_WAIT_SEC 초가 지난
+			//   뒤에만 자기 자리로 본다. 화물이 없어지거나 목적지가 바뀌면
+			//   세던 것을 접는다.
+			BOOL bSensing = FALSE;
+			int  nPlcIdx  = pTrack->m_nCvPlcNum - 1;
+			if ((nPlcIdx >= 0) && (nPlcIdx < CV_PLC_CNT))
+			{
+				int nDevNum = (pTrack->m_nNumber - m_nStTrNum[nPlcIdx] + 1) * m_nWordCnt;
+				bSensing = (GetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor")) != 0);
+			}
+
+			if ((bTwinMatch == FALSE) || (bSensing == FALSE))
+			{
+				pTrack->m_bTwinDestWait = FALSE;
+			}
+			else
+			{
+				if (pTrack->m_bTwinDestWait == FALSE)
+				{
+					pTrack->m_bTwinDestWait = TRUE;
+					pTrack->m_tTwinDestWait = COleDateTime::GetCurrentTime();
+				}
+
+				COleDateTimeSpan tElapse = COleDateTime::GetCurrentTime() - pTrack->m_tTwinDestWait;
+				if (tElapse.GetTotalSeconds() >= DEF_TWIN_DEST_WAIT_SEC)
+					bIsSelfDest = TRUE;
+			}
 		}
 
 		BOOL bIsScDest1 = (nValue > m_nScDestFrom && nValue < m_nScDestTo);

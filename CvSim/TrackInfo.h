@@ -20,6 +20,9 @@
 
 // @.매거진/디스펜서 한 묶음의 장수. 10 장을 채우면 만재, 다 나가면 없음이다.
 #define DEF_PALLET_STACK_MAX		10
+
+// @.트윈 짝 목적지를 받아들이기 전에 멈춰 있어야 하는 시간(초)
+#define DEF_TWIN_DEST_WAIT_SEC	3
 //#include "DciOpboxCtrl.h"
 
 class CEquipment;
@@ -117,6 +120,13 @@ public:
 	//   m_bModified 가 서지 않아 다시 그리지 않았다. 지난 값을 들고 있다가
 	//   달라졌으면 다시 그린다. -1 은 아직 한 번도 안 그렸다는 뜻이다.
 	int				m_nLastDrawSensor;
+
+	// @.트윈 짝 목적지를 자기 자리로 보기 전에 기다린 시각.
+	//   419 는 목적지가 420 이어도 출고대를 올린다. 다만 화물이 들어오자마자
+	//   올리면 아직 흐르는 중일 수 있으므로, 그 자리에 멈춰 선 채로
+	//   DEF_TWIN_DEST_WAIT_SEC 초가 지난 뒤에만 올린다.
+	BOOL			m_bTwinDestWait;
+	COleDateTime	m_tTwinDestWait;
 
 	int				m_nKind;
 	int				m_nNextPlcNum;
