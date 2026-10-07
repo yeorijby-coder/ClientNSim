@@ -889,6 +889,8 @@ BOOL CTrackInfo::LoadXML()
 		// @.옛 TRACK xml 에는 초기화되지 않은 -842150451(0xCDCDCDCD)이 그대로
 		//   적혀 있다. 그대로 읽으면 m_bCross 가 참이 되어 m_nCrossTrack 으로
 		//   엉뚱한 주소를 뒤진다. 음수는 없는 값으로 본다.
+		if (m_nNextPlcNum < 0)		m_nNextPlcNum = 0;
+		if (m_nNextCv < 0)			m_nNextCv = 0;
 		if (m_nCenterNextPlcNum < 0)	m_nCenterNextPlcNum = 0;
 		if (m_nCenterNext < 0)		m_nCenterNext = 0;
 		if (m_nCenterDest < 0)		m_nCenterDest = 0;
