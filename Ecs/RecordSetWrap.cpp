@@ -266,11 +266,20 @@ CString CRecordSetWrap::GetItem(CString strFiledName)
 	if (m_bFieldIndexed == FALSE)
 		BuildFieldIndex();
 
-	CString strKey = strFiledName;
-	strKey.MakeUpper();
-
+	// @.부른 쪽이 준 이름 그대로 먼저 찾아본다.
+	//   이 프로그램은 _T("LUGG_NO_RD") 처럼 대문자로 적어 부르므로 거의
+	//   언제나 여기서 걸린다. 예전에는 부를 때마다 MakeUpper 로 문자열을
+	//   새로 만들었는데, 한 주기에 설비마다 행마다 칸마다 부르는 길이라
+	//   그 자체가 만만치 않았다. 못 찾았을 때만 대문자로 바꿔 다시 본다.
 	void* pIdx = NULL;
-	BOOL  bFound = m_mapFieldIdx.Lookup(strKey, pIdx);
+	BOOL  bFound = m_mapFieldIdx.Lookup(strFiledName, pIdx);
+
+	if (bFound == FALSE)
+	{
+		CString strKey = strFiledName;
+		strKey.MakeUpper();
+		bFound = m_mapFieldIdx.Lookup(strKey, pIdx);
+	}
 
 	TRY
 	{

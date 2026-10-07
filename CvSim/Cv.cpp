@@ -65,7 +65,8 @@ BOOL CCv::CheckRequest(int nConnNum)
 {
 	if (!IsConnect(nConnNum))
 	{
-		m_strLog.Format(_T("%s과(와) 통신연결이 끊어졌습니다!"), DEVICE);
+		// @.여기는 초당 수백 번 지나는 길이다. 쓰이지도 않는 문자열을
+		//   만드느라 CPU 를 먹고 있었다. 그냥 돌아간다.
 		return FALSE;
 	}
 		

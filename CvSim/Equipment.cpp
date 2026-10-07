@@ -492,6 +492,19 @@ UINT CEquipment::ThreadProc(LPVOID pParam)
 	{
 		for(int i = 0 ; i < PLC_CONN_PORT_CNT ; i++)
 		{			
+			// @.소켓이 아예 없는 포트는 건너뛴다.
+			//   포트는 18개로 잡혀 있으나 실제로 쓰는 것은 한둘이다. 바깥 Sleep 이
+			//   10ms 라 한 바퀴에 18번, 초당 1,800번을 헛돌고 있었다.
+			//   소켓은 ConnectServer/Listen 에서 만들어지므로 여기서 건너뛰어도
+			//   새 접속을 놓치지 않는다.
+			//
+			//   IsConnect(i) 로 더 좁히는 것은 하지 않는다. 이 쪽은 듣는 쪽이라
+			//   상대가 붙어도 m_enCommStatus 가 enStatusConnectOK 로 서지 않는
+			//   길이 있어, 살아 있는 연결까지 건너뛸 수 있다.
+			if (pThis->m_pSocket[i] == NULL)
+				continue;
+
+
 			// 슬롯마다 400ms 씩 순차 대기하면 활성 연결의 Q3E 응답이
 			// (앞선 슬롯 수 x 400ms) 만큼 밀려, 여러 연결이 붙는 통합 구동에서
 			// TASK 수신 타임아웃(5초)을 넘겨 재접속을 반복했다.

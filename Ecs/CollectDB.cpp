@@ -103,6 +103,14 @@ UINT CCollectDB::DoWork(LPVOID pParm)
 			::Sleep(500);
 			break;
 		}
+		// @.예전에는 설비마다 이것을 불렀다. 설비가 마흔 가까이 되니 한 바퀴에
+		//   마흔 번이었다. 한 바퀴에 한 번만 본다.
+		if(pThis->IsDB_POSSIBLE() == FALSE)
+		{
+			::Sleep(500);
+			continue;
+		}
+
 		int nEqpCount = pDoc->m_pEquipments.GetCount();
 		for(int nIdxEqp = 0; nIdxEqp < nEqpCount; nIdxEqp++)
 		{
@@ -112,11 +120,7 @@ UINT CCollectDB::DoWork(LPVOID pParm)
 				break;
 			}
 
-			if(pThis->IsDB_POSSIBLE() == FALSE)
-			{
-				::Sleep(500);
-				break;
-			}
+			// @.DB 가 쓸 만한지는 한 바퀴에 한 번만 본다. (아래 for 앞으로 옮겼다)
 			pEquipment = pDoc->m_pEquipments[nIdxEqp];
 
 			//설비들 값
