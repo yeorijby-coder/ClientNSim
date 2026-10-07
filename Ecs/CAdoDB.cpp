@@ -5,6 +5,7 @@
 
 #include "EcsDoc.h"
 #include "AdoDB.h"
+#include "RecordSetWrap.h"	// @.자원 계수기
 
 
 
@@ -15,6 +16,7 @@ IMPLEMENT_DYNCREATE(CAdoDB, CObject)
 
 CAdoDB::CAdoDB()
 {
+	::InterlockedIncrement(&CResCount::s_nDbMade);
 	m_pDoc = NULL;
 	m_pWmsDb = NULL;
 
@@ -25,6 +27,7 @@ CAdoDB::CAdoDB()
 
 CAdoDB::CAdoDB(CEcsDoc* pDoc)
 {
+	::InterlockedIncrement(&CResCount::s_nDbMade);
 	m_pDoc = pDoc;
 	m_pWmsDb = NULL;
 
@@ -36,6 +39,45 @@ CAdoDB::CAdoDB(CEcsDoc* pDoc)
 
 CAdoDB::~CAdoDB()
 {
+	::InterlockedIncrement(&CResCount::s_nDbGone);
+	// @.예전에는 깃발만 내리고 접속은 그냥 두었다.
+	//   _ConnectionPtr 이 알아서 닫아 줄 것 같지만, 이 객체로 연 레코드셋이
+	//   CRecordSetWrap 안에 살아 있으면 그것이 접속을 붙잡고 있어 닫히지 않는다.
+	//   수집 스레드가 재접속할 때마다 하나씩 남아, PostgreSQL 의
+	//   max_connections(100) 를 몇 분 만에 다 썼다. 그러면 다른 프로그램이
+	//   "남은 접속 슬롯이 없다(53300)" 로 로그인조차 못 한다.
+	DisconnectDB();
+}
+
+///////////////////////////////////////////////
+// @.접속을 닫는다. 이미 닫혀 있거나 아직 열지 않았으면 아무 일도 하지 않는다.
+//   닫는 도중에 나는 예외는 삼킨다. 닫기에 실패해도 더 할 수 있는 일이 없고,
+//   여기서 예외가 올라가면 파괴자를 타고 나가 프로그램이 죽는다.
+
+void CAdoDB::DisconnectDB()
+{
+	if (m_pWmsDb == NULL)
+	{
+		m_bConnected = FALSE;
+		return;
+	}
+
+	try
+	{
+		if (m_pWmsDb->GetState() != adStateClosed)
+		{
+			m_pWmsDb->Close();
+			::InterlockedIncrement(&CResCount::s_nConnClose);
+		}
+	}
+	catch (_com_error&)
+	{
+	}
+	catch (...)
+	{
+	}
+
+	m_pWmsDb = NULL;
 	m_bConnected = FALSE;
 }
 
@@ -86,6 +128,10 @@ BOOL CAdoDB::ConnectDB() //보류6
 #endif
 
 	m_strErrMsg = "";
+
+	// @.이미 열려 있는 접속을 덮어쓰면 그 접속은 주인을 잃는다. 먼저 닫는다.
+	DisconnectDB();
+
 	try
 	{
 		m_pWmsDb.CreateInstance(_uuidof(Connection));
@@ -93,6 +139,7 @@ BOOL CAdoDB::ConnectDB() //보류6
 		m_pWmsDb->CursorLocation = adUseClient;
 		m_pWmsDb->Open(strConnet.AllocSysString(), "", "", NULL);
 		m_pWmsDb->Errors->Clear();
+		::InterlockedIncrement(&CResCount::s_nConnOpen);
 	}
 	catch(_com_error &err)
 	{
@@ -284,6 +331,35 @@ void CAdoDB::UTF8toANSI(LPSTR src, CString &dst)
 // RecordSet
 
 
+///////////////////////////////////////////////
+// @.레코드셋을 조용히 닫는다.
+//   열어 둔 레코드셋은 접속을 붙잡는다. 스마트 포인터에 NULL 을 넣어
+//   놓아 주는 것만으로는 닫히지 않는다. 0건이거나 예외가 났을 때도
+//   반드시 닫고 나가야 접속이 쌓이지 않는다.
+
+static void CloseRs(_RecordsetPtr& rsPtr)
+{
+	if (rsPtr == NULL)
+		return;
+
+	try
+	{
+		if (rsPtr->GetState() != adStateClosed)
+		{
+			rsPtr->Close();
+			::InterlockedIncrement(&CResCount::s_nRsClose);
+		}
+	}
+	catch (_com_error&)
+	{
+	}
+	catch (...)
+	{
+	}
+
+	rsPtr = NULL;
+}
+
 _RecordsetPtr CAdoDB::SelectSqlForThread_RecordSet(CString strSql, int &nRowCnt, CString &strMsg)
 {
 	m_pWmsDb->CommandTimeout=60;
@@ -297,18 +373,27 @@ _RecordsetPtr CAdoDB::SelectSqlForThread_RecordSet(CString strSql, int &nRowCnt,
 	{		
 		long lTemp = rsPtr->Open(_variant_t(strSql), m_pWmsDb.GetInterfacePtr(), 
 			adOpenForwardOnly, adLockReadOnly, adCmdText);
+		::InterlockedIncrement(&CResCount::s_nRsOpen);
 			//adOpenDynamic, adLockReadOnly, adCmdText);
 
 		if (rsPtr->adoEOF)
 		{
+			// @.0건이어도 레코드셋은 열려 있다. 닫고 나가야 접속이 풀린다.
+			//   PLC 를 한 대만 붙여 둔 상태에서는 설비 조회 여덟 중 일곱이
+			//   매 주기 0건이라, 여기서 새는 양이 가장 컸다.
 			nRowCnt = 0;
-			rsPtr = NULL;
+			CloseRs(rsPtr);
 			return NULL;
 		}
 		
 		nRowCnt = rsPtr->RecordCount; 
+		// @.Clone 으로 가벼운 사본을 만들고 원본을 닫는다.
+		//   이 짝을 깨면(원본을 열어 둔 채 돌려주면) 조회 결과가 통째로
+		//   남는다. 실제로 그렇게 바꿔 보니 4 GB 를 200초에 다 썼다.
 		_RecordsetPtr rtrsPtr = rsPtr->Clone(adLockReadOnly);
+		::InterlockedIncrement(&CResCount::s_nRsClone);
 		rsPtr->Close();
+		::InterlockedIncrement(&CResCount::s_nRsClose);
 		return rtrsPtr;
 	}
 	// Error 발생 시 처리
@@ -320,7 +405,7 @@ _RecordsetPtr CAdoDB::SelectSqlForThread_RecordSet(CString strSql, int &nRowCnt,
 		strMsg.Format(_T("SelectSqlForThread:%s\n\n%s\n\n%s"), 
 			(LPCTSTR)bstrSource, (LPCTSTR)bstrDescription, (LPCTSTR)bstrErrMsg);
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, strMsg);
-		rsPtr  = NULL;
+		CloseRs(rsPtr);
 
 		// err가 E_FAIL일때 처리..
 		if ( err.Error() == E_FAIL ) 	
@@ -331,12 +416,12 @@ _RecordsetPtr CAdoDB::SelectSqlForThread_RecordSet(CString strSql, int &nRowCnt,
 	}
 	catch(...){
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl 처리 중 오류 발생..");
-		rsPtr  = NULL;	
+		CloseRs(rsPtr);	
 		return FALSE;
 	}
 
 	// Always set these pointers to null when you are done with them!
-	rsPtr  = NULL;
+	CloseRs(rsPtr);
 	return NULL;
 }
 
@@ -354,7 +439,7 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, CStringList &strTempList, int nR
 
 		if (rsPtr->adoEOF)
 		{
-			rsPtr = NULL;
+			CloseRs(rsPtr);
 			return TRUE;
 		}
 		
@@ -389,7 +474,7 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, CStringList &strTempList, int nR
 			if (i+1 ==nRtRecord)
 			{
 				rsPtr->Close();
-				rsPtr  = NULL;
+				CloseRs(rsPtr);
 				return TRUE;
 
 			}
@@ -409,7 +494,7 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, CStringList &strTempList, int nR
 		strMsg.Format(_T("SelectSqlForThread:%s\n\n%s\n\n%s"), 
 					(LPCTSTR)bstrSource, (LPCTSTR)bstrDescription, (LPCTSTR)bstrErrMsg);
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, strMsg);
-		rsPtr  = NULL;
+		CloseRs(rsPtr);
 
 		// err가 E_FAIL일때 처리..
 		if ( err.Error() == E_FAIL ) 	m_bConnected=FALSE;
@@ -419,12 +504,12 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, CStringList &strTempList, int nR
 	}
 	catch(...){
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl 처리 중 오류 발생..");
-		rsPtr  = NULL;	
+		CloseRs(rsPtr);	
 		return FALSE;
 	}
 
 	// Always set these pointers to null when you are done with them!
-	rsPtr  = NULL;
+	CloseRs(rsPtr);
 	return TRUE;
 }
 
@@ -442,7 +527,7 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, int &nRowCnt, CString &strMsg)
 
 		if (rsPtr->adoEOF)
 		{
-			rsPtr = NULL;
+			CloseRs(rsPtr);
 			return TRUE;
 		}
 		nRowCnt = rsPtr->RecordCount; 
@@ -457,18 +542,18 @@ BOOL CAdoDB::SelectSqlForThread(CString strSql, int &nRowCnt, CString &strMsg)
 		strMsg.Format(_T("SelectSqlForThread:%s\n\n%s\n\n%s"), 
 			(LPCTSTR)bstrSource, (LPCTSTR)bstrDescription, (LPCTSTR)bstrErrMsg);
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, strMsg);
-		rsPtr  = NULL;
+		CloseRs(rsPtr);
 		return FALSE;
 
 	}
 	catch(...){
 		//LOG_ERROR(LOG_POS_HOST, LOG_SYSTEM, IMS_TO_ECS, "SelectSqlForThread:SelectSQl 처리 중 오류 발생..");
-		rsPtr  = NULL;	
+		CloseRs(rsPtr);	
 		return FALSE;
 	}
 
 	// Always set these pointers to null when you are done with them!
-	rsPtr  = NULL;
+	CloseRs(rsPtr);
 	return TRUE;
 }
 

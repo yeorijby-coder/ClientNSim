@@ -47,3 +47,5 @@ Ecs_2026*/
 *.suo
 # 실행 중 남는 TRACE 로그
 *TRACE.LOG
+# 자원 계수기가 남기는 진단 로그
+MemCount.log

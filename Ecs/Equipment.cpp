@@ -88,6 +88,7 @@ UINT CEquipment::ThreadProc(LPVOID pParam)
 					pThis->AutoRunProc(); //20190522kdh
 					if(pThis->m_pRsw != NULL)
 					{
+						::InterlockedIncrement(&CResCount::s_nGoneKind[CResCount::KindSlot(pThis->m_enKind)]);
 						delete pThis->m_pRsw;
 						pThis->m_pRsw = NULL;
 					}

@@ -137,6 +137,15 @@ UINT CCollectDB::DoWork(LPVOID pParm)
 		//		::Sleep(50); //Aß°¡
 		//	}
 		//}
+
+		// @.60초마다 자원 계수기를 적는다. (한 바퀴가 1.4초 안팎이라 40바퀴쯤)
+		static int nTick = 0;
+		if (++nTick >= 40)
+		{
+			nTick = 0;
+			CResCount::WriteLine();
+		}
+
 		::Sleep(1000); //1000
 	}
 	pThis->m_bThreadDoWork = FALSE;
@@ -187,9 +196,27 @@ void CCollectDB::Collect_EQUIPMENT(CEquipment* pEquipment)
 	_RecordsetPtr pRsptr = m_pDB_ACCESS->m_pAdoDB->SelectSqlForThread_RecordSet(strSql, nRowCnt, strErrMsg);
 	if(nRowCnt <= 0)
 	{
+		// @.행이 없어도 레코드셋은 열린 채로 돌아온다. 그냥 빠져나가면
+		//   열린 레코드셋이 접속을 붙잡고 있어 접속이 닫히지 않는다.
+		if (pRsptr != NULL)
+		{
+			try
+			{
+				if (pRsptr->GetState() != adStateClosed)
+					pRsptr->Close();
+			}
+			catch (_com_error&)
+			{
+			}
+			catch (...)
+			{
+			}
+		}
+
 		return;
 	}
 	CRecordSetWrap* pRsw = new CRecordSetWrap(pRsptr);
+	::InterlockedIncrement(&CResCount::s_nMadeKind[CResCount::KindSlot(pEquipment->m_enKind)]);
 	pEquipment->SetVar(pRsw);
 
 	// @.SetVar 를 덮어쓴 설비(CV/SC/RTV/BCR/Display)만 이 레코드셋을 받아 m_pRsw 에 넣고,

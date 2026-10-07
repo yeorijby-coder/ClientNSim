@@ -1119,20 +1119,42 @@ void CEcsDoc::GetHostConnectInfo(CString& p_strCONNECTD_YN, int& p_iEQP_TIME)
 		_T("  AND EM.PLC_NO     = '%s' 		\n")
 		_T("ORDER BY EM.WH_TYP, EM.PLC_NO	\n"), _T("HOST"),m_WH_TYP, _T("01"));
 
+	// @.이 함수는 메뉴 상태를 갱신하는 핸들러에서 불린다. 즉 메시지 펌프가
+	//   한가할 때마다 불리므로 초당 열 번 넘게 들어온다.
+	//   예전에는 (1) 정상일 때 CRecordSetWrap 을 아무도 안 지웠고,
+	//   (2) nRowCnt < 0 일 때는 지운 뒤에 그대로 다시 썼다.
+	//   (1)이 이 프로그램 메모리 증가의 거의 전부였다. 초당 열 개씩,
+	//   한 시간이면 삼만 개가 조회 결과를 통째로 쥔 채 쌓였다.
+	//
+	//   접속 상태는 1초 안에 두 번 볼 까닭이 없으므로 1초 동안은 가진 값을 준다.
+	static DWORD   s_dwLastTick = 0;
+	static CString s_strLastYn;
+	static int     s_nLastTime = 0;
+
+	DWORD dwNow = ::GetTickCount();
+	if (s_dwLastTick != 0 && dwNow - s_dwLastTick < 1000)
+	{
+		p_strCONNECTD_YN = s_strLastYn;
+		p_iEQP_TIME      = s_nLastTime;
+		return;
+	}
+
 	_RecordsetPtr pRsp = GetSelectQryRecordsetPtr_DLG(strSql, nRowCnt, strMessage);
 	CRecordSetWrap* pRsw = new CRecordSetWrap(pRsp);
 
-	if (nRowCnt < 0)
+	if (nRowCnt > 0)
 	{
-		if (pRsw != NULL)
-		{
-			delete pRsw;
-		}
+		p_strCONNECTD_YN = pRsw->GetItem(_T("CONNECTED_YN"));
+		p_iEQP_TIME      = CConvert::ToInt(pRsw->GetItem(_T("EQP_TIME")));
 	}
 
-	p_strCONNECTD_YN = pRsw->GetItem(_T("CONNECTED_YN"));
-	p_iEQP_TIME = CConvert::ToInt(pRsw->GetItem(_T("EQP_TIME")));
+	// @.어느 길로 가든 반드시 지운다.
+	delete pRsw;
+	pRsw = NULL;
 
+	s_dwLastTick = dwNow;
+	s_strLastYn  = p_strCONNECTD_YN;
+	s_nLastTime  = p_iEQP_TIME;
 
 	return;
 }

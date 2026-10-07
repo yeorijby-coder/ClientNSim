@@ -30,7 +30,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
@@ -131,6 +131,7 @@ copy "$(OutDir)*.pdb" "$(OutDir)Ecs\mapfile\%DirName%"</Command>
     </ClCompile>
     <Link>
       <LargeAddressAware>true</LargeAddressAware>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>
@@ -138,7 +139,7 @@ copy "$(OutDir)*.pdb" "$(OutDir)Ecs\mapfile\%DirName%"</Command>
       <OptimizeReferences>
       </OptimizeReferences>
       <OutputFile>.\../Bin/Release\Ecs.exe</OutputFile>
-      <AdditionalDependencies>.\../Bin/Release/XmlLib.lib;.\../Bin/Release/DciLib.lib;.\../Bin/Release/EcsLib.lib;.\../Bin/Release/Spr32d70.lib;.\../Bin/Release/Quvc_dll.lib</AdditionalDependencies>
+      <AdditionalDependencies>.\../Bin/Release/XmlLib.lib;.\../Bin/Release/DciLib.lib;.\../Bin/Release/EcsLib.lib;.\../Bin/Release/Spr32du70.lib;.\../Bin/Release/Quvc_dll.lib</AdditionalDependencies>
       <GenerateMapFile>true</GenerateMapFile>
     </Link>
     <Midl>

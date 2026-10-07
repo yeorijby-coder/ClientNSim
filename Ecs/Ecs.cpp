@@ -57,12 +57,41 @@ CGlobal Global;
 
 // CEcsApp 초기화
 //
+///////////////////////////////////////////////
+// @.프로세스가 쓰는 모든 힙에 저단편화 힙(LFH)을 켠다.
+//
+//   이 프로그램은 1초마다 설비 전체를 다시 읽는다. 그 과정에서 ADO 가
+//   행·칸마다 작은 덩어리를 수없이 잡았다 놓는다. 힙이 그만큼 벌집이 되고,
+//   쓰지 못하는 구멍이 주소공간을 채운다. 실제로 멈춘 프로세스를 떠 보니
+//   할당덩어리는 1,216개뿐인데 그 안의 조각이 442,215개였다.
+//
+//   LFH 는 작은 덩어리를 크기별 칸에 모아 주어 이 구멍을 크게 줄인다.
+//   메인 힙은 요즘 윈도우에서 기본으로 켜져 있지만, ADO 의 커서 엔진처럼
+//   제 힙을 따로 만들어 쓰는 쪽은 꺼진 채로 남는다. 그래서 전부 훑어 켠다.
+
+static void EnableLowFragmentationHeap()
+{
+	HANDLE hHeaps[256] = { 0 };
+	DWORD  nCount = ::GetProcessHeaps(256, hHeaps);
+	if (nCount > 256)
+		nCount = 256;
+
+	for (DWORD ii = 0; ii < nCount; ii++)
+	{
+		ULONG ulMode = 2;	// 2 = LFH
+		::HeapSetInformation(hHeaps[ii], HeapCompatibilityInformation, &ulMode, sizeof(ulMode));
+	}
+}
+
 BOOL CEcsApp::InitInstance()
 {
 	//dll등 다른 용도 사용
 	//_CrtSetBreakAlloc(77997); 
 	//AfxSetAllocStop();
 	_CrtDumpMemoryLeaks();
+
+	// @.가장 먼저 켜 둔다. 이미 만들어진 힙에도 적용된다.
+	EnableLowFragmentationHeap();
 
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 	Gdiplus::GdiplusStartup(&m_ulGdiplusToken, &gdiplusStartupInput, NULL);

@@ -33,7 +33,8 @@ public:
 	_ConnectionPtr	m_pWmsDb;
 
 public:
-	BOOL	ConnectDB();			
+	BOOL	ConnectDB();
+	void	DisconnectDB();	// @.접속을 실제로 닫는다. 없어서 접속이 쌓였다			
 
 public:
 	BOOL ExecuteStoredProc(CAdoDbIO *pAdoDbIO, int nScNum);
