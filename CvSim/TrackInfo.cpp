@@ -38,6 +38,7 @@ CTrackInfo::CTrackInfo(CEquipment* pEquipment)
 	m_pTrackCtrl4 = NULL;
 	m_pTrackCtrl5 = NULL;
 	m_bModified		= TRUE;
+	m_nLastDrawSensor = -1;
 	m_bSuspend		= FALSE;
 	m_bDeadLock		= FALSE;
 	m_bStoRequest	= FALSE;
@@ -610,11 +611,31 @@ COLORREF CTrackInfo::GetCvColor()
 
 void CTrackInfo::InvokeControl(CDciTrackCtrl*	pTrackCtrl)
 {
-	if (m_bModified == FALSE)
-		return;
-
 	if (pTrackCtrl == NULL) 
 		return;                                                                                                                                                                                                                                                  
+
+	// @.화물감지는 아래에서 PLC 워드 영역을 직접 읽어 그린다(SeparatelyETC).
+	//   그 값은 CTrackInfo 의 Set... 를 거치지 않으므로 바뀌어도 m_bModified
+	//   가 서지 않는다. 그래서 화물이 올라와도 화면은 그대로이고, 같은 값을
+	//   읽는 WCS Client 에서만 보이는 일이 있었다. 지난 값과 견주어 달라졌으면
+	//   m_bModified 와 상관없이 다시 그린다.
+	BOOL bSensorChanged = FALSE;
+	if ((m_pEquipment != NULL) && (m_pEquipment->m_pDoc != NULL) &&
+		(m_nCvPlcNum >= 1) && (m_nCvPlcNum <= CV_PLC_CNT) &&
+		(m_pEquipment->m_pDoc->m_pDeviceMaps[m_nCvPlcNum - 1] != NULL) &&
+		(m_pEquipment->m_pDoc->m_pDeviceMaps[m_nCvPlcNum - 1]->m_bUseSeparatelyETC == TRUE))
+	{
+		int nTrackNoChk = _ttoi(pTrackCtrl->m_strCID.Right(3)) % 100;
+		int nDeviceNoChk = nTrackNoChk * m_pEquipment->m_pDoc->m_nWordCnt;
+		int nSensorNow = m_pEquipment->m_pDoc->GetAddrByName(
+				m_nCvPlcNum - 1, nDeviceNoChk, _T("ProductSensor"));
+
+		if (nSensorNow != m_nLastDrawSensor)
+			bSensorChanged = TRUE;
+	}
+
+	if ((m_bModified == FALSE) && (bSensorChanged == FALSE))
+		return;
 
 	if ((pTrackCtrl->GetItemSize() != m_arrayStatus.GetSize()) ||
 		(pTrackCtrl->GetItemSize() != m_mapStatusInfos.GetCount()))
@@ -663,10 +684,12 @@ void CTrackInfo::InvokeControl(CDciTrackCtrl*	pTrackCtrl)
 		int nProductSensor = m_pEquipment->m_pDoc->GetAddrByName(m_nCvPlcNum - 1, nDeviceNo, _T("ProductSensor"));
 
 		pTrackCtrl->m_bExist = nProductSensor;
+		m_nLastDrawSensor = nProductSensor;
 	}
 	else
 	{
 		pTrackCtrl->m_bExist = IsProductSensing();
+		m_nLastDrawSensor = pTrackCtrl->m_bExist;
 	}
 
 	BOOL bTemp = FALSE;

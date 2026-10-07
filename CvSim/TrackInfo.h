@@ -111,6 +111,13 @@ public:
 	int				m_strPlcno;
 	int				m_nTabNum;
 
+	// @.마지막으로 화면에 그린 화물감지 값.
+	//   이 현장(SeparatelyETC)에서는 화물감지를 CTrackInfo 의 멤버가 아니라
+	//   PLC 워드 영역에서 바로 읽어 그린다. 그래서 그 값이 바뀌어도
+	//   m_bModified 가 서지 않아 다시 그리지 않았다. 지난 값을 들고 있다가
+	//   달라졌으면 다시 그린다. -1 은 아직 한 번도 안 그렸다는 뜻이다.
+	int				m_nLastDrawSensor;
+
 	int				m_nKind;
 	int				m_nNextPlcNum;
 	int				m_nNextPlcNum2;
