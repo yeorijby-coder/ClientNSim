@@ -1238,6 +1238,36 @@ void CEcsDoc::AddHostRecv(LPCTSTR lpszMsg)
  *   EcsLog.exe 가 있어야 열린다. 메모장으로 바로 열리는 파일에 쌓아
  *   원격지에서도 사유를 읽을 수 있게 한다.
  */
+///////////////////////////////////////////////
+// @.로직그룹의 경유지가 P-BOX 트윈 대기대(221/222)면,
+//   실제로 화물이 올라와 있는 칸으로 바꿔 준다.
+//
+//   221 과 222 는 한 크레인의 두 칸이라 화물이 어느 쪽에나 설 수 있다.
+//   로직그룹에는 221 만 적어 두는 것이 보통인데, 화물이 222 에 서면
+//   221 에서 입고를 내려 해도 그 자리가 비어 있어 지시가 나가지 못한다.
+//   그래서 ECS 가 L 전문으로 알려 준 현황을 보고 고쳐 잡는다.
+//
+//   적어 둔 것이 없거나 둘 다 비어 있으면 적힌 그대로 쓴다.
+
+int CEcsDoc::ResolveBoxViaStation(int nViaStn)
+{
+	if ((nViaStn != DEF_BOX_STN_221) && (nViaStn != DEF_BOX_STN_222))
+		return nViaStn;
+
+	int nLugg = 0;
+
+	// @.적힌 자리에 화물이 있으면 그대로 쓴다.
+	if (m_mapBoxStnLugg.Lookup(nViaStn, nLugg) && (nLugg > 0))
+		return nViaStn;
+
+	// @.없으면 짝을 본다.
+	int nTwin = (nViaStn == DEF_BOX_STN_221) ? DEF_BOX_STN_222 : DEF_BOX_STN_221;
+	if (m_mapBoxStnLugg.Lookup(nTwin, nLugg) && (nLugg > 0))
+		return nTwin;
+
+	return nViaStn;
+}
+
 void CEcsDoc::WriteDiag(LPCTSTR lpszMsg)
 {
 	if (lpszMsg == NULL)

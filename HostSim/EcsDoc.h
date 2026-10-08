@@ -141,6 +141,16 @@ public:
 //	CArray<CDciStaticCtrl*, CDciStaticCtrl*> m_pStoDataChk2;
 	CArray<SLogicGorupInfo*, SLogicGorupInfo*> m_pLogicGorupInfos;
 
+	// @.P-BOX 자동입고 대기대에 지금 무엇이 올라와 있는지.
+	//   ECS 가 L 전문으로 221/222 두 칸을 함께 알려 준다. 그 값을 받아 둔다.
+	//   221 과 222 는 한 크레인의 트윈 대기대라 화물이 둘 중 아무 칸에나
+	//   설 수 있다. 로직그룹에는 보통 221 만 적어 두므로, 입고를 낼 때
+	//   이것을 보고 실제로 화물이 선 칸에서 내야 한다.
+	CMap<int, int, int, int> m_mapBoxStnLugg;
+
+	// @.로직그룹의 경유지가 트윈 대기대면, 실제로 화물이 선 칸으로 바꿔 준다.
+	int ResolveBoxViaStation(int nViaStn);
+
 	// @.거절당한(또는 어긋난) 작업번호를 로직 슬롯에서 풀어 준다.
 	//   nLuggNum 이 0 이면 전 슬롯을 푼다. 푼 개수를 돌려준다.
 	int ReleaseWorkingLugg(int nLuggNum = 0);

@@ -855,15 +855,20 @@ void CScInfo::InvokeControl()
 	BOOL bErase = (m_pControl->m_nForkPos != m_wHorizontalPos);
 	m_pControl->m_nForkPos = (m_wHorizontalPos >= 254 || m_wHorizontalPos < 1) ? 0 : m_wHorizontalPos;
 
+	// @.트윈/더블 포크는 두 포크를 같은 색으로 그린다.
+	//
+	//   예전에는 여기서 m_ucProdLoad(실린 포크 번호)를 1↔2 로 뒤집고 있었다.
+	//   그래서 작업은 1번 포크에 받았는데 크레인 그림은 2번 포크에 실린 것처럼
+	//   보였다. 게다가 화면용 임시값이 아니라 설비 상태 멤버를 직접 뒤집는 탓에
+	//   이 값을 읽는 다른 곳(GetProdLoad 의 대화상자 표시, IsProductExist,
+	//   GetPostColor)도 모두 뒤집힌 값을 보았다.
+	//
+	//   거기에 SetProdLoad 는 "값이 같으면 무시" 라서, 뒤집힌 뒤 PLC 가 같은
+	//   값을 다시 보내면 달라진 것으로 보여 또 바뀌었다. 결국 매 주기 1↔2 가
+	//   번갈아 나타났다. 뒤집지 않고 받은 그대로 그린다.
 	if (m_nForkType == enTwin  || m_nForkType == enDouble)
 	{
-		// 원본
 		m_pControl->m_clrFork2 = m_pControl->m_clrFork = GetForkColor1();
-
-		if (m_ucProdLoad == 1)		
-			m_ucProdLoad = 2;
-		else if (m_ucProdLoad == 2)	
-			m_ucProdLoad = 1;
 	}
 	else
 	{

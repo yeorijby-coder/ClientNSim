@@ -640,7 +640,10 @@ void CEcsView::OnTimer(UINT_PTR  nIDEvent)
 									{
 										int nJobType = 1;
 										// 입고 랙 뱅크 : 이 로직그룹의 ScNum 목록 내에서만 선정
-										int nLuggNum = pDoc->m_pHostCl->JobOrder(nJobType, _ttoi(strViaStnNum), 0, FALSE, NULL, &pDoc->m_pLogicGorupInfos[i]->m_strScs);
+										// @.경유지가 트윈 대기대(221/222)면 실제로 화물이 선 칸에서 낸다.
+									//   적힌 칸이 비어 있는데 짝에 화물이 있으면 짝에서 낸다.
+									int nViaStn = pDoc->ResolveBoxViaStation(_ttoi(strViaStnNum));
+									int nLuggNum = pDoc->m_pHostCl->JobOrder(nJobType, nViaStn, 0, FALSE, NULL, &pDoc->m_pLogicGorupInfos[i]->m_strScs);
 
 										/*
 										 * @.지시를 못 냈으면 슬롯을 건드리지 않는다.
