@@ -85,7 +85,16 @@ public:
 	virtual CInfo* GetInfo(int n) { return NULL; }
 
 public: //kdh20190521
-	virtual void SetVar(CRecordSetWrap* pRecord){};
+	// @.조회 결과를 받아가는 자리. 받아간 쪽이 다 쓰고 나서 제 스레드에서 지운다.
+	//   (CV/SC/RTV/BCR/Display 가 이것을 덮어써서 m_pRsw 에 담아 둔다)
+	//
+	//   덮어쓰지 않은 종류는 아무도 받아가지 않으므로 여기서 바로 지운다.
+	//   예전에는 부르는 쪽(Collect_EQUIPMENT)이 SetVar 뒤에 m_pRsw 를 다시 읽어
+	//   "안 받아갔으면 지운다" 로 가렸는데, 그 사이에 받아간 쪽 스레드가 이미
+	//   다 쓰고 지워 m_pRsw 를 NULL 로 돌려놓을 수 있다. 그러면 안 받아간 것으로
+	//   잘못 보고 같은 것을 한 번 더 지웠다(이중 해제).
+	//   해제된 메모리를 밟아 C0000005 로 죽었다. (EAX = DDDDDDDD)
+	virtual void SetVar(CRecordSetWrap* pRecord) { delete pRecord; }
 	virtual CString GetSelectQry(){ return _T("");};
 
 protected:
