@@ -253,6 +253,9 @@ public:
 	//   트랙이 바뀔 때만 DEST_POS_DEF 를 본다. 이 대화상자는 주기적으로
 	//   다시 그려지므로, 매번 조회하면 그만큼 DB 와 CPU 를 먹는다.
 	void SetTitleAsDestPos();
+
+	// @.목적지 콤보에서 저장할 작업대번호를 꺼낸다.
+	CString GetDestPosFromCombo();
 	CString	m_strTitleMcNo;	// 마지막으로 제목을 만든 트랙
 	void SetBindCombo_COMMON_CODE(CComboBox& cbx, CString strCDX_CD, CString strCCD_NM);
 	void GetComBoBoxData(CComboBox& cbx, CString& strVal, int nlength);

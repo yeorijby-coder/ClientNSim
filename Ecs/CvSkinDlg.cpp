@@ -1215,7 +1215,11 @@ void CCvSkinDlg::UpdateTrackData(int pBtnJob)
 
 	//CLib::GetComBoBoxData(m_cbxCvJobTyp, strJobTyp, 1);
 	m_cbxCvDestPos.GetWindowText(strDestPos);
-	CString strDestPosSimple = strDestPos.Mid(0, 3);
+
+	// @.목록에서 고른 항목의 작업대번호를 쓴다.
+	//   예전에는 보이는 글자의 앞 세 자를 잘라 썼다(Mid(0,3)). 목록에서 고르면
+	//   그 글자가 [251]TR#415 ... 이므로 "[25" 가 저장되었다.
+	CString strDestPosSimple = GetDestPosFromCombo();
 	//m_cbxCvJobTyp.GetWindowText(strJobTyp);
 	//m_cbxCvFmsRpt.GetWindowText(strFmsRptOd);
 	//m_cbxCvTrayTyp.GetWindowText(strTrayTyp);
@@ -1239,7 +1243,10 @@ void CCvSkinDlg::UpdateTrackData(int pBtnJob)
 				break;
 
 			if (strJobNo == _T("")){ strJobNo = _T("0");}
+			// @.실제로 저장되는 것은 strDestPosSimple 이다. 비었을 때를 여기서 막는다.
+			//   (예전에는 보이는 글자인 strDestPos 만 보고 있어 아무 소용이 없었다)
 			if (strDestPos == _T("")){ strDestPos = _T("0"); }
+			if (strDestPosSimple == _T("")){ strDestPosSimple = _T("0"); }
 			if (strJobTyp == _T("")){ strJobTyp=_T("0"); }
 			if (strBarcode == _T("")){ strBarcode =_T("0");}
 			if (strErrorCode == _T("") ){strErrorCode=_T("0");}
@@ -1872,6 +1879,48 @@ void CCvSkinDlg::SetTitleAsDestPos()
 	SetWindowText(strTitle);
 }
 
+///////////////////////////////////////////////
+// @.목적지 콤보에서 저장할 작업대번호를 꺼낸다.
+//
+//   목록에서 고른 때   : 그 항목에 달아 둔 작업대번호를 쓴다.
+//   고른 것이 없을 때  : 콤보에 글자만 들어가 있는 경우다. 지금 걸려 있는
+//                        목적지를 그대로 보여 주려고 SetWindowText 로 넣어
+//                        두기 때문이다. 그 글자에서 번호만 추린다.
+//                        (대괄호 안이 있으면 그 안을, 없으면 앞의 숫자를)
+
+CString CCvSkinDlg::GetDestPosFromCombo()
+{
+	int nSel = m_cbxCvDestPos.GetCurSel();
+	if (nSel >= 0)
+	{
+		CString strKey = m_cbxCvDestPos.GetItemKey(nSel);
+		if (strKey.IsEmpty() == FALSE)
+			return strKey;
+	}
+
+	CString strText;
+	m_cbxCvDestPos.GetWindowText(strText);
+
+	// @.[251]TR#415 ... 모양이면 대괄호 안을 쓴다.
+	int nOpen = strText.Find(_T('['));
+	int nClose = strText.Find(_T(']'));
+	if ((nOpen == 0) && (nClose > nOpen + 1))
+		return strText.Mid(nOpen + 1, nClose - nOpen - 1);
+
+	// @.그 밖에는 앞쪽의 숫자만 추린다.
+	CString strNum;
+	for (int ii = 0; ii < strText.GetLength(); ii++)
+	{
+		TCHAR ch = strText[ii];
+		if ((ch < _T('0')) || (ch > _T('9')))
+			break;
+
+		strNum += ch;
+	}
+
+	return strNum;
+}
+
 void CCvSkinDlg::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CString strGroup_No, CString strDEST_POS_RD)
 {
 	if(m_pDoc == NULL){return;};
@@ -1908,12 +1957,22 @@ void CCvSkinDlg::SetBindCombo_DEST_POS_DEF(CComboBoxWrapper& cbx, CString strGro
 		strREMARKS = pRsw->GetItem(_T("REMARKS"));		
 		strDEST_POS = _T("[") + strSTATION_NO + _T("]TR#") + strTRACK_NO + _T(" ") + strREMARKS;
 
-		cbx.AddString(strDEST_POS);
-		cbx.SetItemData(i, CConvert::ToInt(strTRACK_NO));
-
-		if (strTRACK_NO == strDEST_POS_RD)
+		// @.보이는 글자는 [251]TR#415 3F BOX 피킹대 이지만, 저장해야 하는 값은
+		//   대괄호 안의 작업대번호(DEST_POS_DEF.TRACK_NO) 다. CV_DATA.DEST_POS 가
+		//   그 번호를 담는다. 그래서 그 번호를 항목에 달아 둔다.
+		//
+		//   예전에는 (1) 트랙번호(MC_NO) 를 달아 두었고 (2) AddString 이 돌려주는
+		//   자리가 아니라 i 로 달아 자리가 하나씩 밀려 있었다. 둘 다 바로잡는다.
+		int nIndex = cbx.AddString(strDEST_POS);
+		if (nIndex >= 0)
 		{
-			cbx.SetCurSel(i);
+			cbx.SetItemDataEx(nIndex, strSTATION_NO);
+
+			// @.지금 걸려 있는 목적지와 같으면 그 항목을 고른다.
+			//   DEST_POS_RD 는 000 처럼 0 으로 채워 오기도 하므로 숫자로 견준다.
+			int nDestRd = CConvert::ToInt(strDEST_POS_RD);
+			if ((nDestRd > 0) && (nDestRd == CConvert::ToInt(strSTATION_NO)))
+				cbx.SetCurSel(nIndex);
 		}
 
 		pRsw->MoveNext();
