@@ -1008,6 +1008,30 @@ void CDciRvCtrl::UpdateControl(CDC* pDC)
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 
+		// @.R2L 트윈 크레인은 포크 두 칸의 좌우가 뒤집혀 그려졌다.
+		//
+		//   이 라이브러리는 "Fork#1 은 레일의 기준 끝에 가까운 칸" 으로 잡는다.
+		//   R2L 은 오른쪽이 기준이라 Fork#1 이 오른쪽 칸(rcForkL1)이 된다.
+		//   그런데 이 현장은 그 반대다. 11호기의 두 대기대를 보면
+		//     Fork#1 = 작업대 222 = 트랙 420 = 레이아웃 x 52~53 (왼쪽, 안쪽)
+		//     Fork#2 = 작업대 221 = 트랙 419 = 레이아웃 x 53~54 (오른쪽, 바깥)
+		//   이다. 그래서 작업은 1번 포크에 받았는데 그림은 2번 포크에 보였다.
+		//
+		//   두 칸을 맞바꾼다. 색과 글자, 화물 표시가 모두 이 두 사각형을 쓰므로
+		//   여기 한 군데만 바꾸면 된다. 날개와 레일은 이미 잡혔으니 건드리지 않는다.
+		//   단일 포크와 L2R 은 해당 없다.
+		if ((m_nType == enR2L) && (m_nForkType == enTwin || m_nForkType == enTwinGap2))
+		{
+			CRect rcForkSwap = rcForkL1;
+			rcForkL1 = rcForkL2;
+			rcForkL2 = rcForkSwap;
+
+			// @.눌렀을 때 어느 포크인지 가리는 자리도 함께 맞춘다.
+			CRect rcHitSwap = m_rcForkS;
+			m_rcForkS = m_rcForkT;
+			m_rcForkT = rcHitSwap;
+		}
+
 		m_pDCI->DrawButton(pDC, rcForkL1, m_clrFork, m_bClick);
 
 		LOGFONT m_logfont;
