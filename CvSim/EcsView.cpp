@@ -3637,6 +3637,13 @@ void CEcsView::MoveNextTrackForKindNormal_1(CCv* pCv, CTrackInfo* pTrack, CStati
 	}
 #pragma endregion
 #pragma region 내부 변수 선언
+
+	// @.다음 트랙이 정해지지 않은 자리가 있다. (NextPlcNum 0)
+	//   그대로 두면 m_nStTrNum[-1] 로 배열 앞을 짚어 그 자리에서 죽는다.
+	//   넘겨줄 곳이 없으면 여기서 돌아간다.
+	if ((pTrack->m_nNextPlcNum < 1) || (pTrack->m_nNextPlcNum > CV_PLC_CNT) ||
+	    (pTrack->m_nNextCv <= 0))
+		return;
 	int nNextPlcNum = pTrack->m_nNextPlcNum - 1;
 
 	int nNextDevNum = (pTrack->m_nNextCv- pDoc->m_nStTrNum[pTrack->m_nNextPlcNum-1]+1)* pDoc->m_nWordCnt;
@@ -3673,8 +3680,15 @@ void CEcsView::MoveNextTrackForKindNormal_1(CCv* pCv, CTrackInfo* pTrack, CStati
 	if (!(Temp && Temp2))
 		return;
 
-	// 목적지가 자기 자신이면
-	if (nDestNo == pTrack->m_nDestCode)
+	// @.목적지가 제 자리면 더 보내지 않는다.
+	//
+	//   제 자리인지는 CEcsDoc::IsDestination 이 가린다. 트랙번호와 DestCode 를
+	//   함께 보고, 트윈 대기대라면 안쪽이 비었는지까지 본다.
+	//
+	//   예전에는 DestCode 만 견주었다. 그래서 바깥 자리(419, DestCode 221)는
+	//   목적지 221 을 늘 제 자리로 보고 화물을 안쪽(420)으로 넘기지 않았다.
+	//   현장 PLC 는 안쪽이 비면 바깥을 건너뛴다. 그 규칙을 여기서도 쓴다.
+	if (pDoc->IsDestination(_T("DestPos"), nDestNo, pTrack->m_nNumber, 1))
 		return;
 
 	// 목적지가 0이면 
@@ -3942,6 +3956,13 @@ void CEcsView::MoveNextTrackForKindNormal_2(CCv* pCv, CTrackInfo* pTrack, CStati
 	//	n1TrackAtWord = 2;
 	int nDevNum = (pTrack->m_nNumber - pCv->m_nStTrNum + 1) * pDoc->m_nWordCnt;
 
+
+	// @.다음 트랙이 정해지지 않은 자리가 있다. (NextPlcNum 0)
+	//   그대로 두면 m_nStTrNum[-1] 로 배열 앞을 짚어 그 자리에서 죽는다.
+	//   넘겨줄 곳이 없으면 여기서 돌아간다.
+	if ((pTrack->m_nNextPlcNum < 1) || (pTrack->m_nNextPlcNum > CV_PLC_CNT) ||
+	    (pTrack->m_nNextCv <= 0))
+		return;
 	int nNextPlcNum = pTrack->m_nNextPlcNum - 1;
 	int nNextDevNum = (pTrack->m_nNextCv - pDoc->m_nStTrNum[nNextPlcNum] + 1) * pDoc->m_nWordCnt;
 
@@ -3982,9 +4003,15 @@ void CEcsView::MoveNextTrackForKindNormal_2(CCv* pCv, CTrackInfo* pTrack, CStati
 	if (!(bTemp1 && bTemp2))
 		return;
 
-	// 목적지가 자기자신이 아니어야 함
-	if (//nDestNo == pTrack->m_nNumber || 
-		nDestNo == pTrack->m_nDestCode )
+	// @.목적지가 제 자리면 더 보내지 않는다.
+	//
+	//   제 자리인지는 CEcsDoc::IsDestination 이 가린다. 트랙번호와 DestCode 를
+	//   함께 보고, 트윈 대기대라면 안쪽이 비었는지까지 본다.
+	//
+	//   예전에는 DestCode 만 견주었다. 그래서 바깥 자리(419, DestCode 221)는
+	//   목적지 221 을 늘 제 자리로 보고 화물을 안쪽(420)으로 넘기지 않았다.
+	//   현장 PLC 는 안쪽이 비면 바깥을 건너뛴다. 그 규칙을 여기서도 쓴다.
+	if (pDoc->IsDestination(_T("DestPos"), nDestNo, pTrack->m_nNumber, 1))
 		return;
 
 	// 목적지가 0이면 
@@ -4265,9 +4292,15 @@ void CEcsView::MoveNextTrackForKindDiverter_2(CCv* pCv, CTrackInfo* pTrack, CSta
 			if (!(Temp && Temp2))
 				return;
 
-			// 현재트랙의 목적지가 자기 자신이 아니어야 함!
-			if (nDestNo == pTrack->m_nNumber || 
-				nDestNo == pTrack->m_nDestCode)
+			// @.목적지가 제 자리면 더 보내지 않는다.
+			//
+			//   제 자리인지는 CEcsDoc::IsDestination 이 가린다. 트랙번호와 DestCode 를
+			//   함께 보고, 트윈 대기대라면 안쪽이 비었는지까지 본다.
+			//
+			//   예전에는 DestCode 만 견주었다. 그래서 바깥 자리(419, DestCode 221)는
+			//   목적지 221 을 늘 제 자리로 보고 화물을 안쪽(420)으로 넘기지 않았다.
+			//   현장 PLC 는 안쪽이 비면 바깥을 건너뛴다. 그 규칙을 여기서도 쓴다.
+			if (pDoc->IsDestination(_T("DestPos"), nDestNo, pTrack->m_nNumber, 1))
 				return;
 
 			BOOL Temp5 = IS_BIT_KEY_CURR(_T("ProductSensor"), FALSE);

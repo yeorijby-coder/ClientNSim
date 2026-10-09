@@ -382,6 +382,33 @@ CDeviceMap* CEcsDoc::GetDeviceMapByTrack(int nTrack)
 }
 
 // bMethod => 1:Self, 2:ScDest
+///////////////////////////////////////////////
+// @.그 트랙이 이미 다른 화물에게 넘어갔는가. 작업번호로만 본다.
+//
+//   화물감지 센서는 같이 보지 않는다. CvSim 은 화물을 두 걸음에 옮긴다.
+//     1걸음(MoveNextTrackForKindNormal_1) : 센서를 다음 트랙으로 옮긴다
+//     2걸음(MoveNextTrackForKindNormal_2) : 작업번호와 목적지를 옮긴다
+//   그래서 넘겨주는 도중에는 안쪽에 센서만 켜져 있고 번호는 아직 없다.
+//   그 순간을 "안쪽이 찼다" 로 보면 바깥이 제 자리라고 돌아서서,
+//   2걸음이 영영 안 일어나고 화물이 둘로 쪼개진 채 멈춘다.
+//
+//   작업번호가 들어 있다는 것은 2걸음까지 끝나 제 화물이 되었다는 뜻이다.
+//   상위가 보는 CV_DATA.LUGG_NO_RD 와도 같은 기준이다.
+
+BOOL CEcsDoc::IsTrackLoaded(CTrackInfo* pTrack)
+{
+	if (pTrack == NULL)
+		return FALSE;
+
+	int nPlcIdx = pTrack->m_nCvPlcNum - 1;
+	if ((nPlcIdx < 0) || (nPlcIdx >= CV_PLC_CNT))
+		return FALSE;
+
+	int nDevNum = (pTrack->m_nNumber - m_nStTrNum[nPlcIdx] + 1) * m_nWordCnt;
+
+	return (GetAddrByName(nPlcIdx, nDevNum, _T("LuggNum")) != 0);
+}
+
 BOOL CEcsDoc::IsDestination(CString strArgName, int nValue, int nTrNo, int nMethod)
 {
 	#pragma region 목적지 테이블을 변경해야 하는지에 대한 부분 체크 
@@ -418,51 +445,44 @@ BOOL CEcsDoc::IsDestination(CString strArgName, int nValue, int nTrNo, int nMeth
 		// 자기 목적지로 본다. (EcsView 의 화물 이동 판정과 같은 규칙)
 		BOOL bIsSelfDest = ((nTrNo != 0)        && (nValue == nTrNo))
 		                || ((nTrDestCode != 0)  && (nValue == nTrDestCode));
-		// @.트윈 H/S : 포크 두 개가 한 자리를 나눠 쓰는 경우다.
-		//   짝 트랙이 목적지여도 자기 자리로 본다.
-		//   예) 419 와 420 은 트윈이다. 2 번 포크 자리인 419 는 목적지가
-		//       420(또는 420 의 DestCode 222)이어도 출고대를 올려야 한다.
-		//   작업정보 창의 TwinCheck 에 짝 트랙을 적어 두면 걸린다.
-		if (bIsSelfDest == FALSE && pTrack != NULL &&
-		    pTrack->m_bTwinCheck != FALSE && pTrack->m_nHSTrack > 0)
+		// @.트윈 H/S : 포크 두 개가 한 자리를 나눠 쓴다. (예 : 419 와 420)
+		//
+		//   안쪽부터 채운다. 그래서 바깥 자리는 안쪽이 비어 있는 동안
+		//   제 목적지라고 보지 않는다. 화물을 그냥 안쪽으로 흘려보낸다.
+		//
+		//   현장 PLC 가 그렇게 돈다. 이동 작업의 목적지가 221(=419) 로
+		//   내려와도 419 는 건너뛰고 420 에 가서 멈춘다. 그래서 완료도
+		//   입고 요구도 모두 420 에서 난다. ECS 는 관여하지 않는다.
+		//   (원본 CLib::IsArrivedToRetStation 이 221 과 222 를 한 자리로
+		//    보는 것도 화물이 어느 쪽에 서든 도착으로 쳐 주기 위해서다)
+		//
+		//   어느 쪽이 바깥인지는 따로 적어 두지 않는다. 짝에게 넘겨줄 길이
+		//   있는 쪽(NextTrack 이 짝인 쪽)이 바깥이다.
+		//
+		//   안쪽이 차 있으면 바깥도 제 자리가 된다. 그래야 크레인이 두 개를
+		//   한 번에 집어 간다.
+		if (pTrack != NULL && pTrack->m_bTwinCheck != FALSE && pTrack->m_nHSTrack > 0)
 		{
 			CTrackInfo* pTwin = GetTrackInfo(pTrack->m_nHSTrack);
 			int nTwinDestCode = (pTwin != NULL) ? pTwin->m_nDestCode : 0;
 
-			BOOL bTwinMatch = (nValue == pTrack->m_nHSTrack)
-			               || ((nTwinDestCode != 0) && (nValue == nTwinDestCode));
+			// @.이 짝을 가리키는 목적지인가. 내 자리든 짝의 자리든 같다.
+			BOOL bPairMatch = bIsSelfDest
+				|| (nValue == pTrack->m_nHSTrack)
+				|| ((nTwinDestCode != 0) && (nValue == nTwinDestCode));
 
-			// @.짝 목적지는 바로 받아들이지 않는다.
-			//   화물이 아직 흐르는 중에 출고대를 올리면 크레인이 헛걸음을 한다.
-			//   그 자리에 화물이 멈춰 선 채로 DEF_TWIN_DEST_WAIT_SEC 초가 지난
-			//   뒤에만 자기 자리로 본다. 화물이 없어지거나 목적지가 바뀌면
-			//   세던 것을 접는다.
-			BOOL bSensing = FALSE;
-			int  nPlcIdx  = pTrack->m_nCvPlcNum - 1;
-			if ((nPlcIdx >= 0) && (nPlcIdx < CV_PLC_CNT))
+			if (bPairMatch != FALSE)
 			{
-				int nDevNum = (pTrack->m_nNumber - m_nStTrNum[nPlcIdx] + 1) * m_nWordCnt;
-				bSensing = (GetAddrByName(nPlcIdx, nDevNum, _T("ProductSensor")) != 0);
-			}
+				// @.짝에게 넘겨줄 길이 실제로 열려 있어야 바깥이다.
+				//   길이 없는데 바깥으로 보면 화물이 갈 데가 없어 그 자리에 갇힌다.
+				BOOL bOuter = (pTrack->m_nNextCv == pTrack->m_nHSTrack)
+					&& (pTrack->m_nNextPlcNum >= 1)
+					&& (pTrack->m_nNextPlcNum <= CV_PLC_CNT);
 
-			if ((bTwinMatch == FALSE) || (bSensing == FALSE))
-			{
-				pTrack->m_bTwinDestWait = FALSE;
-			}
-			else
-			{
-				if (pTrack->m_bTwinDestWait == FALSE)
-				{
-					pTrack->m_bTwinDestWait = TRUE;
-					pTrack->m_tTwinDestWait = COleDateTime::GetCurrentTime();
-				}
-
-				COleDateTimeSpan tElapse = COleDateTime::GetCurrentTime() - pTrack->m_tTwinDestWait;
-				if (tElapse.GetTotalSeconds() >= DEF_TWIN_DEST_WAIT_SEC)
-					bIsSelfDest = TRUE;
+				// @.바깥인데 안쪽이 비었으면 여기는 목적지가 아니다. 흘려보낸다.
+				bIsSelfDest = (bOuter == FALSE) || IsTrackLoaded(pTwin);
 			}
 		}
-
 		BOOL bIsScDest1 = (nValue > m_nScDestFrom && nValue < m_nScDestTo);
 		BOOL bIsScDest2 = (m_strDestList.Find(CConvert::ToString(nValue)) != -1);
 		BOOL bIsScDest = bIsScDest1 || bIsScDest2;

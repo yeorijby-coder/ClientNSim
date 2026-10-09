@@ -245,6 +245,9 @@ public:
 //	BOOL IsScDest(int nValue) { return (nValue > m_nScDestFrom && nValue < m_nScDestTo); }
 	BOOL IsStationKind(CTrackInfo* pTrack, CString strKeyWord);
 	BOOL IsDestination(CString strArgName, int nValue, int nTrNo, int nMethod);
+
+	// @.그 트랙에 화물이 올라와 있는가.
+	BOOL IsTrackLoaded(CTrackInfo* pTrack);
 	BOOL LookupKeywordInfo(CString strKeyWord, CString& strType, CString& strAddr, CString& strInOrder);
 	// 키워드를 값으로 받으면 부를 때마다 CString 복사본이 생긴다.
 	// 화면 타이머가 트랙마다 이 함수를 불러서 그 복사와 해제가 CPU 를 먹고 있었다.
