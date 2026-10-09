@@ -79,6 +79,10 @@ public:
 	//   같은 화물로 거듭 내지 않도록, 작업대마다 마지막으로 낸 작업번호를
 	//   들고 있다가 달라졌을 때만 낸다. 작업대가 비면(0) 표시를 지운다.
 	void BoxStoRequest(int nStation, int nLuggNum);
+
+	// @.P-BOX 입고 요구(L) 전문을 읽는다. 9자와 11자를 모두 받는다.
+	void GfReadBoxStoRequest(const CString& strFrame,
+		int& nLugg1, int& nFlag1, int& nLugg2, int& nFlag2);
 	CMap<int, int, int, int> m_mapBoxStoOrdered;
 	int  GetSeqNum();
 	CString GetStartPos(int nStartPos);

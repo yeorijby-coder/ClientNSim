@@ -304,6 +304,53 @@ void CHostSv::WarnStatusRange(LPCTSTR lpszKind, int nDeviceNo, int nMax, LPCTSTR
 	m_pDoc->WriteDiag(strLog);
 }
 
+///////////////////////////////////////////////
+// @.P-BOX 입고 요구(L) 전문을 읽는다. 9자와 11자를 모두 받는다.
+//
+//   두 모양은 작업번호 뒤에 미실행 유무 한 자리가 있느냐로만 다르다.
+//   그래서 전문에 실린 숫자가 몇 개인지를 세어 가른다.
+//
+//     숫자 8개  →  dddd dddd            (9자)
+//     숫자 10개 →  dddd d dddd d        (11자)
+//
+//   길이로 가르지 않는 것은, 보내는 쪽이 뒤에 공백을 채워 보내기도 하고
+//   ETX 를 넣고 안 넣고가 갈리기도 하기 때문이다. 숫자 개수가 가장 믿을 만하다.
+//
+//   둘 중 어느 쪽도 아니면 앞의 여덟 자리만 작업번호로 읽는다. 적어도
+//   화물번호는 건지려는 것이다. 미실행 유무는 -1(없음) 로 둔다.
+
+void CHostSv::GfReadBoxStoRequest(const CString& strFrame,
+		int& nLugg1, int& nFlag1, int& nLugg2, int& nFlag2)
+{
+	nLugg1 = 0;  nLugg2 = 0;
+	nFlag1 = -1; nFlag2 = -1;
+
+	// @.본문은 STX(0) 과 전문종류(1) 다음부터다.
+	int nDigit = 0;
+	for (int i = 2; i < strFrame.GetLength(); i++)
+	{
+		TCHAR ch = strFrame[i];
+		if ((ch < _T('0')) || (ch > _T('9')))
+			break;
+
+		nDigit++;
+	}
+
+	if (nDigit >= 10)
+	{
+		// @.원본 형식
+		nLugg1 = _ttoi(strFrame.Mid(2, 4));
+		nFlag1 = _ttoi(strFrame.Mid(6, 1));
+		nLugg2 = _ttoi(strFrame.Mid(7, 4));
+		nFlag2 = _ttoi(strFrame.Mid(11, 1));
+		return;
+	}
+
+	// @.문서 형식. 숫자가 여덟에 못 미쳐도 Mid 가 알아서 잘라 준다.
+	nLugg1 = _ttoi(strFrame.Mid(2, 4));
+	nLugg2 = _ttoi(strFrame.Mid(6, 4));
+}
+
 void CHostSv::Parsing(char *pFrame)
 {
 	CString strLog;
@@ -512,14 +559,29 @@ void CHostSv::Parsing(char *pFrame)
 		break;
 
 	// [09]Interface목록서 IV.9 P-BoxRack 입고 요구
-	//   STX Type(1) 작업번호#1(2-5) 작업번호#2(6-9) ETX
+	//
+	//   보내는 쪽이 두 모양 중 하나를 쓴다. 둘 다 받는다.
+	//
+	//     9자(문서 IV.9) : STX L 작업번호#1(4) 작업번호#2(4) ETX
+	//    11자(원본 ECS)  : STX L 작업번호#1(4) 미실행#1(1) 작업번호#2(4) 미실행#2(1) ETX
+	//
+	//   #1 은 자동입고 대기대 #1(221, 바깥), #2 는 #2(222, 안쪽) 의 작업번호다.
+	//   미실행 유무는 그 작업대에 아직 지시되지 않은 작업이 있는지를 알려 준다.
+	//   시뮬레이터는 그 값을 받아 로그에만 남긴다. 작업을 낼지는 로직그룹이
+	//   정하고, 중복 출발지는 어차피 작업을 낼 때 걸러지기 때문이다.
 	case	CMD_IN_OUT_REQUEST:
 	{
-		int nLugg1 = _ttoi(strFrame.Mid(2, 4));	// 자동입고 대기대 #1 (221)
-		int nLugg2 = _ttoi(strFrame.Mid(6, 4));	// 자동입고 대기대 #2 (222)
+		int nLugg1 = 0, nLugg2 = 0;
+		int nFlag1 = -1, nFlag2 = -1;	// -1 = 그 모양에 없는 항목
+
+		GfReadBoxStoRequest(strFrame, nLugg1, nFlag1, nLugg2, nFlag2);
 
 		CString strLog;
-		strLog.Format(_T("P-BOX 입고 요구.. #1=[%d] #2=[%d]"), nLugg1, nLugg2);
+		if (nFlag1 < 0)
+			strLog.Format(_T("P-BOX 입고 요구.. #1=[%d] #2=[%d]"), nLugg1, nLugg2);
+		else
+			strLog.Format(_T("P-BOX 입고 요구.. #1=[%d] 미실행[%d] #2=[%d] 미실행[%d]"),
+				nLugg1, nFlag1, nLugg2, nFlag2);
 		m_pDoc->WriteLog(LOG_TYPE_EVENT, LOG_POS_HOST, strLog, _T("CHostSv::Parsing"));
 
 		// @.예전에는 여기서 로그만 적고 응답만 보냈다. 그래서 대기대에 화물이
