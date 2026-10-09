@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="euc-kr"?>
 <!--ECS Configuration (SCP2)-->
 <Config>
-	<Kind>1</Kind>
-	<NextPlcNum>0</NextPlcNum>
-	<NextTrack>0</NextTrack>
+	<Kind>0</Kind>
+	<NextPlcNum>5</NextPlcNum>
+	<NextTrack>541</NextTrack>
 	<Center>0</Center>
 	<CenterNextPlcNum>0</CenterNextPlcNum>
 	<CenterNext>0</CenterNext>
@@ -12,7 +12,7 @@
 	<CrossTrack>0</CrossTrack>
 	<CrossDest>0</CrossDest>
 	<CrossPlcNum>0</CrossPlcNum>
-	<TwinCheck>-842150451</TwinCheck>
+	<TwinCheck>0</TwinCheck>
 	<HSTrack>0</HSTrack>
 	<Dests>
 		<Dest DestPos="1" NextPlcNum="5" NextTrack="549"/>

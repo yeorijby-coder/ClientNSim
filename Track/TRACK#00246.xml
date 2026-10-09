@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="euc-kr"?>
 <!--ECS Configuration (SCP2)-->
 <Config>
-	<Kind>1</Kind>
-	<NextPlcNum>0</NextPlcNum>
-	<NextTrack>0</NextTrack>
+	<Kind>0</Kind>
+	<NextPlcNum>2</NextPlcNum>
+	<NextTrack>247</NextTrack>
 	<Center>0</Center>
 	<CenterNextPlcNum>0</CenterNextPlcNum>
 	<CenterNext>0</CenterNext>
